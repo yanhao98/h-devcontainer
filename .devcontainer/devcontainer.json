@@ -1,0 +1,147 @@
+{
+  // "image": "my-dev-container",
+  "build": {
+    "dockerfile": "Dockerfile.base",
+    "args": {}
+  },
+  "features": {},
+  "runArgs": [
+    // "--cap-add=NET_ADMIN",
+    // "--cap-add=NET_RAW",
+    // "--add-host=host.docker.internal:host-gateway",
+    "--name=${localWorkspaceFolderBasename}-devcontainer"
+  ],
+  "forwardPorts": [ /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
+    1116
+  ],
+  "portsAttributes": {
+    "1116": {
+      "label": "开发服务器端口",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteEnv": {
+    "ANTHROPIC_AUTH_TOKEN": "${localEnv:ANTHROPIC_AUTH_TOKEN}",
+    "ANTHROPIC_BASE_URL": "${localEnv:ANTHROPIC_BASE_URL}",
+    "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
+    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}"
+  },
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "TZ": "${localEnv:TZ:Asia/Shanghai}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [ // code-insiders --install-extension github.copilot-chat
+        // AI
+        "github.copilot-chat",
+        "anthropic.claude-code",
+        "google.gemini-cli-vscode-ide-companion",
+        // >>>>>
+        // "mads-hartmann.bash-ide-vscode",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "chat.extensionUnification.enabled": true,
+        "chat.tools.terminal.autoApprove": {
+          "/.*/": true
+        },
+        // * 尽管使用了“/.*/”，但有些还是会失败，因为有几个错误的默认值：
+        // * https://github.com/microsoft/vscode/issues/266651#issuecomment-3292581459
+        "chat.tools.terminal.ignoreDefaultAutoApproveRules": false,
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": [
+            {
+              "type": "npm",
+              "script": "dev",
+              "label": "🚀 Dev: Run on Folder Open",
+              "detail": "启动开发服务器",
+              "runOptions": {
+                "runOn": "folderOpen"
+              },
+              "problemMatcher": [],
+              "isBackground": true,
+              "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+              },
+              "group": {
+                "kind": "build",
+                "isDefault": false
+              }
+            }
+          ]
+        },
+        "terminal.integrated.defaultProfile.linux": "💲zsh",
+        "terminal.integrated.profiles.linux": {
+          "💲zsh": {
+            "path": "zsh",
+            "icon": "terminal-cmd",
+            "overrideName": true,
+            "color": "terminal.ansiGreen"
+          }
+        },
+        // https://stackoverflow.com/questions/75708866/vscode-dev-container-fails-to-load-ms-vscode-js-debug-extension-correctly
+        // https://davidwesst.com/blog/missing-bootloader-in-vscode-devcontainer/
+        /**
+         * autoAttachFilter 存在问题：会在 NODE_OPTIONS 中注入 bootloader.js 的 --require 参数，
+         * 并错误地重复拼接 --max-old-space-size，形成类似：
+         *   NODE_OPTIONS= --require /home/.../bootloader.js  --max-old-space-size=4096--max-old-space-size=4096
+         * 导致启动时报错：
+         *   Error: illegal value for flag --max-old-space-size=4096--max-old-space-size=4096 of type size_t
+         * 将其设置为 "disabled" 以规避该问题。
+         */
+        // "debug.javascript.autoAttachFilter": "disabled",
+        "json.schemas": [
+          {
+            "fileMatch": [
+              "*/devcontainer-feature.json"
+            ],
+            "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json"
+          }
+        ]
+      }
+    }
+  },
+  "mounts": [
+    {
+      "type": "volume",
+      "source": "${localWorkspaceFolderBasename}-pnpm-store",
+      "target": "/home/usr_vscode/.pnpm-store"
+    },
+    {
+      "type": "volume",
+      "source": "${localWorkspaceFolderBasename}-bun-install-cache",
+      "target": "/home/usr_vscode/.bun/install/cache"
+      // rm -rf ~/.bun/install/cache/*
+    },
+    {
+      "type": "bind",
+      "source": "${localWorkspaceFolder}/.devcontainer/onCreateCommand.sh",
+      "target": "/usr/local/bin/onCreateCommand.sh"
+    }
+  ],
+  /**
+   * 执行顺序总结
+    1. initializeCommand (本地主机，容器创建前)
+    2. 容器创建
+    3. onCreateCommand (容器首次创建时执行一次)
+    4. updateContentCommand ()
+    5. postCreateCommand (每次容器启动时执行)
+    6. 容器启动
+    7. postStartCommand (容器内，每次启动)
+    8. VS Code 附加到容器
+    9. postAttachCommand (容器内，每次附加)
+  */
+  "initializeCommand": "echo '↘️ 准备创建容器...';",
+  "onCreateCommand": "echo '↘️ 容器首次创建！'; chmod +x /usr/local/bin/onCreateCommand.sh && /usr/local/bin/onCreateCommand.sh",
+  "updateContentCommand": "echo '↘️ 容器内容已更新！';",
+  "postCreateCommand": "echo '↘️ 容器已创建！'; $HOME/.bun/bin/pnpm install",
+  "postStartCommand": "echo '↘️ 容器启动了！'",
+  "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"'",
+  "waitFor": "updateContentCommand",
+  "remoteUser": "usr_vscode"
+}

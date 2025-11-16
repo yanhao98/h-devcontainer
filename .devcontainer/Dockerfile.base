@@ -1,0 +1,49 @@
+FROM debian:trixie-slim
+
+# 安装所有系统依赖
+RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
+    wget ca-certificates \
+    sudo fzf zsh \
+    git unzip curl \
+    # 清理缓存
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 创建用户和配置 sudo
+RUN groupadd --gid 1000 usr_vscode \
+    && useradd --uid 1000 --gid usr_vscode --shell /bin/zsh --create-home usr_vscode \
+    && echo "usr_vscode ALL=(root) NOPASSWD: ALL" > /etc/sudoers.d/usr_vscode_user_config \
+    && chmod 0440 /etc/sudoers.d/usr_vscode_user_config \
+    && cat /etc/passwd
+
+# 切换到非 root 用户
+USER usr_vscode
+
+# 要重新触发 zsh 新用户配置向导: autoload -Uz zsh-newuser-install; zsh-newuser-install -f
+
+# Default powerline10k theme
+ARG ZSH_IN_DOCKER_VERSION=1.2.1
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
+  -p git \
+  -p fzf \
+  -a "source ~/.oh-my-zsh/lib/key-bindings.zsh" \
+  -a "source ~/.oh-my-zsh/lib/completion.zsh" \
+#   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.histfile" \
+  -x
+
+
+# # sudo chown -R usr_vscode:usr_vscode ~/.bun
+
+
+# >>>>>安装 Bun
+# bun install -g 将会安装到 这个路径
+RUN mkdir -p /home/usr_vscode/.bun/bin
+ENV BUN_INSTALL_BIN="/home/usr_vscode/.bun/bin"
+ENV PATH="${BUN_INSTALL_BIN}:${PATH}"
+# https://github.com/oven-sh/bun/blob/277fc558e2039e3ab25ecebecc5a3f04c5c3199a/dockerhub/debian-slim/Dockerfile
+COPY --chown=usr_vscode:usr_vscode --from=oven/bun:1-debian /usr/local/bin/bun /usr/local/bin
+
+RUN sudo ln -s /usr/local/bin/bun /usr/local/bin/bunx
+
+RUN sudo mkdir -p /usr/local/bun-node-fallback-bin && sudo ln -s /usr/local/bin/bun /usr/local/bun-node-fallback-bin/node
+ENV PATH "${PATH}:/usr/local/bun-node-fallback-bin"
