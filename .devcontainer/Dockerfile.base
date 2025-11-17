@@ -11,8 +11,6 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     ca-certificates wget curl \
     # 开发工具
     less git procps sudo fzf zsh man-db unzip gnupg2 gh \
-    # For run-parts
-    debian-utils \
     # 网络工具
     iptables ipset iproute2 dnsutils aggregate \
     # 编辑器和实用工具
@@ -25,18 +23,18 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create the main onCreateCommand script runner using run-parts
+# 使用 run-parts 创建主 onCreateCommand 脚本运行器
 RUN tee /usr/local/bin/onCreateCommand.sh >/dev/null <<'EOF'
 #!/bin/bash
 set -e
 
 SCRIPTS_DIR="/usr/local/etc/onCreateCommand.d"
 
-echo "--- Executing scripts from $SCRIPTS_DIR ---"
-# run-parts will execute all scripts in the directory
-# Note: Scripts must be executable and have valid names (no dots)
+echo "--- 开始执行目录中的脚本: $SCRIPTS_DIR ---"
+# run-parts 将执行目录中的所有脚本
+# 注意：脚本必须是可执行的，并且文件名不能包含点号
 run-parts --verbose "$SCRIPTS_DIR"
-echo "--- All scripts executed ---"
+echo "--- 所有脚本执行完毕 ---"
 EOF
 RUN chmod +x /usr/local/bin/onCreateCommand.sh
 

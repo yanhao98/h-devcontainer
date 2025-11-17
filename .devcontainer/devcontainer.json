@@ -136,7 +136,7 @@
     9. postAttachCommand (容器内，每次附加)
   */
   "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/bun-devcontainers:main;",
-  "onCreateCommand": "echo '↘️ 容器首次创建！'; chmod +x /usr/local/bin/onCreateCommand.sh && /usr/local/bin/onCreateCommand.sh",
+  "onCreateCommand": "echo '↘️ 容器首次创建！'; /usr/local/bin/onCreateCommand.sh",
   "updateContentCommand": "echo '↘️ 容器内容已更新！';",
   "postCreateCommand": "echo '↘️ 容器已创建！'; $HOME/.bun/bin/pnpm install",
   "postStartCommand": "echo '↘️ 容器启动了！'",
