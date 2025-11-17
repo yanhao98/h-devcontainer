@@ -11,6 +11,8 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     ca-certificates wget curl \
     # 开发工具
     less git procps sudo fzf zsh man-db unzip gnupg2 gh \
+    # For run-parts
+    debian-utils \
     # 网络工具
     iptables ipset iproute2 dnsutils aggregate \
     # 编辑器和实用工具
@@ -23,29 +25,18 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create the main onCreateCommand script runner
+# Create the main onCreateCommand script runner using run-parts
 RUN tee /usr/local/bin/onCreateCommand.sh >/dev/null <<'EOF'
-#!/bin/zsh
+#!/bin/bash
 set -e
 
 SCRIPTS_DIR="/usr/local/etc/onCreateCommand.d"
 
-if [ -d "$SCRIPTS_DIR" ]; then
-    echo "--- Executing scripts from $SCRIPTS_DIR ---"
-    # Ensure scripts are executable, as git doesn't always preserve permissions
-    find "$SCRIPTS_DIR" -type f -name "*.sh" -exec chmod +x {} +
-
-    # Execute scripts in sorted order
-    find "$SCRIPTS_DIR" -type f -name "*.sh" | sort | while read -r script; do
-        echo "--- Running $script ---"
-        # Execute with zsh
-        /bin/zsh "$script"
-        echo "--- Finished $script ---"
-    done
-    echo "--- All scripts executed ---"
-else
-    echo "--- Scripts directory not found: $SCRIPTS_DIR ---"
-fi
+echo "--- Executing scripts from $SCRIPTS_DIR ---"
+# run-parts will execute all scripts in the directory
+# Note: Scripts must be executable and have valid names (no dots)
+run-parts --verbose "$SCRIPTS_DIR"
+echo "--- All scripts executed ---"
 EOF
 RUN chmod +x /usr/local/bin/onCreateCommand.sh
 
