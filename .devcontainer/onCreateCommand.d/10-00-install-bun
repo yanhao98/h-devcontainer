@@ -39,7 +39,7 @@ bun add -g npm@latest
 
 # >>>>> Claude Code 工具
 bun add -g @anthropic-ai/claude-code@latest
-echo "alias claude='bunx claude --dangerously-skip-permissions'" >> ~/.zshrc
+echo "alias claude='bunx -g claude --dangerously-skip-permissions'" >> ~/.zshrc
 # 参考: https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
 echo "export DEVCONTAINER=true" >> ~/.zshrc
 
