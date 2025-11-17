@@ -1,0 +1,32 @@
+#!/bin/zsh -eu
+
+run_sys() {
+  if [[ "$EUID" -ne 0 ]]; then
+    sudo "$@"
+  else
+    "$@"
+  fi
+}
+
+if ! dpkg -s locales >/dev/null 2>&1; then
+  run_sys apt-get update -qq
+  run_sys DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends locales
+fi
+
+run_sys sed -i "s/^# *zh_CN.UTF-8/zh_CN.UTF-8/" /etc/locale.gen
+if ! locale -a | grep -qi "^zh_CN\.utf8$"; then
+  run_sys locale-gen zh_CN.UTF-8
+fi
+
+zshrc="$HOME/.zshrc"
+mkdir -p "${zshrc:h}"
+touch "$zshrc"
+
+if ! grep -q '^export LANG=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
+  printf '\nexport LANG=zh_CN.UTF-8\n' >>"$zshrc"
+fi
+
+if ! grep -q '^export LC_ALL=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
+  printf 'export LC_ALL=zh_CN.UTF-8\n' >>"$zshrc"
+fi
+run_sys update-locale LANG=zh_CN.UTF-8 LC_ALL=zh_CN.UTF-8

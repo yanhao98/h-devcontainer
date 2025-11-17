@@ -1,0 +1,49 @@
+#!/bin/zsh -eu
+
+# >>>>> 一些参考资料
+# https://github.com/oven-sh/bun/blob/277fc558e2039e3ab25ecebecc5a3f04c5c3199a/dockerhub/debian-slim/Dockerfile
+#  COPY --chown=usr_vscode:usr_vscode --from=oven/bun:1-debian /usr/local/bin/bun /usr/local/bin
+#  IS_BUN_AUTO_UPDATE=true SHELL=zsh bun completions
+#  bun install -g 将会安装到 ENV BUN_INSTALL_BIN
+#  ENV PATH "${BUN_INSTALL_BIN}:${PATH}"
+#  RUN sudo mkdir -p /usr/local/bun-node-fallback-bin && sudo ln -s /usr/local/bin/bun /usr/local/bun-node-fallback-bin/node
+#  ENV PATH "${PATH}:/usr/local/bun-node-fallback-bin"
+# <<<<<
+
+# fix permission
+# 有可能这个目录是 volume 挂载过来的，权限会有问题。
+sudo mkdir -p ~/.bun || true
+sudo chown -R $(whoami):$(whoami) ~/.bun || true
+
+curl -fsSL https://bun.com/install | bash
+
+# https://bun.sh/docs/runtime/nodejs-compat
+mkdir -p ~/.bun/bin/bun-node-fallback-bin || true
+ln -sf ~/.bun/bin/bun ~/.bun/bin/bun-node-fallback-bin/node
+
+which -a bun
+bun --version
+which -a bunx
+bunx --version
+which -a node
+
+# >>>>> pnpm
+bun add -g pnpm@latest
+# echo "alias pnpm='bunx pnpm'" >> ~/.zshrc
+# echo "alias pnpx='bunx pnpx'" >> ~/.zshrc
+bunx pnpm config set store-dir ~/.pnpm-store
+sudo chown -R $(whoami):$(whoami) ~/.pnpm-store || true
+
+# >>>>> npm
+bun add -g npm@latest
+
+# >>>>> Claude Code 工具
+bun add -g @anthropic-ai/claude-code@latest
+echo "alias claude='bunx -g claude --dangerously-skip-permissions'" >> ~/.zshrc
+# 参考: https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
+echo "export DEVCONTAINER=true" >> ~/.zshrc
+
+# >>>>>> Gemini CLI 工具
+bun add -g @google/gemini-cli@latest
+echo "alias gemini='bunx -g gemini --yolo -m gemini-2.5-pro'" >> ~/.zshrc
+echo "export SANDBOX=bun-devcontainer" >> ~/.zshrc

@@ -1,5 +1,5 @@
 {
-  "image": "ghcr.io/yanhao98/bun-devcontainers:main",
+  "image": "ghcr.io/yanhao98/h-devcontainer:oncreatecommand.d",
   // "build": {
   //   "dockerfile": "Dockerfile.base",
   //   "args": {}
@@ -24,10 +24,12 @@
     "ANTHROPIC_AUTH_TOKEN": "${localEnv:ANTHROPIC_AUTH_TOKEN}",
     "ANTHROPIC_BASE_URL": "${localEnv:ANTHROPIC_BASE_URL}",
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
-    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}"
+    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}",
+    "PATH": "${containerEnv:PATH}:${containerWorkspaceFolder}/node_modules/.bin:${containerEnv:HOME}/.bun/bin:${containerEnv:HOME}/.bun/bin/bun-node-fallback-bin"
   },
   "containerEnv": {
-    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "HOME": "/home/usr_vscode",
+    // "NODE_OPTIONS": "--max-old-space-size=4096",
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
   "customizations": {
@@ -37,9 +39,11 @@
         "github.copilot-chat",
         "anthropic.claude-code",
         "google.gemini-cli-vscode-ide-companion",
+        "vicanent.gcmp",
         // >>>>>
-        // "mads-hartmann.bash-ide-vscode",
-        "esbenp.prettier-vscode"
+        "mads-hartmann.bash-ide-vscode",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -88,39 +92,32 @@
             "overrideName": true,
             "color": "terminal.ansiGreen"
           }
-        },
-        "json.schemas": [
-          {
-            "fileMatch": [
-              "*/devcontainer-feature.json"
-            ],
-            "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json"
-          }
-        ]
+        }
       }
     }
   },
   "mounts": [
-    { // 不挂载可能会遇到：`Cannot run macOS (Mach-O) executable in Docker: Exec format error`
+    {
+      // 不挂载可能会遇到：`Cannot run macOS (Mach-O) executable in Docker: Exec format error`
       "type": "volume",
       "source": "${localWorkspaceFolderBasename}-node_modules",
       "target": "${containerWorkspaceFolder}/node_modules"
     },
     {
       "type": "volume",
-      "source": "${localWorkspaceFolderBasename}-pnpm-store",
+      "source": "devcontainer-pnpm-store",
       "target": "/home/usr_vscode/.pnpm-store"
     },
     {
       "type": "volume",
-      "source": "${localWorkspaceFolderBasename}-bun-install-cache",
+      "source": "devcontainer-bun-install-cache",
       "target": "/home/usr_vscode/.bun/install/cache"
       // rm -rf ~/.bun/install/cache/*
     },
     {
       "type": "bind",
-      "source": "${localWorkspaceFolder}/.devcontainer/onCreateCommand.sh",
-      "target": "/usr/local/bin/onCreateCommand.sh"
+      "source": "${localWorkspaceFolder}/.devcontainer/onCreateCommand.d",
+      "target": "/usr/local/etc/onCreateCommand.d"
     }
   ],
   /**
@@ -135,12 +132,12 @@
     8. VS Code 附加到容器
     9. postAttachCommand (容器内，每次附加)
   */
-  "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/bun-devcontainers:main;",
-  "onCreateCommand": "echo '↘️ 容器首次创建！'; chmod +x /usr/local/bin/onCreateCommand.sh && /usr/local/bin/onCreateCommand.sh",
-  "updateContentCommand": "echo '↘️ 容器内容已更新！';",
-  "postCreateCommand": "echo '↘️ 容器已创建！'; $HOME/.bun/bin/pnpm install",
+  "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/h-devcontainer:oncreatecommand.d;",
+  "onCreateCommand": "echo '↘️ 容器首次创建！'; /usr/local/bin/onCreateCommand.sh",
+  "updateContentCommand": "echo '↘️ 容器内容已更新！';  zsh -c 'time pnpm install;'",
+  "postCreateCommand": "echo '↘️ 容器已创建！';",
   "postStartCommand": "echo '↘️ 容器启动了！'",
-  "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"'",
+  "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"';",
   "waitFor": "updateContentCommand",
   "remoteUser": "usr_vscode"
 }
