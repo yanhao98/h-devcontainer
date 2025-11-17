@@ -1,9 +1,9 @@
 {
-  // "image": "ghcr.io/yanhao98/bun-devcontainers:main",
-  "build": {
-    "dockerfile": "Dockerfile.base",
-    "args": {}
-  },
+  "image": "ghcr.io/yanhao98/h-devcontainer:oncreatecommand.d",
+  // "build": {
+  //   "dockerfile": "Dockerfile.base",
+  //   "args": {}
+  // },
   "features": {},
   "runArgs": [
     // "--cap-add=NET_ADMIN",
@@ -92,15 +92,7 @@
             "overrideName": true,
             "color": "terminal.ansiGreen"
           }
-        },
-        "json.schemas": [
-          {
-            "fileMatch": [
-              "*/devcontainer-feature.json"
-            ],
-            "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json"
-          }
-        ]
+        }
       }
     }
   },
@@ -140,12 +132,12 @@
     8. VS Code 附加到容器
     9. postAttachCommand (容器内，每次附加)
   */
-  "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/bun-devcontainers:main;",
+  "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/h-devcontainer:oncreatecommand.d;",
   "onCreateCommand": "echo '↘️ 容器首次创建！'; /usr/local/bin/onCreateCommand.sh",
   "updateContentCommand": "echo '↘️ 容器内容已更新！';  zsh -c 'time pnpm install;'",
   "postCreateCommand": "echo '↘️ 容器已创建！';",
   "postStartCommand": "echo '↘️ 容器启动了！'",
-  "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"'",
+  "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"';",
   "waitFor": "updateContentCommand",
   "remoteUser": "usr_vscode"
 }

@@ -12,6 +12,8 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     less git procps sudo fzf zsh man-db unzip gnupg2 gh \
     # 编辑器和实用工具
     jq nano vim \
+    # 网络工具
+    lsof \
     # 清理缓存
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
