@@ -1,0 +1,19 @@
+#!/bin/zsh -eux
+
+# # >>>>>安装 Bun
+# # bun install -g 将会安装到 这个路径
+# RUN mkdir -p /home/usr_vscode/.bun/bin
+# ENV BUN_INSTALL_BIN "/home/usr_vscode/.bun/bin"
+# ENV PATH "${BUN_INSTALL_BIN}:${PATH}"
+# # https://github.com/oven-sh/bun/blob/277fc558e2039e3ab25ecebecc5a3f04c5c3199a/dockerhub/debian-slim/Dockerfile
+# COPY --chown=usr_vscode:usr_vscode --from=oven/bun:1-debian /usr/local/bin/bun /usr/local/bin
+
+# RUN sudo ln -s /usr/local/bin/bun /usr/local/bin/bunx
+
+# RUN sudo mkdir -p /usr/local/bun-node-fallback-bin && sudo ln -s /usr/local/bin/bun /usr/local/bun-node-fallback-bin/node
+# ENV PATH "${PATH}:/usr/local/bun-node-fallback-bin"
+
+
+# which bun
+# which bunx
+# bun --version

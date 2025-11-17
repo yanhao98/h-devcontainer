@@ -37,9 +37,11 @@
         "github.copilot-chat",
         "anthropic.claude-code",
         "google.gemini-cli-vscode-ide-companion",
+        "vicanent.gcmp",
         // >>>>>
-        // "mads-hartmann.bash-ide-vscode",
-        "esbenp.prettier-vscode"
+        "mads-hartmann.bash-ide-vscode",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
       ],
       "settings": {
         "editor.formatOnSave": true,
