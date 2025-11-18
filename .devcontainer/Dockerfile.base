@@ -25,18 +25,28 @@ RUN groupadd --gid 1000 usr_vscode \
     && chmod 0440 /etc/sudoers.d/usr_vscode_user_config \
     && cat /etc/passwd
 
+# >>>>> 复制内置脚本到 /usr/local/bin
+COPY onCreateCommand-internal.d/* /usr/local/bin/
+RUN chmod +x /usr/local/bin/*
+
 # >>>>> 使用 run-parts 创建主 onCreateCommand 脚本运行器
 RUN tee /usr/local/bin/onCreateCommand.sh >/dev/null <<'EOF'
 #!/bin/bash
 set -e
 
-SCRIPTS_DIR="/usr/local/etc/onCreateCommand.d"
+USER_SCRIPTS_DIR="/usr/local/etc/onCreateCommand.d"
 
-echo "--- 开始执行目录中的脚本: $SCRIPTS_DIR ---"
-# run-parts 将执行目录中的所有脚本
-# 注意：脚本必须是可执行的，并且文件名不能包含点号
-run-parts --verbose "$SCRIPTS_DIR"
-echo "--- 所有脚本执行完毕 ---"
+if [ -d "$USER_SCRIPTS_DIR" ]; then
+    if [ -n "$(ls -A "$USER_SCRIPTS_DIR")" ]; then
+        echo "--- 开始执行用户自定义脚本: $USER_SCRIPTS_DIR ---"
+        run-parts --verbose "$USER_SCRIPTS_DIR"
+        echo "--- 用户自定义脚本执行完毕 ---"
+    else
+        echo "--- 用户自定义脚本目录 $USER_SCRIPTS_DIR 为空，跳过执行 ---"
+    fi
+else
+    echo "--- 用户自定义脚本目录 $USER_SCRIPTS_DIR 不存在，跳过执行 ---"
+fi
 EOF
 RUN chmod +x /usr/local/bin/onCreateCommand.sh
 
