@@ -1,3 +1,0 @@
-#!/bin/zsh -eu
-
-sudo chown -R $(whoami):$(whoami) node_modules || true

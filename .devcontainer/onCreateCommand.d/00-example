@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh -eu
 
 # 这是一个示例脚本，用于演示如何在 Devcontainer 创建时自动执行命令。
 #
@@ -12,8 +12,13 @@
 # 在这里添加您自己的命令：
 echo "--- 正在执行您的自定义示例脚本 ---"
 
-# 例如，调用内置命令来安装 Bun:
-# install-bun
+# 修复 node_modules 权限问题:
+sudo chown -R $(whoami):$(whoami) node_modules || true
+
+# 调用内置命令 (这些命令在 onCreateCommand-internal.d 目录中的脚本中定义)
+h-setup-locale
+h-setup-zsh
+h-setup-bun
 
 # 或者安装一个新的系统软件包:
 # apt-get update && apt-get install -y cowsay

@@ -31,7 +31,7 @@ which -a node
 bun add -g pnpm@latest
 # echo "alias pnpm='bunx pnpm'" >> ~/.zshrc
 # echo "alias pnpx='bunx pnpx'" >> ~/.zshrc
-bunx pnpm config set store-dir ~/.pnpm-store
+pnpm config set store-dir ~/.pnpm-store
 sudo chown -R $(whoami):$(whoami) ~/.pnpm-store || true
 
 # >>>>> npm
@@ -46,4 +46,4 @@ echo "export DEVCONTAINER=true" >> ~/.zshrc
 # >>>>>> Gemini CLI 工具
 bun add -g @google/gemini-cli@latest
 echo "alias gemini='bunx -g gemini --yolo -m gemini-2.5-pro'" >> ~/.zshrc
-echo "export SANDBOX=bun-devcontainer" >> ~/.zshrc
+echo "export SANDBOX=h-devcontainer" >> ~/.zshrc
