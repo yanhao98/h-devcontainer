@@ -1,3 +1,15 @@
+## Dev Container 执行顺序总结
+
+1. initializeCommand (本地主机，容器创建前)
+2. 容器创建
+3. onCreateCommand (容器首次创建时执行一次)
+4. updateContentCommand ()
+5. postCreateCommand (每次容器启动时执行)
+6. 容器启动
+7. postStartCommand (容器内，每次启动)
+8. VS Code 附加到容器
+9. postAttachCommand (容器内，每次附加)
+
 ## 参考资料
 
 - https://containers.dev/implementors/json_reference/

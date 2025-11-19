@@ -1,9 +1,9 @@
 {
-  "image": "ghcr.io/yanhao98/h-devcontainer:main",
-  // "build": {
-  //   "dockerfile": "Dockerfile.base",
-  //   "args": {}
-  // },
+  // "image": "ghcr.io/yanhao98/h-devcontainer:main",
+  "build": {
+    "dockerfile": "Dockerfile.base",
+    "args": {}
+  },
   "features": {},
   "runArgs": [
     // "--cap-add=NET_ADMIN",
@@ -29,7 +29,7 @@
   },
   "containerEnv": {
     "HOME": "/home/usr_vscode",
-    // "NODE_OPTIONS": "--max-old-space-size=4096",
+    "NODE_OPTIONS": "--max-old-space-size=4096",
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
   "customizations": {
@@ -101,21 +101,9 @@
       "target": "/usr/local/etc/onCreateCommand.d"
     }
   ],
-  /**
-   * 执行顺序总结
-    1. initializeCommand (本地主机，容器创建前)
-    2. 容器创建
-    3. onCreateCommand (容器首次创建时执行一次)
-    4. updateContentCommand ()
-    5. postCreateCommand (每次容器启动时执行)
-    6. 容器启动
-    7. postStartCommand (容器内，每次启动)
-    8. VS Code 附加到容器
-    9. postAttachCommand (容器内，每次附加)
-  */
   "initializeCommand": "echo '↘️ 准备创建容器...'; docker pull ghcr.io/yanhao98/h-devcontainer:main;",
   "onCreateCommand": "echo '↘️ 容器首次创建！'; /usr/local/bin/onCreateCommand.sh",
-  "updateContentCommand": "echo '↘️ 容器内容已更新！'; zsh -c \"if command -v pnpm >/dev/null 2>&1; then time pnpm install; else echo '❌错误: pnpm 未安装'; exit 1; fi\";",
+  "updateContentCommand": "echo '↘️ 容器内容已更新！'; zsh -c \"if command -v pnpm >/dev/null 2>&1; then time pnpm install; else echo '❌错误: pnpm 未安装'; exit 0; fi\";",
   "postCreateCommand": "echo '↘️ 容器已创建！';",
   "postStartCommand": "echo '↘️ 容器启动了！'",
   "postAttachCommand": "echo '↘️ VS Code 已附加到容器！'; zsh -c 'source ~/.zshrc; echo \"$(date +%Y-%m-%dT%H:%M:%S%z) - Welcome to your Dev Container!\"';",
