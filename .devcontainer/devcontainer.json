@@ -73,17 +73,6 @@
             }
           ]
         },
-        // https://stackoverflow.com/questions/75708866/vscode-dev-container-fails-to-load-ms-vscode-js-debug-extension-correctly
-        // https://davidwesst.com/blog/missing-bootloader-in-vscode-devcontainer/
-        /**
-         * autoAttachFilter 存在问题：会在 NODE_OPTIONS 中注入 bootloader.js 的 --require 参数，
-         * 并错误地重复拼接 --max-old-space-size，形成类似：
-         *   NODE_OPTIONS= --require /home/.../bootloader.js  --max-old-space-size=4096--max-old-space-size=4096
-         * 导致启动时报错：
-         *   Error: illegal value for flag --max-old-space-size=4096--max-old-space-size=4096 of type size_t
-         * 将其设置为 "disabled" 以规避该问题。
-         */
-        // "debug.javascript.autoAttachFilter": "disabled",
         "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
