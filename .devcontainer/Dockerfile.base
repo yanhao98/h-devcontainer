@@ -57,9 +57,9 @@ ENV PATH="${HOME}/.bun/bin:${PATH}"
 ENV PATH="${PATH}:/usr/local/bun-node-fallback-bin"
 
 # TODO: 这不是 pnpm 专有的
+ENV XDG_CACHE_HOME="/vscode/cache-home"
 ENV XDG_DATA_HOME="/vscode/pnpm/pnpm-data"
 ENV XDG_STATE_HOME="/vscode/pnpm/pnpm-state"
-ENV XDG_CACHE_HOME="/vscode/pnpm/pnpm-cache"
 
 ENV PNPM_HOME="${HOME}/.pnpm"
 ENV PATH="${PNPM_HOME}:${PATH}"
