@@ -12,14 +12,14 @@ export DEVCONTAINER=true
 # export CLAUDE_CONFIG_DIR=/vscode/claude-config
 EOF
 
-cat <<'EOF' > ~/.claude.json
-{
-  "numStartups": 1,
-  "theme": "light-daltonized",
-  "bypassPermissionsModeAccepted": true,
-  "hasCompletedOnboarding": true
-}
-EOF
+# cat <<'EOF' > ~/.claude.json
+# {
+#   "numStartups": 1,
+#   "theme": "light-daltonized",
+#   "bypassPermissionsModeAccepted": true,
+#   "hasCompletedOnboarding": true
+# }
+# EOF
 
 
 # >>>>>> Gemini CLI 工具
@@ -29,16 +29,16 @@ alias gemini='bunx --bun -g gemini --yolo -m gemini-2.5-pro'
 export SANDBOX=h-devcontainer
 EOF
 
-mkdir -p ~/.gemini || true
-cat <<'EOF' > ~/.gemini/settings.json
-{
-  "security": {
-    "auth": {
-      "selectedType": "gemini-api-key"
-    }
-  },
-  "ide": {
-    "enabled": true
-  }
-}
-EOF
+# mkdir -p ~/.gemini || true
+# cat <<'EOF' > ~/.gemini/settings.json
+# {
+#   "security": {
+#     "auth": {
+#       "selectedType": "gemini-api-key"
+#     }
+#   },
+#   "ide": {
+#     "enabled": true
+#   }
+# }
+# EOF
