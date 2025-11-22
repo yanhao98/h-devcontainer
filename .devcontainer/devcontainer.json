@@ -9,6 +9,7 @@
     // "--cap-add=NET_ADMIN",
     // "--cap-add=NET_RAW",
     // "--add-host=host.docker.internal:host-gateway",
+    "--env-file=${localWorkspaceFolder}/.devcontainer/.env",
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
   "forwardPorts": [ /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
@@ -20,13 +21,7 @@
       "onAutoForward": "notify"
     }
   },
-  "remoteEnv": {
-    // FIXME: 用 --env-file 传递环境变量
-    "ANTHROPIC_AUTH_TOKEN": "${localEnv:ANTHROPIC_AUTH_TOKEN}",
-    "ANTHROPIC_BASE_URL": "${localEnv:ANTHROPIC_BASE_URL}",
-    "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
-    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}"
-  },
+  "remoteEnv": {},
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
