@@ -28,7 +28,6 @@
     "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}",
   },
   "containerEnv": {
-    "HOME": "/home/usr_vscode",
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
@@ -56,7 +55,11 @@
         // * 尽管使用了“/.*/”，但有些还是会失败，因为有几个错误的默认值：
         // * https://github.com/microsoft/vscode/issues/266651#issuecomment-3292581459
         "chat.tools.terminal.ignoreDefaultAutoApproveRules": true,
-        "terminal.integrated.defaultProfile.linux": "zsh"
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "tasks": {
+          "version": "2.0.0",
+          "tasks": []
+        }
       }
     }
   },
