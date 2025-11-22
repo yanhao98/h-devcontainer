@@ -25,7 +25,7 @@
     "ANTHROPIC_AUTH_TOKEN": "${localEnv:ANTHROPIC_AUTH_TOKEN}",
     "ANTHROPIC_BASE_URL": "${localEnv:ANTHROPIC_BASE_URL}",
     "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
-    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}",
+    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}"
   },
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
