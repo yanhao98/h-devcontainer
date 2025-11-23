@@ -1,5 +1,6 @@
-#!/bin/bash
-set -e
+#!/bin/bash -eu
+
+h-00-fix-permissions
 
 LIFECYCLE_EVENT="$1"
 if [ -z "$LIFECYCLE_EVENT" ]; then
