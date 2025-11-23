@@ -1,0 +1,24 @@
+#!/bin/zsh -eu
+
+# >>>>>> Gemini CLI 工具
+bun add -g @google/gemini-cli@latest
+cat <<'EOF' >> ~/.zshrc
+alias gemini='bunx --bun -g gemini --yolo -m gemini-2.5-pro'
+export SANDBOX=h-devcontainer
+EOF
+
+if [[ "${1:-}" == "--config" ]]; then
+  mkdir -p ~/.gemini || true
+  cat <<'EOF' > ~/.gemini/settings.json
+{
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  },
+  "ide": {
+    "enabled": true
+  }
+}
+EOF
+fi

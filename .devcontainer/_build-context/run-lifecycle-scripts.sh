@@ -8,19 +8,22 @@ if [ -z "$LIFECYCLE_EVENT" ]; then
     exit 1
 fi
 
-# 支持带数字前缀的目录名（如 01-onCreateCommand.d）
-USER_SCRIPTS_DIR=$(find /usr/local/etc/lifecycle-scripts.d -maxdepth 1 -type d -name "*-${LIFECYCLE_EVENT}.d" | head -n 1)
+# 支持带数字前缀的目录名（如 01-onCreateCommand.d）以及 .local 后缀的本地目录
+USER_SCRIPTS_DIRS=$(find /usr/local/etc/lifecycle-scripts.d -maxdepth 1 -type d \( -name "*-${LIFECYCLE_EVENT}.d" -o -name "*-${LIFECYCLE_EVENT}.d.local" \) | sort)
 
-if [ -n "$USER_SCRIPTS_DIR" ] && [ -d "$USER_SCRIPTS_DIR" ]; then
-    if [ -n "$(ls -A "$USER_SCRIPTS_DIR")" ]; then
-        # echo "--- 赋予用户自定义脚本可执行权限 ---"
-        chmod +x "$USER_SCRIPTS_DIR"/*
-        echo "🚀 --- 开始执行 ${LIFECYCLE_EVENT} 用户自定义脚本: $USER_SCRIPTS_DIR ---"
-        run-parts --verbose "$USER_SCRIPTS_DIR"
-        echo "✔️ --- ${LIFECYCLE_EVENT} 用户自定义脚本执行完毕 ---"
-    else
-        echo "--- ${LIFECYCLE_EVENT} 用户自定义脚本目录 $USER_SCRIPTS_DIR 为空，跳过执行 ---"
-    fi
+if [ -n "$USER_SCRIPTS_DIRS" ]; then
+    for DIR in $USER_SCRIPTS_DIRS; do
+        if [ -d "$DIR" ] && [ -n "$(ls -A "$DIR")" ]; then
+            # echo "--- 赋予用户自定义脚本可执行权限 ---"
+            chmod +x "$DIR"/*
+            echo "🚀 --- 开始执行 ${LIFECYCLE_EVENT} 用户自定义脚本: $DIR ---"
+            run-parts --verbose "$DIR"
+            echo "✔️ --- ${LIFECYCLE_EVENT} 用户自定义脚本执行完毕 ($DIR) ---"
+            echo ""
+        else
+            echo "--- ${LIFECYCLE_EVENT} 用户自定义脚本目录 $DIR 为空或不存在，跳过执行 ---"
+        fi
+    done
 else
     echo "--- ${LIFECYCLE_EVENT} 用户自定义脚本目录不存在，跳过执行 ---"
 fi
