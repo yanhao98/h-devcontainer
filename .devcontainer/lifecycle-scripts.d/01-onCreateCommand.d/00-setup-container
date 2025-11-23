@@ -9,6 +9,5 @@ h-setup-locale
 h-setup-zsh
 
 h-setup-bun-bin
-h-setup-ai-tools
 
 h-setup-pnpm-bin
