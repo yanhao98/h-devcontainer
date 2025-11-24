@@ -27,12 +27,7 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": [ // code-insiders --install-extension github.copilot-chat
-        // AI
-        "github.copilot-chat",
-        "anthropic.claude-code",
-        "google.gemini-cli-vscode-ide-companion",
-        "vicanent.gcmp",
+      "extensions": [
         // >>>>>
         "mads-hartmann.bash-ide-vscode",
         "esbenp.prettier-vscode",
