@@ -21,7 +21,7 @@
 | delegated         | 容器 (Container)   | 写入速度极快，读取一般 | 构建任务、日志生成、大规模文件处理   | 容器崩溃时，未同步回主机的少量数据可能丢失 |
 
 ## 参考资料
-
+- https://code.visualstudio.com/docs/devcontainers/containers
 - https://containers.dev/implementors/json_reference/
 
 - https://github.com/devcontainers/features
