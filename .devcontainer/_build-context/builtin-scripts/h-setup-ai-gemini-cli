@@ -2,10 +2,13 @@
 
 # >>>>>> Gemini CLI 工具
 bun add -g @google/gemini-cli@latest
+
+if ! grep -q "alias gemini=" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 alias gemini='bunx --bun -g gemini --yolo -m gemini-2.5-pro'
 export SANDBOX=h-devcontainer
 EOF
+fi
 
 if [[ "${1:-}" == "--config" ]]; then
   mkdir -p ~/.gemini || true

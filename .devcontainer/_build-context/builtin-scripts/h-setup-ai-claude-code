@@ -6,11 +6,13 @@ bun add -g @anthropic-ai/claude-code@latest
 
 # sudo mkdir -p /vscode/claude-config || true
 # sudo chown -R $(whoami):$(whoami) /vscode/claude-config || true
+if ! grep -q "alias claude=" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 alias claude='bunx --bun -g claude --dangerously-skip-permissions'
 export DEVCONTAINER=true
 # export CLAUDE_CONFIG_DIR=/vscode/claude-config
 EOF
+fi
 
 if [[ "${1:-}" == "--config" ]]; then
   cat <<'EOF' > ~/.claude.json
