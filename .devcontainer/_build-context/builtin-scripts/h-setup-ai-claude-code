@@ -10,6 +10,8 @@ if ! grep -q "alias claude=" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 alias claude='bunx --bun -g claude --dangerously-skip-permissions'
 export DEVCONTAINER=true
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+export DISABLE_TELEMETRY=1
 # export CLAUDE_CONFIG_DIR=/vscode/claude-config
 EOF
 fi
