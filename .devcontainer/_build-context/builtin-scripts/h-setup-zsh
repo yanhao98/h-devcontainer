@@ -30,7 +30,11 @@ fi
 EOF
 fi
 
-alias_snippet="alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf node_modules/*'; unsetopt rm_star_silent"
-if ! grep -Fqx -- "$alias_snippet" "$zshrc" 2>/dev/null; then
-  printf '\n%s\n' "$alias_snippet" >>"$zshrc"
+alias_marker='# h-devcontainers: custom aliases'
+if ! grep -Fq "$alias_marker" "$zshrc" 2>/dev/null; then
+cat <<'EOF' >>"$zshrc"
+
+# h-devcontainers: custom aliases
+alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf node_modules/*; unsetopt rm_star_silent'
+EOF
 fi
