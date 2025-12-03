@@ -8,11 +8,14 @@ bun add -g @anthropic-ai/claude-code@latest
 # sudo chown -R $(whoami):$(whoami) /vscode/claude-config || true
 if ! grep -q "alias claude=" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
+
+# >>>>> Claude Code
 alias claude='bunx --bun -g claude --dangerously-skip-permissions'
 export DEVCONTAINER=true
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export DISABLE_TELEMETRY=1
-# export CLAUDE_CONFIG_DIR=/vscode/claude-config
+export CLAUDE_CONFIG_DIR=/vscode/claude-config
+# <<<<< Claude Code
 EOF
 fi
 

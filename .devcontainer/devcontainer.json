@@ -53,6 +53,7 @@
     }
   },
   "mounts": [
+    "source=vscode,target=/vscode,type=volume",
     // 不挂载还可能会遇到：`Cannot run macOS (Mach-O) executable in Docker: Exec format error`
     "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localWorkspaceFolder}/.devcontainer/lifecycle-scripts.d,target=/usr/local/etc/lifecycle-scripts.d,type=bind,consistency=delegated"
