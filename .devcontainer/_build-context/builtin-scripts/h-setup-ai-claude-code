@@ -4,7 +4,7 @@
 # 参考: https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
 bun add -g @anthropic-ai/claude-code@latest
 
-if ! grep -q "alias claude=" ~/.zshrc; then
+if ! grep -q ">>>>> Claude Code" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 
 # >>>>> Claude Code
@@ -18,7 +18,11 @@ EOF
 fi
 
 if [[ "${1:-}" == "--config" ]]; then
-cat <<'EOF' > /vscode/claude-config/.claude.json
+  mkdir -p /vscode/claude-config
+  if [[ -f /vscode/claude-config/.claude.json ]]; then
+    echo "Claude Code 配置文件已存在，跳过覆盖。"
+  else
+    cat <<'EOF' > /vscode/claude-config/.claude.json
 {
   "numStartups": 1,
   "theme": "light-daltonized",
@@ -26,4 +30,5 @@ cat <<'EOF' > /vscode/claude-config/.claude.json
   "hasCompletedOnboarding": true
 }
 EOF
+  fi
 fi
