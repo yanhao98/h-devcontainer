@@ -20,7 +20,7 @@ fi
 if [[ "${1:-}" == "--config" ]]; then
   mkdir -p /vscode/claude-config
   if [[ -f /vscode/claude-config/.claude.json ]]; then
-    echo "Claude Code config already exists, skipping."
+    echo "Claude Code 配置文件已存在，跳过覆盖。"
   else
     cat <<'EOF' > /vscode/claude-config/.claude.json
 {
