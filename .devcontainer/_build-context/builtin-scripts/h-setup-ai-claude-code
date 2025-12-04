@@ -4,7 +4,7 @@
 # 参考: https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
 bun add -g @anthropic-ai/claude-code@latest
 
-if ! grep -q "alias claude=" ~/.zshrc; then
+if ! grep -q ">>>>> Claude Code" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 
 # >>>>> Claude Code

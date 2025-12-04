@@ -3,7 +3,7 @@
 # >>>>>> Gemini CLI 工具
 bun add -g @google/gemini-cli@latest
 
-if ! grep -q "alias gemini=" ~/.zshrc; then
+if ! grep -q ">>>>> Gemini CLI" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 
 # >>>>> Gemini CLI
