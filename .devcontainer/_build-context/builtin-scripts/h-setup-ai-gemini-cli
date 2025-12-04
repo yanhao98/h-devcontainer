@@ -15,7 +15,10 @@ fi
 
 if [[ "${1:-}" == "--config" ]]; then
   mkdir -p ~/.gemini || true
-  cat <<'EOF' > ~/.gemini/settings.json
+  if [[ -f ~/.gemini/settings.json ]]; then
+    echo "Gemini CLI config already exists, skipping."
+  else
+    cat <<'EOF' > ~/.gemini/settings.json
 {
   "security": {
     "auth": {
@@ -27,4 +30,5 @@ if [[ "${1:-}" == "--config" ]]; then
   }
 }
 EOF
+  fi
 fi
