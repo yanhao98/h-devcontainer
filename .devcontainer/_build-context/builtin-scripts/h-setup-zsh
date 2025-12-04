@@ -11,10 +11,11 @@ zshrc="${target_home}/.zshrc"
 mkdir -p "${zshrc:h}"
 touch "$zshrc"
 
-vscode_marker='if [[ "$TERM_PROGRAM" == "vscode" ]]; then'
+vscode_marker='# >>>>> VS Code Shell Integration'
 if ! grep -Fq "$vscode_marker" "$zshrc" 2>/dev/null; then
   cat <<'EOF' >>"$zshrc"
 
+# >>>>> VS Code Shell Integration
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
     local vscode_executable
     if command -v code >/dev/null 2>&1; then
@@ -27,6 +28,7 @@ if [[ "$TERM_PROGRAM" == "vscode" ]]; then
         . "$($vscode_executable --locate-shell-integration-path zsh)"
     fi
 fi
+# <<<<< VS Code Shell Integration
 EOF
 fi
 
