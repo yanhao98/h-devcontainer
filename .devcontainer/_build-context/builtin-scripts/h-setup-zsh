@@ -17,15 +17,10 @@ if ! grep -Fq "$vscode_marker" "$zshrc" 2>/dev/null; then
 
 # >>>>> VS Code Shell Integration
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    local vscode_executable
     if command -v code >/dev/null 2>&1; then
-        vscode_executable="code"
+        . "$(code --locate-shell-integration-path zsh)"
     elif command -v code-insiders >/dev/null 2>&1; then
-        vscode_executable="code-insiders"
-    fi
-
-    if [ -n "$vscode_executable" ]; then
-        . "$($vscode_executable --locate-shell-integration-path zsh)"
+        . "$(code-insiders --locate-shell-integration-path zsh)"
     fi
 fi
 # <<<<< VS Code Shell Integration
