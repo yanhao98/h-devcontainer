@@ -19,6 +19,7 @@ fi
 
 if [[ "${1:-}" == "--config" ]]; then
   mkdir -p /vscode/claude-config
+
   if [[ -f /vscode/claude-config/.claude.json ]]; then
     echo "Claude Code 配置文件已存在，跳过覆盖。"
   else
@@ -28,6 +29,18 @@ if [[ "${1:-}" == "--config" ]]; then
   "theme": "light-daltonized",
   "bypassPermissionsModeAccepted": true,
   "hasCompletedOnboarding": true
+}
+EOF
+  fi
+
+  if [[ -f /vscode/claude-config/settings.json ]]; then
+    echo "Claude Code 设置文件已存在，跳过覆盖。"
+  else
+    cat <<'EOF' > /vscode/claude-config/settings.json
+{
+  "model": "opus",
+  "alwaysThinkingEnabled": false,
+  "defaultMode": "bypassPermissions"
 }
 EOF
   fi
