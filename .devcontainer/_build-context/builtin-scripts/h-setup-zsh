@@ -17,10 +17,11 @@ if ! grep -Fq "$vscode_marker" "$zshrc" 2>/dev/null; then
 
 # >>>>> VS Code Shell Integration
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    if command -v code >/dev/null 2>&1; then
-        . "$(code --locate-shell-integration-path zsh)"
-    elif command -v code-insiders >/dev/null 2>&1; then
+    if command -v code-insiders >/dev/null 2>&1; then
+        alias code='code-insiders'
         . "$(code-insiders --locate-shell-integration-path zsh)"
+    elif command -v code >/dev/null 2>&1; then
+        . "$(code --locate-shell-integration-path zsh)"
     fi
 fi
 # <<<<< VS Code Shell Integration
