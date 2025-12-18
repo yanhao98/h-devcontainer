@@ -37,6 +37,9 @@ if [[ "${1:-}" == "--config" ]]; then
   },
   "ide": {
     "enabled": true
+  },
+  "general": {
+    "previewFeatures": true
   }
 }
 EOF
