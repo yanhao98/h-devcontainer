@@ -7,18 +7,28 @@ if ! grep -q ">>>>> Gemini CLI" ~/.zshrc; then
 cat <<'EOF' >> ~/.zshrc
 
 # >>>>> Gemini CLI
-alias gemini='bunx --bun -g gemini --yolo -m gemini-2.5-pro'
+alias gemini='bunx --bun -g gemini --yolo'
+# alias gemini='bunx --bun -g gemini --yolo --model gemini-2.5-pro'
 export SANDBOX=h-devcontainer
+export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json
+
+# 限制: bunx 不支持 --env-file 参数
+# 相关问题: https://github.com/oven-sh/bun/issues/12430
+
+# gemini-cli 的 GEMINI_DIR 路径被硬编码为 '.gemini'
+# 源码参考: https://github.com/google-gemini/gemini-cli/blob/bc168bbae4f4907f0518ba69964fffab670d84ec/packages/core/src/utils/paths.ts#L11
+
+# 解决方案: 在项目根目录创建 .env.local 文件来配置 GOOGLE_GEMINI_BASE_URL 和 GEMINI_API_KEY
+# 环境变量文档: https://bun.com/docs/runtime/environment-variables#setting-environment-variables
 # <<<<< Gemini CLI
 EOF
 fi
 
 if [[ "${1:-}" == "--config" ]]; then
-  mkdir -p ~/.gemini || true
-  if [[ -f ~/.gemini/settings.json ]]; then
+  if [[ -f /vscode/gemini-system-settings.json ]]; then
     echo "Gemini CLI 配置文件已存在，跳过覆盖。"
   else
-    cat <<'EOF' > ~/.gemini/settings.json
+    cat <<'EOF' > /vscode/gemini-system-settings.json
 {
   "security": {
     "auth": {
