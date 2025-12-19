@@ -23,7 +23,8 @@
   "remoteEnv": {},
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
-    "TZ": "${localEnv:TZ:Asia/Shanghai}"
+    "TZ": "${localEnv:TZ:Asia/Shanghai}",
+    "DISPLAY": ":1"
   },
   "customizations": {
     "vscode": {
@@ -48,7 +49,12 @@
         "tasks": {
           "version": "2.0.0",
           "tasks": []
-        }
+        },
+        "github.copilot.chat.codeGeneration.instructions": [
+          {
+            "text": "This dev container includes a lightweight Fluxbox based desktop that can be accessed using a VNC viewer or the web. GUI-based commands executed from the built-in VS Code terminal will open on the desktop automatically."
+          }
+        ]
       }
     }
   },

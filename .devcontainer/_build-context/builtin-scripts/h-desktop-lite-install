@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------------------------------------
+# https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
+#-------------------------------------------------------------------------------------------------------------
+set -e
+
+export INSTALL_NOVNC="false"
+
+echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
+
+# 使用 curl 下载并执行远程脚本
+curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="${INSTALL_NOVNC}" bash
+
+# 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
+# xrandr --output VNC-0 --mode 1920x1200
+# sudo apt update && sudo apt install -y chromium chromium-l10n
+
+# 启动桌面进程
+# /usr/local/share/desktop-init.sh
