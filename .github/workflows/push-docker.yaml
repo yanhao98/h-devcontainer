@@ -3,43 +3,121 @@ on:
   workflow_dispatch:
   pull_request:
   push:
+
 env:
   TZ: Asia/Shanghai
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
+  # https://github.com/docker/metadata-action/tree/v5/?tab=readme-ov-file#semver
+  # Event: push,     Ref: refs/head/main,       Tags: main
+  # Event: push tag, Ref: refs/tags/v1.2.3,     Tags: 1.2.3, 1.2, 1, latest
+  # Event: push tag, Ref: refs/tags/v2.0.8-rc1, Tags: 2.0.8-rc1
+  METADATA_TAGS: |
+    type=ref,event=branch
+    type=semver,pattern={{version}}
+    type=semver,pattern={{major}}.{{minor}}
+    type=semver,pattern={{major}}
 
 jobs:
-  build-and-push-ghcr:
-    runs-on: ubuntu-latest
+  build:
+    name: Build
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
-    env:
-      # https://github.com/docker/metadata-action/tree/v5/?tab=readme-ov-file#semver
-      # Event: push,     Ref: refs/head/main,       Tags: main
-      # Event: push tag, Ref: refs/tags/v1.2.3,     Tags: 1.2.3, 1.2, 1, latest
-      # Event: push tag, Ref: refs/tags/v2.0.8-rc1, Tags: 2.0.8-rc1
-      metadata-action-tags: |
-        type=ref,event=branch
-        type=semver,pattern={{version}}
-        type=semver,pattern={{major}}.{{minor}}
-        type=semver,pattern={{major}}
 
     steps:
+      - name: ⬇️ 检出代码
+        uses: actions/checkout@v4
+
       - name: 🔑 登录 GitHub Container Registry
-        uses: docker/login-action@master
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🐳 构建并推送 Docker 镜像
-        uses: yanhao98/composite-actions/docker-build-push@main
+      - name: 🏷️ 提取 Docker 元数据
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: ${{ env.METADATA_TAGS }}
+
+      - name: 🐳 设置 Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔨 构建并推送 (按摘要)
+        id: build
+        uses: docker/build-push-action@v6
         with:
           file: ./.devcontainer/Dockerfile.base
           context: ./.devcontainer
-          platforms: linux/amd64,linux/arm64
-          push: true
-          load: false
-          meta_images: ghcr.io/${{ github.repository }}
-          meta_tags: ${{ env.metadata-action-tags }}
-          cache-from: type=gha,scope=${{ github.workflow }}
-          cache-to: type=gha,scope=${{ github.workflow }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ github.workflow }}-${{ matrix.platform }}
+          cache-to: type=gha,scope=${{ github.workflow }}-${{ matrix.platform }}
+
+      - name: 📤 导出摘要
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: ⬆️ 上传摘要 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Merge
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: ⬇️ 下载摘要 artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: 🔑 登录 GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐳 设置 Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏷️ 提取 Docker 元数据
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: ${{ env.METADATA_TAGS }}
+
+      - name: 🚢 创建清单列表并推送
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: 🔍 检查镜像
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
