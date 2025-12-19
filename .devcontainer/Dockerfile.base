@@ -1,5 +1,6 @@
 FROM debian:trixie-slim
 
+ENV DISPLAY=:1
 # Set environment variables to prevent interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
 # Set the default editor and visual

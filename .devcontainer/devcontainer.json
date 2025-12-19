@@ -23,8 +23,7 @@
   "remoteEnv": {},
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
-    "TZ": "${localEnv:TZ:Asia/Shanghai}",
-    "DISPLAY": ":1"
+    "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
   "customizations": {
     "vscode": {
