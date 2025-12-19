@@ -50,6 +50,8 @@ RUN set -eux; \
     -x && \
     sed -i "/export LANG='en_US.UTF-8'/d;/export LANGUAGE='en_US:en'/d;/export LC_ALL='en_US.UTF-8'/d" $HOME/.zshrc
 
+RUN curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="false" bash
+
 # >>>>> 复制内置脚本到 /usr/local/bin
 COPY --chmod=755 _build-context/builtin-scripts/* /usr/local/bin/
 COPY --chmod=755 _build-context/run-lifecycle-scripts.sh /usr/local/bin/
