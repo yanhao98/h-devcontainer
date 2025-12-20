@@ -27,7 +27,7 @@ curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desk
 # xrandr --output VNC-0 --mode 1920x1200
 
 curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
-  chromium chromium-l10n
+  chromium chromium-l10n ffmpeg
 
 cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #!/bin/bash
@@ -37,10 +37,20 @@ cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #                           df -h /dev/shm  查看 /dev/shm 分区大小
 #-------------------------------------------------------------------------------------------------------------
 
+CHROME_ARGS=(
+  "--no-sandbox"
+  "--start-maximized"
+  "--disable-gpu"
+  "--disable-software-rasterizer"
+  "--deny-permission-prompts"
+  "--disable-device-discovery-notifications"
+  "--test-type"
+)
+
 if { [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ "${DBUS_SESSION_BUS_ADDRESS}" = "autolaunch:" ]; } && [ -x "$(command -v dbus-launch)" ]; then
-  exec dbus-launch --exit-with-session /usr/bin/chromium --no-sandbox --start-maximized --disable-gpu --disable-software-rasterizer "$@"
+  exec dbus-launch --exit-with-session /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
 else
-  exec /usr/bin/chromium --no-sandbox --start-maximized --disable-gpu --disable-software-rasterizer "$@"
+  exec /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
 fi
 EOF
 sudo chmod +x /usr/local/bin/chromium
