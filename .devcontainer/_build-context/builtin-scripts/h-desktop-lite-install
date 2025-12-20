@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------------------------------------
 set -euo pipefail
 
-curl -4 -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
     fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
     at-spi2-core xterm nautilus mousepad seahorse \
@@ -26,12 +26,12 @@ curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desk
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200
 
-curl -4 -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
   chromium chromium-l10n
 
 cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #!/bin/bash
-exec /usr/bin/chromium --no-sandbox "$@"
+exec /usr/bin/chromium --no-sandbox --start-maximized "$@"
 EOF
 sudo chmod +x /usr/local/bin/chromium
 
