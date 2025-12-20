@@ -1,10 +1,10 @@
-#!/bin/bash -eu
+#!/bin/bash
 #-------------------------------------------------------------------------------------------------------------
 # https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
-set -e
+set -euo pipefail
 
-curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+curl -4 -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
     fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
     at-spi2-core xterm nautilus mousepad seahorse \
@@ -21,11 +21,19 @@ echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
 # 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
 curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
   sed '\#rm -rf /var/lib/apt/lists/\*#d' | \
-  sudo INSTALL_NOVNC="false" bash
+  sudo env INSTALL_NOVNC="false" VNC_RESOLUTION="1680x1050x16" bash
 
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200
-# sudo apt update && sudo apt install -y chromium chromium-l10n
+
+curl -4 -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+  chromium chromium-l10n
+
+cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
+#!/bin/bash
+exec /usr/bin/chromium --no-sandbox "$@"
+EOF
+sudo chmod +x /usr/local/bin/chromium
 
 # 启动桌面进程
-# /usr/local/share/desktop-init.sh
+/usr/local/share/desktop-init.sh
