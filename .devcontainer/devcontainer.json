@@ -12,7 +12,8 @@
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
   "forwardPorts": [ /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
-    1116
+    1116,
+    5901
   ],
   "portsAttributes": {
     "1116": {
