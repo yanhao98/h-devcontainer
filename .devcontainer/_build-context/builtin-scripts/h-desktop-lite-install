@@ -18,8 +18,10 @@ curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-ins
 
 echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
 
-# 使用 curl 下载并执行远程脚本
-curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="false" bash
+# 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
+curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
+  sed '/rm -rf /var/lib/apt/lists/\*/d' | \
+  sudo INSTALL_NOVNC="false" bash
 
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200
