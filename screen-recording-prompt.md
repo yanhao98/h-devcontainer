@@ -12,35 +12,48 @@ ffmpeg -f x11grab -video_size 1440x768 -i :1 -r 10 -c:v libx264 -preset ultrafas
 
 ## 2. 执行浏览器操作
 
+- 使用 chrome-devtools MCP 工具执行指定操作
+
 每次点击前，先用 `evaluate_script` 高亮目标元素：
 
 ```javascript
-(el) => {
+el => {
   // 创建点击指示器
   const rect = el.getBoundingClientRect();
   const indicator = document.createElement('div');
   indicator.style.cssText = `
     position: fixed;
-    left: ${rect.left + rect.width/2 - 20}px;
-    top: ${rect.top + rect.height/2 - 20}px;
+    left: ${rect.left + rect.width / 2 - 20}px;
+    top: ${rect.top + rect.height / 2 - 20}px;
     width: 40px;
     height: 40px;
     border: 3px solid red;
     border-radius: 50%;
     pointer-events: none;
     z-index: 999999;
+    opacity: 1;
+    transition: opacity 0.3s ease;
   `;
   document.body.appendChild(indicator);
 
   // 给元素添加红色边框
+  const originalOutline = el.style.outline;
   el.style.outline = '3px solid red';
   el.style.outlineOffset = '2px';
 
+  // 2.5秒后自动移除高亮
+  setTimeout(() => {
+    indicator.style.opacity = '0';
+    setTimeout(() => document.body.removeChild(indicator), 300);
+    el.style.outline = originalOutline;
+  }, 2500);
+
   return 'highlight added';
-}
+};
 ```
 
 操作流程：
+
 1. `take_snapshot` 获取页面元素
 2. `evaluate_script` 高亮目标元素（传入 `args: [{"uid": "目标uid"}]`）
 3. 等待 1 秒（让视频捕获到高亮）
