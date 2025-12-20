@@ -31,7 +31,17 @@ curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-ins
 
 cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #!/bin/bash
-exec /usr/bin/chromium --no-sandbox --start-maximized "$@"
+#-------------------------------------------------------------------------------------------------------------
+# --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
+#                           使用此选项可以强制 Chromium 使用磁盘而不是共享内存来存储这些文件，从而避免内存不足的问题。
+#                           df -h /dev/shm  查看 /dev/shm 分区大小
+#-------------------------------------------------------------------------------------------------------------
+
+if { [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ "${DBUS_SESSION_BUS_ADDRESS}" = "autolaunch:" ]; } && [ -x "$(command -v dbus-launch)" ]; then
+  exec dbus-launch --exit-with-session /usr/bin/chromium --no-sandbox --start-maximized --disable-gpu --disable-software-rasterizer "$@"
+else
+  exec /usr/bin/chromium --no-sandbox --start-maximized --disable-gpu --disable-software-rasterizer "$@"
+fi
 EOF
 sudo chmod +x /usr/local/bin/chromium
 
