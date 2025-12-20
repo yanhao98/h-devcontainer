@@ -65,8 +65,8 @@ ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
 ENV PATH="${HOME}/.bun/bin:${PATH}"
 ENV PATH="${PATH}:/usr/local/bun-node-fallback-bin"
 
-ENV XDG_CACHE_HOME="/vscode/xdg-cache"
-ENV XDG_CONFIG_HOME="/vscode/xdg-config"
+# ENV XDG_CACHE_HOME="/vscode/xdg-cache"
+# ENV XDG_CONFIG_HOME="/vscode/xdg-config"
 ENV XDG_DATA_HOME="/vscode/xdg-data"
 ENV XDG_STATE_HOME="/vscode/xdg-state"
 
