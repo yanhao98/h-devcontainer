@@ -20,7 +20,7 @@ echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
 
 # 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
 curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
-  sed '/rm -rf /var/lib/apt/lists/\*/d' | \
+  sed '\#rm -rf /var/lib/apt/lists/\*#d' | \
   sudo INSTALL_NOVNC="false" bash
 
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
