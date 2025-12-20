@@ -1,20 +1,23 @@
 FROM debian:trixie-slim
 
-ENV DISPLAY=:1
 # Set environment variables to prevent interactive prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
 # Set the default editor and visual
 ENV EDITOR=nano
 ENV VISUAL=nano
 
+ENV DISPLAY=:1
+
 # >>>>> 安装系统依赖
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 基础工具
     ca-certificates wget curl tree locales \
+    
+    # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
+    eatmydata \
+    
     # 开发工具
     less git procps sudo fzf zsh man-db unzip gnupg2 gh \
-    #  python3-pip python3-venv python-is-python3
-    python3 \
     # 编辑器和实用工具
     jq nano vim \
     # 网络工具
@@ -50,7 +53,6 @@ RUN set -eux; \
     -x && \
     sed -i "/export LANG='en_US.UTF-8'/d;/export LANGUAGE='en_US:en'/d;/export LC_ALL='en_US.UTF-8'/d" $HOME/.zshrc
 
-RUN curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="false" bash
 
 # >>>>> 复制内置脚本到 /usr/local/bin
 COPY --chmod=755 _build-context/builtin-scripts/* /usr/local/bin/

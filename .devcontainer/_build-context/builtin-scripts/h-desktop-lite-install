@@ -1,15 +1,25 @@
-#!/usr/bin/env bash
+#!/bin/bash -eu
 #-------------------------------------------------------------------------------------------------------------
 # https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
 set -e
 
-export INSTALL_NOVNC="false"
+curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+    tigervnc-standalone-server tigervnc-common tigervnc-tools \
+    fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
+    at-spi2-core xterm nautilus mousepad seahorse \
+    gnome-icon-theme gnome-keyring \
+    libx11-dev libxkbfile-dev libsecret-1-dev libgbm-dev libnotify4 \
+    libnss3 libxss1 libasound2 libasound2-dev \
+    xfonts-base xfonts-terminus fonts-noto fonts-wqy-microhei fonts-droid-fallback fonts-noto-color-emoji \
+    htop ncdu curl ca-certificates unzip nano locales \
+    python3-minimal python3-numpy \
+    tilix
 
 echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
 
 # 使用 curl 下载并执行远程脚本
-curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="${INSTALL_NOVNC}" bash
+curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | sudo INSTALL_NOVNC="false" bash
 
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200

@@ -3,11 +3,11 @@
 
 echo '↘️ 容器内容已更新！'
 
-# 安装依赖
-if command -v pnpm >/dev/null 2>&1; then
-    # 跳过: The modules directory at "/workspaces/h-devcontainers/node_modules" will be removed and reinstalled from scratch. Proceed? (Y/n) · 
-    time pnpm install --config.confirmModulesPurge=false
-else
-    echo '❌错误: pnpm 未安装'
-    exit 0
-fi
+# # 安装依赖
+# if command -v pnpm >/dev/null 2>&1; then
+#     # 跳过: The modules directory at "/workspaces/h-devcontainers/node_modules" will be removed and reinstalled from scratch. Proceed? (Y/n) · 
+#     time pnpm install --config.confirmModulesPurge=false
+# else
+#     echo '❌错误: pnpm 未安装'
+#     exit 0
+# fi
