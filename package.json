@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "vite --port 1116 --host --strictPort"
   },
-  "packageManager": "pnpm@10.22.0",
+  "packageManager": "pnpm@10.26.1",
   "devDependencies": {
-    "vite": "^7.2.2"
+    "vite": "latest"
   }
 }
