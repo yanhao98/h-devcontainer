@@ -1,0 +1,4 @@
+# VSCode 搜索忽略文件
+!.devcontainer/.env
+!*.local
+!*.local/
