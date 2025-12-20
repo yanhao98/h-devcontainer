@@ -17,14 +17,16 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     eatmydata \
     
     # 开发工具
-    less git procps sudo fzf zsh man-db unzip gnupg2 gh \
+    less git procps sudo fzf zsh man-db unzip gnupg2 \
     # 编辑器和实用工具
     jq nano vim \
     # 网络工具
-    lsof \
-    # 清理缓存
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    lsof
+
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
+    eatmydata apt-get install -qq -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # >>>>> 创建用户和配置 sudo
 RUN groupadd --gid 1000 usr_vscode \
@@ -63,10 +65,10 @@ ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
 ENV PATH="${HOME}/.bun/bin:${PATH}"
 ENV PATH="${PATH}:/usr/local/bun-node-fallback-bin"
 
-# TODO: 这不是 pnpm 专有的
-ENV XDG_CACHE_HOME="/vscode/cache-home"
-ENV XDG_DATA_HOME="/vscode/pnpm/pnpm-data"
-ENV XDG_STATE_HOME="/vscode/pnpm/pnpm-state"
+ENV XDG_CACHE_HOME="/vscode/xdg-cache"
+ENV XDG_CONFIG_HOME="/vscode/xdg-config"
+ENV XDG_DATA_HOME="/vscode/xdg-data"
+ENV XDG_STATE_HOME="/vscode/xdg-state"
 
 ENV PNPM_HOME="${HOME}/.pnpm"
 ENV PATH="${PNPM_HOME}:${PATH}"

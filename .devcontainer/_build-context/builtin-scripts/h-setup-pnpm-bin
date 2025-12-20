@@ -110,7 +110,7 @@ ENV="$HOME/.zshrc" SHELL="$(which zsh)" "$tmp_dir/pnpm" setup || { echo "pnpm se
 
 cmd_pnpm="$PNPM_HOME/pnpm"
 $cmd_pnpm config set store-dir /vscode/pnpm/pnpm-store || { echo "pnpm config set store-dir 失败"; exit 1; }
-$cmd_pnpm env use lts --global || { echo "pnpm env use lts --global 失败"; exit 1; }
+# $cmd_pnpm env use lts --global || { echo "pnpm env use lts --global 失败"; exit 1; }
 
 $cmd_pnpm completion zsh > ~/completion-for-pnpm.zsh
 # 检查 ~/.zshrc 中是否已经存在 pnpm 自动补全配置
