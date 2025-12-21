@@ -12,6 +12,7 @@ cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #                           df -h /dev/shm  查看 /dev/shm 分区大小
 #-------------------------------------------------------------------------------------------------------------
 
+  # "--disable-setuid-sandbox"
 CHROME_ARGS=(
   "--no-sandbox"
   "--start-maximized"
