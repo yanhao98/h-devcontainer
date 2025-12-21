@@ -18,32 +18,31 @@ export CLAUDE_CONFIG_DIR=/vscode/claude-config
 EOF
 fi
 
-if [[ "${1:-}" == "--config" ]]; then
-  mkdir -p /vscode/claude-config
-  # >>>>> Claude Code 配置文件
-  if [[ -f /vscode/claude-config/.claude.json ]]; then
-    echo "Claude Code 配置文件 (.claude.json) 已存在，跳过覆盖。"
-  else
-    cat <<'EOF' > /vscode/claude-config/.claude.json
-{
+mkdir -p /vscode/claude-config
+
+local CLAUDE_JSON_CONTENT='{
   "numStartups": 1,
   "theme": "light-daltonized",
   "bypassPermissionsModeAccepted": true,
   "hasCompletedOnboarding": true
-}
-EOF
-  fi
+}'
 
-  # >>>>> Claude Code 设置文件
-  if [[ -f /vscode/claude-config/settings.json ]]; then
-    echo "Claude Code 设置文件 (settings.json) 已存在，跳过覆盖。"
-  else
-    cat <<'EOF' > /vscode/claude-config/settings.json
-{
+local SETTINGS_JSON_CONTENT='{
   "model": "opus",
   "alwaysThinkingEnabled": false,
   "defaultMode": "bypassPermissions"
-}
-EOF
-  fi
+}'
+
+# >>>>> Claude Code 配置文件
+if [[ -f /vscode/claude-config/.claude.json ]]; then
+  echo "Claude Code 配置文件 (.claude.json) 已存在，跳过覆盖。"
+else
+  echo "$CLAUDE_JSON_CONTENT" > /vscode/claude-config/.claude.json
+fi
+
+# >>>>> Claude Code 设置文件
+if [[ -f /vscode/claude-config/settings.json ]]; then
+  echo "Claude Code 设置文件 (settings.json) 已存在，跳过覆盖。"
+else
+  echo "$SETTINGS_JSON_CONTENT" > /vscode/claude-config/settings.json
 fi

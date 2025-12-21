@@ -25,12 +25,7 @@ export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json
 EOF
 fi
 
-if [[ "${1:-}" == "--config" ]]; then
-  if [[ -f /vscode/gemini-system-settings.json ]]; then
-    echo "Gemini CLI 配置文件已存在，跳过覆盖。"
-  else
-    cat <<'EOF' > /vscode/gemini-system-settings.json
-{
+local GEMINI_SETTINGS_CONTENT='{
   "security": {
     "auth": {
       "selectedType": "gemini-api-key"
@@ -42,7 +37,10 @@ if [[ "${1:-}" == "--config" ]]; then
   "general": {
     "previewFeatures": true
   }
-}
-EOF
-  fi
+}'
+
+if [[ -f /vscode/gemini-system-settings.json ]]; then
+  echo "Gemini CLI 配置文件已存在，跳过覆盖。"
+else
+  echo "$GEMINI_SETTINGS_CONTENT" > /vscode/gemini-system-settings.json
 fi

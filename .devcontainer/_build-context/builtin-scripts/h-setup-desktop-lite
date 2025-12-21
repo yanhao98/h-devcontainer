@@ -28,4 +28,3 @@ curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desk
 
 # 启动桌面进程
 /usr/local/share/desktop-init.sh
-
