@@ -1,6 +1,7 @@
-#!/bin/bash -eu
+#!/bin/bash
+set -euo pipefail
 
-h-00-fix-permissions
+# h-00-fix-permissions
 
 LIFECYCLE_EVENT="$1"
 if [ -z "$LIFECYCLE_EVENT" ]; then

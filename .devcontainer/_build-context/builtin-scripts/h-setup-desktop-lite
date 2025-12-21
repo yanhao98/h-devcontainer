@@ -26,34 +26,6 @@ curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desk
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200
 
-curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
-  chromium chromium-l10n ffmpeg
-
-cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
-#!/bin/bash
-#-------------------------------------------------------------------------------------------------------------
-# --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
-#                           使用此选项可以强制 Chromium 使用磁盘而不是共享内存来存储这些文件，从而避免内存不足的问题。
-#                           df -h /dev/shm  查看 /dev/shm 分区大小
-#-------------------------------------------------------------------------------------------------------------
-
-CHROME_ARGS=(
-  "--no-sandbox"
-  "--start-maximized"
-  "--disable-gpu"
-  "--disable-software-rasterizer"
-  "--deny-permission-prompts"
-  "--disable-device-discovery-notifications"
-  "--test-type"
-)
-
-if { [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ "${DBUS_SESSION_BUS_ADDRESS}" = "autolaunch:" ]; } && [ -x "$(command -v dbus-launch)" ]; then
-  exec dbus-launch --exit-with-session /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
-else
-  exec /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
-fi
-EOF
-sudo chmod +x /usr/local/bin/chromium
-
 # 启动桌面进程
 /usr/local/share/desktop-init.sh
+

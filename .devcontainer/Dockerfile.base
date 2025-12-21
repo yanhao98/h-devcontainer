@@ -8,25 +8,26 @@ ENV VISUAL=nano
 
 ENV DISPLAY=:1
 
+COPY --from=node:lts-trixie-slim /usr/local/bin/node /usr/local/bin/node
+
 # >>>>> 安装系统依赖
 RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 基础工具
     ca-certificates wget curl tree locales \
-    
     # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
     eatmydata \
-    
     # 开发工具
     less git procps sudo fzf zsh man-db unzip gnupg2 \
     # 编辑器和实用工具
     jq nano vim \
     # 网络工具
-    lsof netcat-openbsd iproute2 net-tools
-
-RUN curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
-    eatmydata apt-get install -qq -y nodejs && \
+    lsof netcat-openbsd iproute2 net-tools && \
+    # 清理缓存
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# RUN curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
+#     eatmydata apt-get install -qq -y nodejs && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # >>>>> 创建用户和配置 sudo
 RUN groupadd --gid 1000 usr_vscode \
@@ -38,6 +39,7 @@ ENV HOME=/home/usr_vscode
 
 # >>>>> 切换到非 root 用户
 USER usr_vscode
+RUN sudo mkdir /vscode && sudo chown usr_vscode:usr_vscode /vscode
 
 # >>>>> zsh-in-docker 安装和配置
 # 要重新触发 zsh 新用户配置向导: autoload -Uz zsh-newuser-install; zsh-newuser-install -f
@@ -55,6 +57,24 @@ RUN set -eux; \
     -x && \
     sed -i "/export LANG='en_US.UTF-8'/d;/export LANGUAGE='en_US:en'/d;/export LC_ALL='en_US.UTF-8'/d" $HOME/.zshrc
 
+# >>>>> zsh 配置
+RUN cat <<'EOF' >> /home/usr_vscode/.zshrc
+
+# >>>>> VS Code Shell Integration
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    if command -v code-insiders >/dev/null 2>&1; then
+        alias code='code-insiders'
+        . "$(code-insiders --locate-shell-integration-path zsh)"
+    elif command -v code >/dev/null 2>&1; then
+        . "$(code --locate-shell-integration-path zsh)"
+    fi
+fi
+# <<<<< VS Code Shell Integration
+
+# >>>>> 自定义别名
+alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf node_modules/*; unsetopt rm_star_silent'
+# <<<<< 自定义别名
+EOF
 
 # >>>>> 复制内置脚本到 /usr/local/bin
 COPY --chmod=755 _build-context/builtin-scripts/* /usr/local/bin/

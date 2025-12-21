@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+
+# 检查 node_modules 权限
+if [ -d "node_modules" ]; then
+    sudo chown -R $(whoami) node_modules || true
+fi
+
+# 安装依赖
+if command -v pnpm >/dev/null 2>&1; then
+    if [ -f "pnpm-lock.yaml" ]; then
+        # 跳过: The modules directory at "/workspaces/h-devcontainers/node_modules" will be removed and reinstalled from scratch. Proceed? (Y/n) ·
+        time pnpm install --config.confirmModulesPurge=false
+    fi
+else
+    echo '❌错误: pnpm 未安装'
+    exit 0
+fi

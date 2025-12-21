@@ -1,0 +1,41 @@
+#!/bin/zsh -eu
+set -euo pipefail
+
+# 防止在 locale 未生成时出现 perl 警告
+export LC_ALL=C
+
+run_sys() {
+  if [[ "$EUID" -ne 0 ]]; then
+    sudo "$@"
+  else
+    "$@"
+  fi
+}
+
+if ! dpkg -s locales >/dev/null 2>&1; then
+  curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+    locales
+fi
+
+if [ -f /etc/locale.gen ]; then
+  run_sys sed -i 's/^# *zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen
+  run_sys sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+fi
+
+run_sys locale-gen zh_CN.UTF-8 en_US.UTF-8
+
+zshrc="$HOME/.zshrc"
+mkdir -p "${zshrc:h}"
+touch "$zshrc"
+
+# 将 locale 相关的环境变量添加到 .zshrc 的最前面
+# if ! grep -q '^export LC_ALL=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
+#   sed -i '1i export LC_ALL=zh_CN.UTF-8' "$zshrc"
+# fi
+if ! grep -q '^export LANG=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
+  sed -i '1i export LANG=zh_CN.UTF-8' "$zshrc"
+fi
+if ! grep -q '^export LANGUAGE=zh_CN.UTF-8:zh_CN:zh$' "$zshrc" 2>/dev/null; then
+  sed -i '1i export LANGUAGE=zh_CN.UTF-8:zh_CN:zh' "$zshrc"
+fi
+run_sys update-locale LANG=zh_CN.UTF-8 LC_ALL=zh_CN.UTF-8

@@ -1,4 +1,5 @@
-#!/bin/zsh -eu
+#!/bin/zsh
+set -euo pipefail
 
 # >>>>>> Gemini CLI 工具
 bun add -g @google/gemini-cli@latest
