@@ -1,0 +1,1013 @@
+[20 ms] Dev Containers 0.434.0 in VS Code 1.107.1 (994fd12f8d3a5aa16f17d42c041e5809167e845a).
+[19 ms] Start: 正在解析远程
+[34 ms] Setting up container for folder or workspace: /Users/1-h/workspaces/h-devcontainers
+[34 ms] Context: orbstack
+[39 ms] Start: Check Docker is running
+[39 ms] Start: Run: docker version
+[56 ms] Client:
+ Version:           28.5.2
+ API version:       1.51
+ Go version:        go1.25.3
+ Git commit:        ecc6942
+ Built:             Wed Nov  5 14:42:30 2025
+ OS/Arch:           darwin/arm64
+ Context:           orbstack
+
+[56 ms] Server: Docker Engine - Community
+ Engine:
+  Version:          28.5.2
+  API version:      1.51 (minimum version 1.24)
+  Go version:       go1.24.9
+  Git commit:       89c5e8f
+  Built:            Wed Nov  5 14:43:35 2025
+  OS/Arch:          linux/arm64
+  Experimental:     false
+ containerd:
+  Version:          v2.2.0
+  GitCommit:        1c4457e00facac03ce1d75f7b6777a7a851e5c41
+ runc:
+  Version:          1.3.3
+  GitCommit:        d842d7719497cc3b774fd71620278ac9e17710e0
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+[57 ms] Start: Run: docker volume ls -q
+[69 ms] Start: Run: docker volume create vscode
+[93 ms] Start: Run: docker ps -q -a --filter label=vsch.local.folder=/Users/1-h/workspaces/h-devcontainers --filter label=vsch.quality=stable
+[104 ms] Start: Run: docker ps -q -a --filter label=devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --filter label=devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json
+[115 ms] Start: Run: docker ps -q -a --filter label=devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers
+[126 ms] Running Dev Containers CLI:   up --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --workspace-mount-consistency cached --gpu-availability detect --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --build-no-cache --remove-existing-container --mount type=volume,source=vscode,target=/vscode,external=true --skip-post-create --update-remote-user-uid-default on --mount-workspace-git-root --include-configuration --include-merged-configuration
+[136 ms] ProxyResolver#loadSystemCertificates count (9ms)
+[137 ms] ProxyResolver#loadSystemCertificates count filtered
+[137 ms] Start: Run: /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/spec-node/devContainersSpecCLI.js up --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --workspace-mount-consistency cached --gpu-availability detect --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --build-no-cache --remove-existing-container --mount type=volume,source=vscode,target=/vscode,external=true --skip-post-create --update-remote-user-uid-default on --mount-workspace-git-root --include-configuration --include-merged-configuration
+[239 ms] @devcontainers/cli 0.80.1. Node.js v22.21.1. darwin 25.2.0 arm64.
+[239 ms] Start: Run: docker buildx version
+[283 ms] github.com/docker/buildx v0.29.1 a32761aeb3debd39be1eca514af3693af0db334b
+[283 ms] 
+[283 ms] Start: Run: docker -v
+[292 ms] Start: Resolving Remote
+[293 ms] Start: Run: git rev-parse --show-cdup
+[304 ms] Start: Run: docker ps -q -a --filter label=devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --filter label=devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json
+[319 ms] Start: Run: docker inspect --type image ghcr.io/yanhao98/h-devcontainer:main
+[334 ms] Start: Run: docker events --format {{json .}} --filter event=start
+[335 ms] Start: Starting container
+[335 ms] Start: Run: docker run --sig-proxy=false -a STDOUT -a STDERR --mount source=/Users/1-h/workspaces/h-devcontainers,target=/workspaces/h-devcontainers,type=bind,consistency=delegated --mount source=h-devcontainers-node_modules,target=/workspaces/h-devcontainers/node_modules,type=volume --mount source=/Users/1-h/workspaces/h-devcontainers/.devcontainer/lifecycle-scripts.d,target=/usr/local/etc/lifecycle-scripts.d,type=bind,consistency=delegated --mount type=volume,src=vscode,dst=/vscode -l devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers -l devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json -e NODE_OPTIONS=--max-old-space-size=4096 -e TZ=Asia/Shanghai --name=h-devcontainers-devcontainer --entrypoint /bin/sh -l devcontainer.metadata=[{"onCreateCommand":"/usr/local/bin/run-lifecycle-scripts.sh onCreateCommand","updateContentCommand":"/usr/local/bin/run-lifecycle-scripts.sh updateContentCommand","postCreateCommand":"/usr/local/bin/run-lifecycle-scripts.sh postCreateCommand","postStartCommand":"/usr/local/bin/run-lifecycle-scripts.sh postStartCommand","postAttachCommand":"/usr/local/bin/run-lifecycle-scripts.sh postAttachCommand","customizations":{"vscode":{"extensions":["mads-hartmann.bash-ide-vscode","esbenp.prettier-vscode","dbaeumer.vscode-eslint"],"settings":{"editor.formatOnSave":true,"editor.defaultFormatter":"esbenp.prettier-vscode","chat.extensionUnification.enabled":true,"chat.tools.terminal.autoApprove":{"/.*/":true,"git push":false},"chat.tools.terminal.ignoreDefaultAutoApproveRules":true,"terminal.integrated.defaultProfile.linux":"zsh","tasks":{"version":"2.0.0","tasks":[]},"github.copilot.chat.codeGeneration.instructions":[{"text":"This dev container includes a lightweight Fluxbox based desktop that can be accessed using a VNC viewer or the web. GUI-based commands executed from the built-in VS Code terminal will open on the desktop automatically."}]}}},"mounts":["source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume","source=${localWorkspaceFolder}/.devcontainer/lifecycle-scripts.d,target=/usr/local/etc/lifecycle-scripts.d,type=bind,consistency=delegated"],"containerEnv":{"NODE_OPTIONS":"--max-old-space-size=4096","TZ":"${localEnv:TZ:Asia/Shanghai}"},"remoteUser":"usr_vscode","remoteEnv":{},"portsAttributes":{"1116":{"label":"开发服务器端口","onAutoForward":"notify"}},"forwardPorts":[1116,5901],"updateRemoteUserUID":true}] ghcr.io/yanhao98/h-devcontainer:main -c echo Container started
+Container started
+[842 ms] Start: Run: docker ps -q -a --filter label=devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --filter label=devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json
+[861 ms] Start: Run: docker inspect --type container e8d3b071d6ea
+[873 ms] Start: Inspecting container
+[873 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[884 ms] Start: Run in container: /bin/sh
+[885 ms] Start: Run in container: uname -m
+[908 ms] aarch64
+[908 ms] 
+[908 ms] Start: Run in container: (cat /etc/os-release || cat /usr/lib/os-release) 2>/dev/null
+[909 ms] PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.2
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+[909 ms] 
+[909 ms] Start: Run in container:  (command -v getent >/dev/null 2>&1 && getent passwd 'usr_vscode' || grep -E '^usr_vscode|^[^:]*:[^:]*:usr_vscode:' /etc/passwd || true)
+[911 ms] Start: Run in container: test -f '/var/devcontainer/.patchEtcEnvironmentMarker'
+[911 ms] 
+[911 ms] 
+[911 ms] Exit code 1
+[911 ms] Start: Run in container: /bin/sh
+[912 ms] Start: Run in container: test ! -f '/var/devcontainer/.patchEtcEnvironmentMarker' && set -o noclobber && mkdir -p '/var/devcontainer' && { > '/var/devcontainer/.patchEtcEnvironmentMarker' ; } 2> /dev/null
+[934 ms] 
+[934 ms] 
+[935 ms] Start: Run in container: cat >> /etc/environment <<'etcEnvironmentEOF'
+[935 ms] 
+[935 ms] 
+[935 ms] Start: Run in container: test -f '/var/devcontainer/.patchEtcProfileMarker'
+[936 ms] 
+[936 ms] 
+[936 ms] Exit code 1
+[936 ms] Start: Run in container: test ! -f '/var/devcontainer/.patchEtcProfileMarker' && set -o noclobber && mkdir -p '/var/devcontainer' && { > '/var/devcontainer/.patchEtcProfileMarker' ; } 2> /dev/null
+[937 ms] 
+[937 ms] 
+[937 ms] Start: Run in container: sed -i -E 's/((^|\s)PATH=)([^\$]*)$/\1${PATH:-\3}/g' /etc/profile || true
+[939 ms] 
+[939 ms] 
+[944 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[956 ms] Start: Run: docker exec -i -u root e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 /bin/sh -c echo "New container started. Keep-alive process started." ; export VSCODE_REMOTE_CONTAINERS_SESSION=4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 ; /bin/sh
+[956 ms] Start: Inspecting container
+[956 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[969 ms] Start: Run in container: /bin/sh
+[970 ms] Start: Run in container: uname -m
+[981 ms] New container started. Keep-alive process started.
+[992 ms] aarch64
+[992 ms] 
+[992 ms] Start: Run in container: (cat /etc/os-release || cat /usr/lib/os-release) 2>/dev/null
+[993 ms] PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.2
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+[993 ms] 
+[993 ms] Start: Run in container:  (command -v getent >/dev/null 2>&1 && getent passwd 'usr_vscode' || grep -E '^usr_vscode|^[^:]*:[^:]*:usr_vscode:' /etc/passwd || true)
+[994 ms] safe.directory: Looking up root folder for workspace folder '/workspaces/h-devcontainers'.
+[994 ms] Start: Run in container: command -v git >/dev/null 2>&1 && ROOT_FOLDER="$(git -C '/workspaces/h-devcontainers' rev-parse --show-toplevel)" && test "$(stat -c %u "$ROOT_FOLDER")" != "$(id -u)" && echo -n "$ROOT_FOLDER"
+[996 ms] 
+[996 ms] 
+[996 ms] Exit code 1
+[997 ms] safe.directory: Checking host ownership of root folder at mount point '/workspaces/h-devcontainers' skipped.
+[997 ms] Start: Updating configuration state
+[999 ms] Start: Setup shutdown monitor
+[999 ms] Forking shutdown monitor: /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/shutdown/shutdownMonitorProcess /var/folders/gc/01bzh82x5mg2fl9x85qv1bnh0000gn/T/vscode-remote-containers-e08fb711-385b-4d93-b701-20fcb5fa1de8.sock singleContainer Debug /Users/1-h/Library/Application Support/Code/logs/20251221T041827/window1/exthost/ms-vscode-remote.remote-containers 1766320505527
+[1000 ms] Start: Run in container: test -d '/home/usr_vscode/.vscode-server'
+[1001 ms] 
+[1001 ms] 
+[1001 ms] Exit code 1
+[1001 ms] Start: Run in container: test -d '/home/usr_vscode/.vscode-remote'
+[1001 ms] 
+[1001 ms] 
+[1001 ms] Exit code 1
+[1002 ms] Start: Run in container: test ! -f '/home/usr_vscode/.vscode-server/data/Machine/.writeMachineSettingsMarker' && set -o noclobber && mkdir -p '/home/usr_vscode/.vscode-server/data/Machine' && { > '/home/usr_vscode/.vscode-server/data/Machine/.writeMachineSettingsMarker' ; } 2> /dev/null
+[1003 ms] 
+[1003 ms] 
+[1003 ms] Start: Run in container: test -f '/home/usr_vscode/.vscode-server/data/Machine/settings.json'
+[1003 ms] 
+[1003 ms] 
+[1003 ms] Exit code 1
+[1003 ms] Start: Run in container: which apt dpkg snap dnf yum rpm apk docker git gh kubectl podman curl wget ssh scp rsync gpg ps lsof netstat top tree find grep zip unzip tar gzip bzip2 xz || true
+[1005 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.vscode-server/data/Machine' && cat >'/home/usr_vscode/.vscode-server/data/Machine/settings.json' <<'settingsJSON'
+[1005 ms] 
+[1005 ms] 
+[1006 ms] Start: Run in container: test ! -f '/home/usr_vscode/.vscode-server/data/Machine/.writeMachineMCPConfigMarker' && set -o noclobber && mkdir -p '/home/usr_vscode/.vscode-server/data/Machine' && { > '/home/usr_vscode/.vscode-server/data/Machine/.writeMachineMCPConfigMarker' ; } 2> /dev/null
+[1006 ms] 
+[1006 ms] 
+[1006 ms] Start: Run in container: test -f '/home/usr_vscode/.vscode-server/data/User/mcp.json'
+[1007 ms] 
+[1007 ms] 
+[1007 ms] Exit code 1
+[1007 ms] 
+Support for ARM64 is in preview.
+
+[1007 ms] Start: Run in container: test -d '/home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a'
+[1008 ms] 
+[1008 ms] 
+[1008 ms] Exit code 1
+[1008 ms] Start: Run in container: test -d '/vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a'
+[1008 ms] 
+[1008 ms] 
+[1008 ms] Exit code 1
+[1009 ms] Installing VS Code Server for commit 994fd12f8d3a5aa16f17d42c041e5809167e845a
+[1009 ms] Start: Run in container: /bin/sh
+[1009 ms] Start: Installing VS Code Server
+[1009 ms] Start: Run in container: mkdir -p /vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a_1766320506536
+[1032 ms] 
+[1032 ms] 
+[1069 ms] Start: Run in container: (dd iflag=fullblock bs=8192 count=8756; dd iflag=fullblock bs=6369 count=1) | tar --no-same-owner -xz -C /vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a_1766320506536
+[2245 ms] 8756+0 records in
+8756+0 records out
+71729152 bytes (72 MB, 68 MiB) copied, 1.1746 s, 61.1 MB/s
+[2247 ms] 1+0 records in
+1+0 records out
+6369 bytes (6.4 kB, 6.2 KiB) copied, 2.225e-05 s, 286 MB/s
+[2248 ms] 
+[2248 ms] 
+[2249 ms] Start: Run in container: mv -n /vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a_1766320506536/* /vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a && rmdir /vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a_1766320506536
+[2250 ms] 
+[2250 ms] 
+[2250 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.vscode-server/bin' && ln -snf '/vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a' '/home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a'
+[2251 ms] 
+[2252 ms] 
+[2252 ms] Start: Run in container: touch '/vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a' && cd '/vscode/vscode-server/bin/linux-arm64' && ls -td *[^_]????????????? | tail -n +10 | xargs rm -rf
+[2252 ms] Start: Run in container: test -x '/home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/bin/helpers/check-requirements.sh'
+[2252 ms] 
+[2253 ms] 
+[2253 ms] Start: Run in container: '/home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/bin/helpers/check-requirements.sh'
+[2253 ms] 
+[2253 ms] ls: cannot access '*[^_]?????????????': No such file or directory
+[2263 ms] 
+[2263 ms] 
+[2263 ms] Start: Launching Dev Containers helper.
+[2264 ms] ssh-agent: SSH_AUTH_SOCK in container (/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock) forwarded to local host (/private/tmp/com.apple.launchd.AR4jDULjb3/Listeners).
+[2264 ms] Start: Run in container: gpgconf --list-dirs
+[2265 ms] sysconfdir:/etc/gnupg
+bindir:/usr/bin
+libexecdir:/usr/lib/gnupg
+libdir:/usr/lib/aarch64-linux-gnu/gnupg
+datadir:/usr/share/gnupg
+localedir:/usr/share/locale
+socketdir:/home/usr_vscode/.gnupg
+dirmngr-socket:/home/usr_vscode/.gnupg/S.dirmngr
+keyboxd-socket:/home/usr_vscode/.gnupg/S.keyboxd
+agent-ssh-socket:/home/usr_vscode/.gnupg/S.gpg-agent.ssh
+agent-extra-socket:/home/usr_vscode/.gnupg/S.gpg-agent.extra
+agent-browser-socket:/home/usr_vscode/.gnupg/S.gpg-agent.browser
+agent-socket:/home/usr_vscode/.gnupg/S.gpg-agent
+homedir:/home/usr_vscode/.gnupg
+[2265 ms] 
+[2265 ms] Start: Run in container: ls '/home/usr_vscode/.gnupg/private-keys-v1.d' 2>/dev/null
+[2266 ms] 
+[2266 ms] 
+[2266 ms] Exit code 2
+[2266 ms] Start: Run in container: grep -e '^s*use-keyboxds*$' '/home/usr_vscode/.gnupg/common.conf' 2>/dev/null
+[2267 ms] 
+[2267 ms] 
+[2267 ms] Exit code 2
+[2267 ms] Start: Run: gpgconf --list-dirs
+[2269 ms] spawn gpgconf ENOENT
+[2269 ms] gpg-agent: No agent-extra-socket found on local host.
+[2270 ms] Start: Run in container: (command -v 'docker' || command -v 'oras' || command -v 'skopeo') >/dev/null 2>&1
+[2270 ms] 
+[2270 ms] 
+[2270 ms] Exit code 127
+[2271 ms] Start: Run in container: /bin/sh
+[2272 ms] userEnvProbe: loginInteractiveShell (default)
+[2272 ms] Start: Run in container: test -f '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[2272 ms] Start: Run in container: echo ~
+[2273 ms] 
+[2273 ms] 
+[2273 ms] Exit code 1
+[2273 ms] userEnvProbe: not found in cache
+[2273 ms] userEnvProbe shell: /bin/zsh
+[2273 ms] Start: Run in container: # Test for /home/usr_vscode/.ssh/known_hosts and ssh
+[2274 ms] ssh not found
+[2274 ms] 
+[2274 ms] Exit code 1
+[2274 ms] Start: Run in container: command -v git >/dev/null 2>&1 && git config --system --replace-all credential.helper '!f() { /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/node /tmp/vscode-remote-containers-2220fcbf-2102-4460-81b5-e5c797b28964.js git-credential-helper $*; }; f' || true
+[2275 ms] 
+[2275 ms] 
+[2275 ms] Start: Run in container: for pid in `cd /proc && ls -d [0-9]*`; do { echo $pid ; readlink /proc/$pid/cwd || echo ; readlink /proc/$pid/ns/mnt || echo ; cat /proc/$pid/stat | tr "
+[2288 ms] Start: Run in container: cat '/home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/product.json'
+[2290 ms] Start: Run in container: cat '/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a' 2>/dev/null || (umask 377 && echo '969d7cae-e27e-4e3f-9366-4be1b842b3a4' >'/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a-f4aeadcd-f4ba-428b-9150-7ad74be183c8' && mv -n '/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a-f4aeadcd-f4ba-428b-9150-7ad74be183c8' '/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a' && rm -f '/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a-f4aeadcd-f4ba-428b-9150-7ad74be183c8' && cat '/home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a')
+[2291 ms] 969d7cae-e27e-4e3f-9366-4be1b842b3a4
+[2291 ms] 
+[2291 ms] Start: Starting VS Code Server
+[2292 ms] Start: Preparing Extensions
+[2292 ms] Start: Run in container: test ! -f '/home/usr_vscode/.vscode-server/data/Machine/.installExtensionsMarker' && set -o noclobber && mkdir -p '/home/usr_vscode/.vscode-server/data/Machine' && { > '/home/usr_vscode/.vscode-server/data/Machine/.installExtensionsMarker' ; } 2> /dev/null
+[2293 ms] 
+[2293 ms] 
+[2293 ms] Extensions cache, install extensions: mads-hartmann.bash-ide-vscode, esbenp.prettier-vscode, dbaeumer.vscode-eslint, anthropic.claude-code, google.gemini-cli-vscode-ide-companion, github.copilot-chat, vicanent.gcmp
+[2293 ms] Start: Run in container: test -d /home/usr_vscode/.vscode-server/extensionsCache && ls /home/usr_vscode/.vscode-server/extensionsCache || true
+[2294 ms] 
+[2294 ms] 
+[2294 ms] Start: Run in container: test -d /vscode/vscode-server/extensionsCache && ls /vscode/vscode-server/extensionsCache || true
+[2295 ms] 
+[2295 ms] 
+[2295 ms] Extensions cache, link in container: None
+[2295 ms] Optimizing extensions for quality: stable
+[2296 ms] Start: Run in container: /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/bin/code-server --log debug --force-disable-user-env --server-data-dir /home/usr_vscode/.vscode-server --telemetry-level all --accept-server-license-terms --host 127.0.0.1 --port 0 --connection-token-file /home/usr_vscode/.vscode-server/data/Machine/.connection-token-994fd12f8d3a5aa16f17d42c041e5809167e845a --extensions-download-dir /home/usr_vscode/.vscode-server/extensionsCache --install-extension mads-hartmann.bash-ide-vscode --install-extension esbenp.prettier-vscode --install-extension dbaeumer.vscode-eslint --install-extension anthropic.claude-code --install-extension google.gemini-cli-vscode-ide-companion --install-extension github.copilot-chat --install-extension vicanent.gcmp --start-server  --skip-requirements-check
+[2298 ms] /home/usr_vscode
+[2298 ms] 
+[2298 ms] Start: Run in container: cat <<'EOF-/tmp/vscode-remote-containers-2220fcbf-2102-4460-81b5-e5c797b28964.js' >/tmp/vscode-remote-containers-2220fcbf-2102-4460-81b5-e5c797b28964.js
+[2299 ms] 
+[2299 ms] 
+[2299 ms] Start: Run in container: cat <<'EOF-/tmp/vscode-remote-containers-server-2220fcbf-2102-4460-81b5-e5c797b28964.js' >/tmp/vscode-remote-containers-server-2220fcbf-2102-4460-81b5-e5c797b28964.js_1766320507826
+[2312 ms] 
+[2312 ms] 
+[2384 ms] *
+* Visual Studio Code Server
+*
+* By using the software, you agree to
+* the Visual Studio Code Server License Terms (https://aka.ms/vscode-server-license) and
+* the Microsoft Privacy Statement (https://privacy.microsoft.com/en-US/privacystatement).
+*
+[2387 ms] Server bound to 127.0.0.1:36335 (IPv4)
+Extension host agent listening on 36335
+
+[2388 ms] Start: Run in container: echo 36335 >'/home/usr_vscode/.vscode-server/data/Machine/.devport-994fd12f8d3a5aa16f17d42c041e5809167e845a'
+[2389 ms] 
+[2389 ms] 
+[2389 ms] Port forwarding for container port 36335 starts listening on local port.
+[2390 ms] Port forwarding local port 36335 to container port 36335
+[2390 ms] Running Dev Containers CLI:   run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands true --prebuild false --stop-for-personalization true --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --dotfiles-target-path ~/dotfiles
+[2390 ms] Start: Run: /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/spec-node/devContainersSpecCLI.js run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands true --prebuild false --stop-for-personalization true --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --dotfiles-target-path ~/dotfiles
+[2410 ms] Ignoring option 'skip-requirements-check': not supported for server.
+[2413 ms] [20:35:07] 
+
+
+
+
+[2436 ms] [reconnection-grace-time] No CLI argument provided, using default: 10800000ms (10800s)
+[2438 ms] [20:35:07] Installing extensions...
+[2439 ms] [20:35:07] Extension host agent started.
+[2470 ms] [20:35:07] Error while reading the extension cache file: /home/usr_vscode/.vscode-server/data/CachedProfilesData/__default__profile__/extensions.builtin.cache Unable to read file '/home/usr_vscode/.vscode-server/data/CachedProfilesData/__default__profile__/extensions.builtin.cache' (Error: Unable to resolve nonexistent file '/home/usr_vscode/.vscode-server/data/CachedProfilesData/__default__profile__/extensions.builtin.cache')
+[2470 ms] [20:35:07] Started initializing default profile extensions in extensions installation folder. file:///home/usr_vscode/.vscode-server/extensions
+[2484 ms] [20:35:08] ComputeTargetPlatform: linux-arm64
+[2507 ms] @devcontainers/cli 0.80.1. Node.js v22.21.1. darwin 25.2.0 arm64.
+[2507 ms] Start: Run: docker buildx version
+[2508 ms] [20:35:08] Completed initializing default profile extensions in extensions installation folder. file:///home/usr_vscode/.vscode-server/extensions
+[2520 ms] [20:35:08] ComputeTargetPlatform: linux-arm64
+[2576 ms] github.com/docker/buildx v0.29.1 a32761aeb3debd39be1eca514af3693af0db334b
+[2576 ms] 
+[2576 ms] Start: Run: docker -v
+[2587 ms] Start: Run: git rev-parse --show-cdup
+[2597 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[2609 ms] Start: Inspecting container
+[2609 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[2624 ms] Start: Run in container: /bin/sh
+[2626 ms] Start: Run in container: uname -m
+[2672 ms] aarch64
+[2672 ms] 
+[2672 ms] Start: Run in container: (cat /etc/os-release || cat /usr/lib/os-release) 2>/dev/null
+[2673 ms] PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.2
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+[2674 ms] 
+[2674 ms] Start: Run in container:  (command -v getent >/dev/null 2>&1 && getent passwd 'usr_vscode' || grep -E '^usr_vscode|^[^:]*:[^:]*:usr_vscode:' /etc/passwd || true)
+[2675 ms] userEnvProbe: loginInteractiveShell (default)
+[2676 ms] Start: Run in container: test -f '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[2676 ms] 
+[2676 ms] 
+[2676 ms] Exit code 1
+[2677 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.onCreateCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.onCreateCommandMarker'
+[2677 ms] userEnvProbe: not found in cache
+[2677 ms] userEnvProbe shell: /bin/zsh
+[2677 ms] Start: Run in container: /bin/zsh -lic echo -n a091a1a0-37d7-4037-8f7e-22ebf011fa7f; cat /proc/self/environ; echo -n a091a1a0-37d7-4037-8f7e-22ebf011fa7f
+[2679 ms] 
+[2680 ms] 
+Running the onCreateCommand from devcontainer.json...
+
+[2989 ms] userEnvProbe PATHs:
+Probe:     '/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin'
+Container: '/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin'
+[2989 ms] Start: Run in container: mkdir -p '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038' && cat > '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json' << 'envJSON'
+[2990 ms] 
+[2991 ms] 
+[3037 ms] userEnvProbe PATHs:
+Probe:     '/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin'
+Container: '/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin'
+[3037 ms] Start: Run in container: mkdir -p '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038' && cat > '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json' << 'envJSON'
+[3039 ms] 
+[3039 ms] 
+[3039 ms] Start: Run in container: /bin/sh -c /usr/local/bin/run-lifecycle-scripts.sh onCreateCommand
+🚀 --- 开始执行 onCreateCommand 用户自定义脚本: /usr/local/etc/lifecycle-scripts.d/01-onCreateCommand.d ---
+run-parts: executing /usr/local/etc/lifecycle-scripts.d/01-onCreateCommand.d/00-setup-container
+↘️  容器首次创建！
+✔️ --- onCreateCommand 用户自定义脚本执行完毕 (/usr/local/etc/lifecycle-scripts.d/01-onCreateCommand.d) ---
+
+[3074 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.updateContentCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.updateContentCommandMarker'
+[3075 ms] 
+[3075 ms] 
+Running the updateContentCommand from devcontainer.json...
+
+[3075 ms] Start: Run in container: /bin/sh -c /usr/local/bin/run-lifecycle-scripts.sh updateContentCommand
+🚀 --- 开始执行 updateContentCommand 用户自定义脚本: /usr/local/etc/lifecycle-scripts.d/02-updateContentCommand.d ---
+run-parts: executing /usr/local/etc/lifecycle-scripts.d/02-updateContentCommand.d/00-echo-and-install
+↘️ 容器内容已更新！
+✔️ --- updateContentCommand 用户自定义脚本执行完毕 (/usr/local/etc/lifecycle-scripts.d/02-updateContentCommand.d) ---
+
+[3110 ms] Running Dev Containers CLI:   run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands false --prebuild false --stop-for-personalization true --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28 --dotfiles-target-path ~/dotfiles
+[3110 ms] Start: Run: /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/spec-node/devContainersSpecCLI.js run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands false --prebuild false --stop-for-personalization true --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28 --dotfiles-target-path ~/dotfiles
+[3114 ms] Initializing configuration support...
+[3114 ms] Internal initialization of dev container support package...
+[3118 ms] Port forwarding connection from 51801 > 36335 > 36335 in the container.
+[3118 ms] Start: Run in container: /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/node -e 
+[3198 ms] Port forwarding 51801 > 36335 > 36335 stderr: Connection established
+[3208 ms] [20:35:08] [127.0.0.1][44aa9362][ManagementConnection] New connection established.
+[3212 ms] Port forwarding connection from 51802 > 36335 > 36335 in the container.
+[3212 ms] Start: Run in container: /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/node -e 
+[3226 ms] [20:35:08] Log level changed to info
+[3254 ms] [20:35:08] Installing extensions...
+[3271 ms] @devcontainers/cli 0.80.1. Node.js v22.21.1. darwin 25.2.0 arm64.
+[3271 ms] Start: Run: docker buildx version
+[3275 ms] Port forwarding 51802 > 36335 > 36335 stderr: Connection established
+[3339 ms] github.com/docker/buildx v0.29.1 a32761aeb3debd39be1eca514af3693af0db334b
+[3339 ms] 
+[3339 ms] Start: Run: docker -v
+[3356 ms] Start: Run: git rev-parse --show-cdup
+[3371 ms] [20:35:08] [127.0.0.1][d3ac5807][ExtensionHostConnection] New connection established.
+[3372 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[3378 ms] [20:35:08] [127.0.0.1][d3ac5807][ExtensionHostConnection] <523> Launched Extension Host Process.
+[3397 ms] Start: Inspecting container
+[3397 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[3419 ms] Start: Run in container: /bin/sh
+[3421 ms] Start: Run in container: uname -m
+[3468 ms] aarch64
+[3468 ms] 
+[3468 ms] Start: Run in container: (cat /etc/os-release || cat /usr/lib/os-release) 2>/dev/null
+[3470 ms] PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.2
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+[3470 ms] 
+[3470 ms] Start: Run in container:  (command -v getent >/dev/null 2>&1 && getent passwd 'usr_vscode' || grep -E '^usr_vscode|^[^:]*:[^:]*:usr_vscode:' /etc/passwd || true)
+[3472 ms] userEnvProbe: loginInteractiveShell (default)
+[3473 ms] Start: Run in container: test -f '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[3474 ms] 
+[3474 ms] 
+[3474 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.onCreateCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.onCreateCommandMarker'
+[3478 ms] 
+[3478 ms] 
+[3478 ms] Exit code 1
+[3478 ms] Start: Run in container: cat '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[3479 ms] {
+        "PATH": "/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin",
+        "HOSTNAME": "e8d3b071d6ea",
+        "NODE_OPTIONS": "--max-old-space-size=4096",
+        "TZ": "Asia/Shanghai",
+        "DEBIAN_FRONTEND": "noninteractive",
+        "EDITOR": "nano",
+        "VISUAL": "nano",
+        "DISPLAY": ":1",
+        "HOME": "/home/usr_vscode",
+        "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+        "BUN_INSTALL_CACHE_DIR": "/vscode/bun/install-cache",
+        "BUN_INSTALL_BIN": "/home/usr_vscode/.bun/bin",
+        "XDG_DATA_HOME": "/vscode/xdg-data",
+        "XDG_STATE_HOME": "/vscode/xdg-state",
+        "PNPM_HOME": "/home/usr_vscode/.pnpm",
+        "LOGNAME": "usr_vscode",
+        "SHLVL": "1",
+        "OLDPWD": "/",
+        "TERM": "xterm",
+        "ZSH": "/home/usr_vscode/.oh-my-zsh",
+        "PAGER": "less",
+        "LESS": "-R",
+        "LSCOLORS": "Gxfxcxdxbxegedabagacad",
+        "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.7z=01;31:*.ace=01;31:*.alz=01;31:*.apk=01;31:*.arc=01;31:*.arj=01;31:*.bz=01;31:*.bz2=01;31:*.cab=01;31:*.cpio=01;31:*.crate=01;31:*.deb=01;31:*.drpm=01;31:*.dwm=01;31:*.dz=01;31:*.ear=01;31:*.egg=01;31:*.esd=01;31:*.gz=01;31:*.jar=01;31:*.lha=01;31:*.lrz=01;31:*.lz=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.lzo=01;31:*.pyz=01;31:*.rar=01;31:*.rpm=01;31:*.rz=01;31:*.sar=01;31:*.swm=01;31:*.t7z=01;31:*.tar=01;31:*.taz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tgz=01;31:*.tlz=01;31:*.txz=01;31:*.tz=01;31:*.tzo=01;31:*.tzst=01;31:*.udeb=01;31:*.war=01;31:*.whl=01;31:*.wim=01;31:*.xz=01;31:*.z=01;31:*.zip=01;31:*.zoo=01;31:*.zst=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.jxl=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:",
+        "P9K_SSH": "0",
+        "_P9K_SSH_TTY": "",
+        "_": "/usr/bin/cat"
+}
+[3479 ms] 
+[3479 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.updateContentCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.updateContentCommandMarker'
+[3482 ms] 
+[3482 ms] 
+[3482 ms] Exit code 1
+[3482 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.postCreateCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.postCreateCommandMarker'
+[3484 ms] 
+[3484 ms] 
+Running the postCreateCommand from devcontainer.json...
+
+[3485 ms] Start: Run in container: /bin/sh -c /usr/local/bin/run-lifecycle-scripts.sh postCreateCommand
+🚀 --- 开始执行 postCreateCommand 用户自定义脚本: /usr/local/etc/lifecycle-scripts.d/03-postCreateCommand.d ---
+run-parts: executing /usr/local/etc/lifecycle-scripts.d/03-postCreateCommand.d/00-post-create
+↘️ 容器已创建！
+✔️ --- postCreateCommand 用户自定义脚本执行完毕 (/usr/local/etc/lifecycle-scripts.d/03-postCreateCommand.d) ---
+
+[3541 ms] Start: Run in container: # Test for /home/usr_vscode/.gitconfig and git
+[3543 ms] 
+[3543 ms] 
+[3543 ms] Start: Run in container: # Copy /Users/1-h/.gitconfig to /home/usr_vscode/.gitconfig
+[3545 ms] 
+[3545 ms] 
+[3545 ms] Start: Run in container: # Cleaning up git config
+[3549 ms] 
+[3550 ms] 
+[3550 ms] Start: Run: git config --global --get gpg.ssh.allowedSignersFile
+[3550 ms] Start: Run in container: command -v git >/dev/null 2>&1 && git config --global --replace-all credential.helper '!f() { /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/node /tmp/vscode-remote-containers-2220fcbf-2102-4460-81b5-e5c797b28964.js git-credential-helper $*; }; f' || true
+[3552 ms] 
+[3552 ms] 
+[3552 ms] Running Dev Containers CLI:   run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands false --prebuild false --stop-for-personalization false --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28 --dotfiles-target-path ~/dotfiles
+[3552 ms] Start: Run: /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/spec-node/devContainersSpecCLI.js run-user-commands --user-data-folder /Users/1-h/Library/Application Support/Code/User/globalStorage/ms-vscode-remote.remote-containers/data --container-session-data-folder /tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038 --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --default-user-env-probe loginInteractiveShell --skip-non-blocking-commands false --prebuild false --stop-for-personalization false --remote-env REMOTE_CONTAINERS_IPC=/tmp/vscode-remote-containers-ipc-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env SSH_AUTH_SOCK=/tmp/vscode-ssh-auth-2220fcbf-2102-4460-81b5-e5c797b28964.sock --remote-env REMOTE_CONTAINERS=true --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28 --dotfiles-target-path ~/dotfiles
+[3598 ms] [20:35:09] [127.0.0.1][d3ac5807][ExtensionHostConnection] <523> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[3665 ms] @devcontainers/cli 0.80.1. Node.js v22.21.1. darwin 25.2.0 arm64.
+[3665 ms] Start: Run: docker buildx version
+[3712 ms] github.com/docker/buildx v0.29.1 a32761aeb3debd39be1eca514af3693af0db334b
+[3712 ms] 
+[3712 ms] Start: Run: docker -v
+[3723 ms] Start: Run: git rev-parse --show-cdup
+[3731 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[3742 ms] Start: Inspecting container
+[3742 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[3772 ms] Start: Run in container: /bin/sh
+[3773 ms] Start: Run in container: uname -m
+[3798 ms] aarch64
+[3798 ms] 
+[3798 ms] Start: Run in container: (cat /etc/os-release || cat /usr/lib/os-release) 2>/dev/null
+[3799 ms] PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.2
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+[3799 ms] 
+[3799 ms] Start: Run in container:  (command -v getent >/dev/null 2>&1 && getent passwd 'usr_vscode' || grep -E '^usr_vscode|^[^:]*:[^:]*:usr_vscode:' /etc/passwd || true)
+[3800 ms] userEnvProbe: loginInteractiveShell (default)
+[3800 ms] Start: Run in container: test -f '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[3800 ms] 
+[3800 ms] 
+[3800 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.onCreateCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.onCreateCommandMarker'
+[3801 ms] 
+[3801 ms] 
+[3801 ms] Exit code 1
+[3801 ms] Start: Run in container: cat '/tmp/devcontainers-4074c7b2-d05a-42a5-a2e2-e87d34f834181766320505038/env-loginInteractiveShell.json'
+[3802 ms] {
+        "PATH": "/home/usr_vscode/.pnpm:/home/usr_vscode/.bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bun-node-fallback-bin",
+        "HOSTNAME": "e8d3b071d6ea",
+        "NODE_OPTIONS": "--max-old-space-size=4096",
+        "TZ": "Asia/Shanghai",
+        "DEBIAN_FRONTEND": "noninteractive",
+        "EDITOR": "nano",
+        "VISUAL": "nano",
+        "DISPLAY": ":1",
+        "HOME": "/home/usr_vscode",
+        "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+        "BUN_INSTALL_CACHE_DIR": "/vscode/bun/install-cache",
+        "BUN_INSTALL_BIN": "/home/usr_vscode/.bun/bin",
+        "XDG_DATA_HOME": "/vscode/xdg-data",
+        "XDG_STATE_HOME": "/vscode/xdg-state",
+        "PNPM_HOME": "/home/usr_vscode/.pnpm",
+        "LOGNAME": "usr_vscode",
+        "SHLVL": "1",
+        "OLDPWD": "/",
+        "TERM": "xterm",
+        "ZSH": "/home/usr_vscode/.oh-my-zsh",
+        "PAGER": "less",
+        "LESS": "-R",
+        "LSCOLORS": "Gxfxcxdxbxegedabagacad",
+        "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.7z=01;31:*.ace=01;31:*.alz=01;31:*.apk=01;31:*.arc=01;31:*.arj=01;31:*.bz=01;31:*.bz2=01;31:*.cab=01;31:*.cpio=01;31:*.crate=01;31:*.deb=01;31:*.drpm=01;31:*.dwm=01;31:*.dz=01;31:*.ear=01;31:*.egg=01;31:*.esd=01;31:*.gz=01;31:*.jar=01;31:*.lha=01;31:*.lrz=01;31:*.lz=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.lzo=01;31:*.pyz=01;31:*.rar=01;31:*.rpm=01;31:*.rz=01;31:*.sar=01;31:*.swm=01;31:*.t7z=01;31:*.tar=01;31:*.taz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tgz=01;31:*.tlz=01;31:*.txz=01;31:*.tz=01;31:*.tzo=01;31:*.tzst=01;31:*.udeb=01;31:*.war=01;31:*.whl=01;31:*.wim=01;31:*.xz=01;31:*.z=01;31:*.zip=01;31:*.zoo=01;31:*.zst=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.jxl=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:",
+        "P9K_SSH": "0",
+        "_P9K_SSH_TTY": "",
+        "_": "/usr/bin/cat"
+}
+[3802 ms] 
+[3802 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.updateContentCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.updateContentCommandMarker'
+[3802 ms] 
+[3802 ms] 
+[3802 ms] Exit code 1
+[3803 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.postCreateCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:05.877162083Z}" != '2025-12-21T12:35:05.877162083Z' ] && echo '2025-12-21T12:35:05.877162083Z' > '/home/usr_vscode/.devcontainer/.postCreateCommandMarker'
+[3803 ms] 
+[3803 ms] 
+[3803 ms] Exit code 1
+[3803 ms] Start: Run in container: mkdir -p '/home/usr_vscode/.devcontainer' && CONTENT="$(cat '/home/usr_vscode/.devcontainer/.postStartCommandMarker' 2>/dev/null || echo ENOENT)" && [ "${CONTENT:-2025-12-21T12:35:06.331558103Z}" != '2025-12-21T12:35:06.331558103Z' ] && echo '2025-12-21T12:35:06.331558103Z' > '/home/usr_vscode/.devcontainer/.postStartCommandMarker'
+[3805 ms] 
+[3805 ms] 
+Running the postStartCommand from devcontainer.json...
+
+[3805 ms] Start: Run in container: /bin/sh -c /usr/local/bin/run-lifecycle-scripts.sh postStartCommand
+🚀 --- 开始执行 postStartCommand 用户自定义脚本: /usr/local/etc/lifecycle-scripts.d/04-postStartCommand.d ---
+run-parts: executing /usr/local/etc/lifecycle-scripts.d/04-postStartCommand.d/00-echo
+↘️ 容器启动了！
+✔️ --- postStartCommand 用户自定义脚本执行完毕 (/usr/local/etc/lifecycle-scripts.d/04-postStartCommand.d) ---
+
+Running the postAttachCommand from devcontainer.json...
+
+[3837 ms] Start: Run in container: /bin/sh -c /usr/local/bin/run-lifecycle-scripts.sh postAttachCommand
+🚀 --- 开始执行 postAttachCommand 用户自定义脚本: /usr/local/etc/lifecycle-scripts.d/05-postAttachCommand.d ---
+run-parts: executing /usr/local/etc/lifecycle-scripts.d/05-postAttachCommand.d/00-echo-and-welcome
+↘️ VS Code 已附加到容器！
+🎉 欢迎使用开发容器！祝您编码愉快！
+✔️ --- postAttachCommand 用户自定义脚本执行完毕 (/usr/local/etc/lifecycle-scripts.d/05-postAttachCommand.d) ---
+
+[4331 ms] [20:35:09] Installing extension 'esbenp.prettier-vscode'...
+[4441 ms] [20:35:09] Installing extension 'mads-hartmann.bash-ide-vscode'...
+[20:35:09] Installing extension 'google.gemini-cli-vscode-ide-companion'...
+[4607 ms] [20:35:10] Installing extension 'ms-ceintl.vscode-language-pack-zh-hans'...
+[4611 ms] [20:35:10] Installing extension 'vicanent.gcmp'...
+[4612 ms] [20:35:10] Installing extension 'dbaeumer.vscode-eslint'...
+[4615 ms] [20:35:10] Installing extension 'anthropic.claude-code'...
+[4831 ms] [20:35:10] Installing extension 'github.copilot-chat'...
+[4833 ms] [20:35:10] Getting Manifest... esbenp.prettier-vscode
+[20:35:10] Getting Manifest... mads-hartmann.bash-ide-vscode
+[20:35:10] Getting Manifest... google.gemini-cli-vscode-ide-companion
+[20:35:10] Getting Manifest... vicanent.gcmp
+[20:35:10] Getting Manifest... dbaeumer.vscode-eslint
+[4834 ms] [20:35:10] Getting Manifest... anthropic.claude-code
+[4834 ms] [20:35:10] Getting Manifest... github.copilot-chat
+[5103 ms] [20:35:10] Installing extension: google.gemini-cli-vscode-ide-companion {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[20:35:10] Installing extension: mads-hartmann.bash-ide-vscode {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5103 ms] [20:35:10] Installing extension: vicanent.gcmp {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5104 ms] [20:35:10] Installing extension: dbaeumer.vscode-eslint {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5104 ms] [20:35:10] Installing extension: anthropic.claude-code {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5105 ms] [20:35:10] Installing extension: esbenp.prettier-vscode {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[20:35:10] Installing extension: github.copilot-chat {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5150 ms] [20:35:10] Getting Manifest... ms-ceintl.vscode-language-pack-zh-hans
+[5353 ms] [20:35:10] Installing extension: ms-ceintl.vscode-language-pack-zh-hans {
+  isMachineScoped: true,
+  isBuiltin: false,
+  installPreReleaseVersion: undefined,
+  installGivenVersion: false,
+  isApplicationScoped: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[5427 ms] [20:35:10] Getting Manifest... github.copilot-chat
+[5436 ms] [20:35:10] Getting Manifest... github.copilot
+[5880 ms] [20:35:11] Getting Manifest... github.copilot
+[6067 ms] [20:35:11] Installing extension: github.copilot {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  isBuiltin: false,
+  installGivenVersion: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' },
+  pinned: false,
+  context: { dependecyOrPackExtensionInstall: true }
+}
+[7236 ms] [20:35:12] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/97475cc2-6d12-498d-b4c2-fdfa3c276e3d
+[7251 ms] [20:35:12] Installing extension: github.copilot-chat {
+  isApplicationScoped: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[7450 ms] [20:35:12] Getting Manifest... github.copilot
+[7730 ms] [20:35:13] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/8c95f915-c45f-473b-8791-d6e9996539a1
+[7733 ms] [20:35:13] Installing extension: github.copilot {
+  isApplicationScoped: false,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[7936 ms] [20:35:13] Getting Manifest... github.copilot-chat
+[8399 ms] [20:35:13] Waiting for already requested installing extension github.copilot github.copilot-chat file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[8917 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2: github.copilot-chat
+[8927 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2
+[8939 ms] [20:35:14] Extension signature verification result for dbaeumer.vscode-eslint: Success. Internal Code: 0. Executed: true. Duration: 1422ms.
+[8957 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/dbaeumer.vscode-eslint-3.0.20: dbaeumer.vscode-eslint
+[8960 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/dbaeumer.vscode-eslint-3.0.20
+[8961 ms] [20:35:14] Extension signature verification result for github.copilot-chat: Success. Internal Code: 0. Executed: true. Duration: 266ms.
+[9055 ms] [20:35:14] Extension signature verification result for google.gemini-cli-vscode-ide-companion: Success. Internal Code: 0. Executed: true. Duration: 966ms.
+[9068 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/google.gemini-cli-vscode-ide-companion-0.20.0: google.gemini-cli-vscode-ide-companion
+[9073 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/google.gemini-cli-vscode-ide-companion-0.20.0
+[9155 ms] [20:35:14] Extension signature verification result for vicanent.gcmp: Success. Internal Code: 0. Executed: true. Duration: 910ms.
+[9268 ms] [20:35:14] Waiting for already requested installing extension github.copilot-chat github.copilot file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[9283 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/vicanent.gcmp-0.15.17: vicanent.gcmp
+[9284 ms] [20:35:14] Extension signature verification result for ms-ceintl.vscode-language-pack-zh-hans: Success. Internal Code: 0. Executed: true. Duration: 2146ms.
+[9288 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/vicanent.gcmp-0.15.17
+[9294 ms] [20:35:14] Extension signature verification result for esbenp.prettier-vscode: Success. Internal Code: 0. Executed: true. Duration: 896ms.
+[9326 ms] [20:35:14] Extension signature verification result for mads-hartmann.bash-ide-vscode: Success. Internal Code: 0. Executed: true. Duration: 905ms.
+[9365 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.107.2025121009: ms-ceintl.vscode-language-pack-zh-hans
+[9369 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.107.2025121009
+[9377 ms] [20:35:14] Adding language packs from the extension ms-ceintl.vscode-language-pack-zh-hans
+[9388 ms] [20:35:14] Extension installed successfully: ms-ceintl.vscode-language-pack-zh-hans file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[9388 ms] [20:35:14] Extension 'ms-ceintl.vscode-language-pack-zh-hans' v1.107.2025121009 was successfully installed.
+[9450 ms] [20:35:14] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/esbenp.prettier-vscode-11.0.2: esbenp.prettier-vscode
+[9459 ms] [20:35:14] Renamed to /home/usr_vscode/.vscode-server/extensions/esbenp.prettier-vscode-11.0.2
+[9545 ms] Port forwarding connection from 51867 > 36335 > 36335 in the container.
+[9547 ms] Start: Run in container: /home/usr_vscode/.vscode-server/bin/994fd12f8d3a5aa16f17d42c041e5809167e845a/node -e 
+[9617 ms] Port forwarding 51867 > 36335 > 36335 stderr: Connection established
+[10198 ms] [20:35:15] Extension signature verification result for github.copilot: Success. Internal Code: 0. Executed: true. Duration: 648ms.
+[10448 ms] [20:35:15] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0: github.copilot
+[10541 ms] [20:35:16] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0
+[10692 ms] [20:35:16] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/mads-hartmann.bash-ide-vscode-1.43.0: mads-hartmann.bash-ide-vscode
+[10733 ms] [20:35:16] Renamed to /home/usr_vscode/.vscode-server/extensions/mads-hartmann.bash-ide-vscode-1.43.0
+[10797 ms] [20:35:16] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0: github.copilot
+[10802 ms] [20:35:16] Rename failed because of ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'. Deleted from extracted location Br {
+  scheme: 'file',
+  authority: '',
+  path: '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b',
+  query: '',
+  fragment: '',
+  _formatted: null,
+  _fsPath: '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b'
+}
+[10806 ms] [20:35:16] Error while installing the extension github.copilot ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0' file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[11808 ms] rejected promise not handled within 1 second: Rename: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+stack trace: Error: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+    at async Object.rename (node:internal/fs/promises:786:10)
+    at async Object.VC (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:27:92827)
+    at async Mf.G (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:25528)
+    at async Mf.extractUserExtension (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:21998)
+    at async Il.Bb (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:15506)
+[11808 ms] [20:35:17] Error: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+    at async Object.rename (node:internal/fs/promises:786:10)
+    at async Object.VC (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:27:92827)
+    at async Mf.G (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:25528)
+    at async Mf.extractUserExtension (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:21998)
+    at async Il.Bb (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:55:15506) {
+  code: 'Rename',
+  name: 'Rename'
+}
+[12298 ms] Start: Run in container: mkdir -p '/vscode/vscode-server/extensionsCache' && cd '/home/usr_vscode/.vscode-server/extensionsCache' && cp '8c95f915-c45f-473b-8791-d6e9996539a1' '97475cc2-6d12-498d-b4c2-fdfa3c276e3d' 'dbaeumer.vscode-eslint-3.0.20' 'esbenp.prettier-vscode-11.0.2' 'github.copilot-chat-0.35.2' 'google.gemini-cli-vscode-ide-companion-0.20.0' 'mads-hartmann.bash-ide-vscode-1.43.0' 'ms-ceintl.vscode-language-pack-zh-hans-1.107.2025121009' 'vicanent.gcmp-0.15.17' '/vscode/vscode-server/extensionsCache'
+[12327 ms] 
+[12327 ms] 
+[12328 ms] Start: Run in container: cd '/vscode/vscode-server/extensionsCache' && ls -t | tail -n +500 | xargs rm -f
+[12329 ms] 
+[12330 ms] 
+[12857 ms] [20:35:18] Extension signature verification result for anthropic.claude-code: Success. Internal Code: 0. Executed: true. Duration: 293ms.
+[13871 ms] [20:35:19] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/anthropic.claude-code-2.0.75-linux-arm64: anthropic.claude-code
+[13988 ms] [20:35:19] Renamed to /home/usr_vscode/.vscode-server/extensions/anthropic.claude-code-2.0.75-linux-arm64
+[13998 ms] [20:35:19] Rollback: Uninstalled extension vicanent.gcmp
+[13999 ms] [20:35:19] Marked extension as removed vicanent.gcmp-0.15.17
+[14000 ms] [20:35:19] Rollback: Uninstalled extension github.copilot-chat
+[20:35:19] Extension installed successfully: dbaeumer.vscode-eslint file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[14000 ms] [20:35:19] Extension installed successfully: google.gemini-cli-vscode-ide-companion file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20:35:19] Extension installed successfully: esbenp.prettier-vscode file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20:35:19] Extension installed successfully: mads-hartmann.bash-ide-vscode file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20:35:19] Extension installed successfully: anthropic.claude-code file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[14001 ms] [20:35:19] Finished waiting for already requested installing extension github.copilot github.copilot-chat file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20:35:19] Finished waiting for already requested installing extension github.copilot-chat github.copilot file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20:35:19] Extension 'dbaeumer.vscode-eslint' v3.0.20 was successfully installed.
+[14001 ms] [20:35:19] Extension 'google.gemini-cli-vscode-ide-companion' v0.20.0 was successfully installed.
+[20:35:19] Extension 'esbenp.prettier-vscode' v11.0.2 was successfully installed.
+[20:35:19] Extension 'mads-hartmann.bash-ide-vscode' v1.43.0 was successfully installed.
+[20:35:19] Extension 'anthropic.claude-code' v2.0.75 was successfully installed.
+[20:35:19] Extension installed successfully: github.copilot-chat file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[14001 ms] [20:35:19] Error while installing extension github.copilot-chat: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+[20:35:19] Error while installing extension vicanent.gcmp: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+[20:35:19] Error while installing extension github.copilot: ENOTEMPTY: directory not empty, rename '/home/usr_vscode/.vscode-server/extensions/.21bbc20c-5256-4376-aa61-840a3e07370b' -> '/home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0'
+[14002 ms] [20:35:19] Extension installed successfully: github.copilot file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[14003 ms] [20:35:19] Error: Failed Installing Extensions: github.copilot-chat, vicanent.gcmp, github.copilot
+    at _l.installExtensions (file:///vscode/vscode-server/bin/linux-arm64/994fd12f8d3a5aa16f17d42c041e5809167e845a/out/server-main.js:67:36448)
+[14008 ms] [20:35:19] Relaying the following extensions to install later: github.copilot-chat, vicanent.gcmp
+[14008 ms] [20:35:19] Marked extension as removed github.copilot-chat-0.35.2
+[14015 ms] [20:35:19] Deleted marked for removal extension from disk github.copilot-chat /home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2
+[20:35:19] Deleted marked for removal extension from disk vicanent.gcmp /home/usr_vscode/.vscode-server/extensions/vicanent.gcmp-0.15.17
+[14115 ms] [20:35:19] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+[19983 ms] [20:35:25] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/841862d3-2e5b-4e6f-9e12-e2e5152532b7
+[19991 ms] [20:35:25] Installing extension: github.copilot-chat {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  downloadExtensionsLocally: true,
+  donotVerifySignature: false,
+  donotIncludePackAndDependencies: true,
+  keepExisting: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[19991 ms] [20:35:25] Installing the extension without checking dependencies and pack github.copilot-chat
+[20076 ms] Port forwarding 51867 > 36335 > 36335 stderr: Remote close
+[20105 ms] Port forwarding 51867 > 36335 > 36335 terminated with code 0 and signal null.
+[20284 ms] [20:35:25] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2: github.copilot-chat
+[20329 ms] [20:35:25] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2
+[20352 ms] [20:35:25] Extension installed successfully: github.copilot-chat file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[20661 ms] [20:35:26] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/c48e126d-d706-469b-9a1c-15fba2908ca6
+[20667 ms] [20:35:26] Installing extension: github.copilot {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  downloadExtensionsLocally: true,
+  donotVerifySignature: false,
+  donotIncludePackAndDependencies: true,
+  keepExisting: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[20:35:26] Installing the extension without checking dependencies and pack github.copilot
+[20677 ms] [20:35:26] Deleted existing extension from disk github.copilot /home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0
+[20975 ms] [20:35:26] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0: github.copilot
+[20982 ms] [20:35:26] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0
+[20993 ms] [20:35:26] Extension installed successfully: github.copilot file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[23157 ms] [20:35:28] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/88ba1f35-09e8-48a3-a747-86fed1cb7957
+[23160 ms] [20:35:28] Installing extension: github.copilot {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  downloadExtensionsLocally: true,
+  donotVerifySignature: false,
+  donotIncludePackAndDependencies: true,
+  keepExisting: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[20:35:28] Installing the extension without checking dependencies and pack github.copilot
+[23174 ms] [20:35:28] Deleted existing extension from disk github.copilot /home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0
+[23489 ms] [20:35:29] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0: github.copilot
+[23500 ms] [20:35:29] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-1.388.0
+[23509 ms] [20:35:29] Extension installed successfully: github.copilot file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[24487 ms] [20:35:30] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/599a9837-209f-40a3-b6a2-41c97f4fd40f
+[24493 ms] [20:35:30] Installing extension: github.copilot-chat {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  downloadExtensionsLocally: true,
+  donotVerifySignature: false,
+  donotIncludePackAndDependencies: true,
+  keepExisting: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[20:35:30] Installing the extension without checking dependencies and pack github.copilot-chat
+[24504 ms] [20:35:30] Deleted existing extension from disk github.copilot-chat /home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2
+[24755 ms] [20:35:30] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2: github.copilot-chat
+[24832 ms] [20:35:30] Renamed to /home/usr_vscode/.vscode-server/extensions/github.copilot-chat-0.35.2
+[24845 ms] [20:35:30] Extension installed successfully: github.copilot-chat file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[27941 ms] [20:35:33] Downloaded extension to file:///home/usr_vscode/.vscode-server/extensionsCache/098634a7-ab79-4952-8352-0f25ca2c72ba
+[27942 ms] [20:35:33] Installing extension: vicanent.gcmp {
+  isMachineScoped: false,
+  installPreReleaseVersion: false,
+  isApplicationScoped: true,
+  downloadExtensionsLocally: true,
+  donotVerifySignature: false,
+  donotIncludePackAndDependencies: true,
+  keepExisting: true,
+  profileLocation: Br {
+    scheme: 'file',
+    authority: '',
+    path: '/home/usr_vscode/.vscode-server/extensions/extensions.json',
+    query: '',
+    fragment: '',
+    _formatted: 'file:///home/usr_vscode/.vscode-server/extensions/extensions.json',
+    _fsPath: '/home/usr_vscode/.vscode-server/extensions/extensions.json'
+  },
+  productVersion: { version: '1.107.1', date: '2025-12-17T14:15:14.850Z' }
+}
+[27942 ms] [20:35:33] Installing the extension without checking dependencies and pack vicanent.gcmp
+[28069 ms] [20:35:33] Extracted extension to file:///home/usr_vscode/.vscode-server/extensions/vicanent.gcmp-0.15.17: vicanent.gcmp
+[28075 ms] [20:35:33] Renamed to /home/usr_vscode/.vscode-server/extensions/vicanent.gcmp-0.15.17
+[28085 ms] [20:35:33] Extension installed successfully: vicanent.gcmp file:///home/usr_vscode/.vscode-server/extensions/extensions.json
+[32274 ms] Running Dev Containers CLI:   read-configuration --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28
+[32274 ms] Start: Run: /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Users/1-h/.vscode/extensions/ms-vscode-remote.remote-containers-0.434.0/dist/spec-node/devContainersSpecCLI.js read-configuration --workspace-folder /Users/1-h/workspaces/h-devcontainers --id-label devcontainer.local_folder=/Users/1-h/workspaces/h-devcontainers --id-label devcontainer.config_file=/Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --container-id e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5 --log-level debug --log-format json --config /Users/1-h/workspaces/h-devcontainers/.devcontainer/devcontainer.json --mount-workspace-git-root --terminal-columns 126 --terminal-rows 28
+[32408 ms] @devcontainers/cli 0.80.1. Node.js v22.21.1. darwin 25.2.0 arm64.
+[32408 ms] Start: Run: git rev-parse --show-cdup
+[32425 ms] Start: Run: docker inspect --type container e8d3b071d6ea84e8c7c3b6049129142c9d904a28adcdf1d9acf60e6cfe9826e5
+[72335 ms] Start: Run in container: mkdir -p '/vscode/vscode-server/extensionsCache' && cd '/home/usr_vscode/.vscode-server/extensionsCache' && cp 'anthropic.claude-code-2.0.75-linux-arm64' '/vscode/vscode-server/extensionsCache'
+[72395 ms] 
+[72396 ms] 
+[72396 ms] Start: Run in container: cd '/vscode/vscode-server/extensionsCache' && ls -t | tail -n +500 | xargs rm -f
+[72398 ms] 
+[72398 ms] 
+[150333 ms] Start: Run in container: cat /proc/1173/environ
+[155308 ms] Start: Run in container: cat /proc/1435/environ
