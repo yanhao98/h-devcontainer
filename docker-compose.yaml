@@ -2,6 +2,7 @@
 services:
   devcontainer:
     image: ghcr.io/yanhao98/h-devcontainer:main
+    init: true
     build:
       context: .devcontainer
       dockerfile: Dockerfile.base
