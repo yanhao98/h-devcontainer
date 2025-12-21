@@ -7,7 +7,11 @@ h-setup-pnpm-bin
 h-setup-ai-claude-code --config
 h-setup-ai-gemini-cli --config
 
+h-setup-chromium
+h-setup-desktop-lite
+
 h-install-node-modules
 
-h-setup-desktop-lite
-h-setup-chromium
+echo "-----------------------------"
+echo "开发容器已启动并配置完成！"
+echo "-----------------------------"
