@@ -24,6 +24,10 @@ curl -sSL https://raw.githubusercontent.com/devcontainers/features/main/src/desk
   sed 's#unzip /tmp#unzip -q /tmp#g' | \
   sudo env INSTALL_NOVNC="false" VNC_RESOLUTION="1680x1050x16" bash
 
+# TigerVNC 出于安全考虑，拒绝在没有密码保护的情况下允许外部连接（非 localhost）。
+# 允许非本地连接 VNC，并添加不安全连接确认标志
+sudo sed -i 's/ -localhost / -localhost no --I-KNOW-THIS-IS-INSECURE /g' /usr/local/share/desktop-init.sh
+
 # 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
 # xrandr --output VNC-0 --mode 1920x1200
 

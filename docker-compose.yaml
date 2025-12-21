@@ -1,0 +1,33 @@
+# docker compose up -d; docker compose logs -f
+services:
+  devcontainer:
+    image: ghcr.io/yanhao98/h-devcontainer:main
+    build:
+      context: .devcontainer
+      dockerfile: Dockerfile.base
+    container_name: h-devcontainer
+    hostname: h-devcontainer
+    user: usr_vscode
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=4096
+      - TZ=Asia/Shanghai
+    volumes:
+      # 挂载当前工作目录
+      - .:/workspaces/h-devcontainers:delegated
+      # 挂载 vscode 扩展缓存卷 (外部卷)
+      - vscode:/vscode
+      - h-devcontainers-node_modules:/workspaces/h-devcontainers/node_modules
+      - ./docker-compose-entrypoint.sh:/docker-compose-entrypoint.sh:delegated
+    ports:
+      # 开发服务器端口
+      - "1116:1116"
+      # VNC 端口
+      - "127.0.0.1:5901:5901"
+      - "127.0.0.1:6080:6080"
+    command: /bin/bash /docker-compose-entrypoint.sh
+    restart: unless-stopped
+
+volumes:
+  h-devcontainers-node_modules:
+  vscode:
+    external: true

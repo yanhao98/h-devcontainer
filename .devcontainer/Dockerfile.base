@@ -92,3 +92,5 @@ ENV XDG_STATE_HOME="/vscode/xdg-state"
 
 ENV PNPM_HOME="${HOME}/.pnpm"
 ENV PATH="${PNPM_HOME}:${PATH}"
+
+CMD [ "sleep", "infinity" ]
