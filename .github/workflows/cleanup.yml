@@ -1,0 +1,18 @@
+name: Delete old images
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # 每周日午夜运行一次
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  delete-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete untagged images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'h-devcontainer'
+          package-type: 'container'
+          min-versions-to-keep: 5 # 保留最近的 5 个版本
+          delete-only-untagged: true # 只删除没打标签的（Untagged）
