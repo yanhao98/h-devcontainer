@@ -118,14 +118,7 @@ RUN set -eux; \
 RUN cat <<'EOF' >> /home/usr_vscode/.zshrc
 
 # >>>>> VS Code Shell Integration
-if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    if command -v code-insiders >/dev/null 2>&1; then
-        alias code='code-insiders'
-        . "$(code-insiders --locate-shell-integration-path zsh)"
-    elif command -v code >/dev/null 2>&1; then
-        . "$(code --locate-shell-integration-path zsh)"
-    fi
-fi
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 # <<<<< VS Code Shell Integration
 
 # >>>>> 自定义别名
