@@ -86,6 +86,7 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 #     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # >>>>> 创建用户和配置 sudo
+# https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user
 RUN groupadd --gid 1000 usr_vscode \
     && useradd --uid 1000 --gid usr_vscode --shell /bin/zsh --create-home usr_vscode \
     && echo "usr_vscode ALL=(root) NOPASSWD: ALL" > /etc/sudoers.d/usr_vscode_user_config \
