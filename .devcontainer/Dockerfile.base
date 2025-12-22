@@ -150,6 +150,6 @@ ENV LANG="zh_CN.UTF-8" \
     INSTALL_NOVNC="false" \
     VNC_RESOLUTION="1680x1050x16" \
     NODE_OPTIONS="--max-old-space-size=4096" \
-    TZ="${localEnv:TZ:Asia/Shanghai}"
+    TZ="TZ:Asia/Shanghai"
 
 CMD [ "sleep", "infinity" ]

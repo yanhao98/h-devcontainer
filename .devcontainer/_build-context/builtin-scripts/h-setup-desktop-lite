@@ -32,4 +32,7 @@ sudo sed -i 's/ -localhost / -localhost no --I-KNOW-THIS-IS-INSECURE /g' /usr/lo
 # xrandr --output VNC-0 --mode 1920x1200
 
 # 启动桌面进程
-/usr/local/share/desktop-init.sh
+nohup setsid /usr/local/share/desktop-init.sh >/dev/null 2>&1 &
+# - nohup: 忽略 SIGHUP 信号
+# - setsid: 创建新的 session，进程成为 session leader，完全脱离原终端/进程组
+# 另外，keepRunningInBackground() 函数内部的 ( ... & ...) 也可能需要类似处理，但先试试改外层脚本，看是否足够。
