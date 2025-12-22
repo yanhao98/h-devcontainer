@@ -33,10 +33,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        // >>>>>
         "mads-hartmann.bash-ide-vscode",
         "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "kilocode.kilo-code"
       ],
       "settings": {
         "editor.formatOnSave": true,
