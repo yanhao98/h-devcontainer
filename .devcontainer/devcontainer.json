@@ -8,7 +8,7 @@
     // "--cap-add=NET_ADMIN",
     // "--cap-add=NET_RAW",
     // "--add-host=host.docker.internal:host-gateway",
-    // "--env-file=${localWorkspaceFolder}/.devcontainer/.env",
+    "--hostname=devcontainer-host",
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
   "forwardPorts": [ /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
@@ -23,11 +23,6 @@
   },
   "remoteEnv": {},
   "containerEnv": {
-    "LANG": "zh_CN.UTF-8",
-    "LANGUAGE": "zh_CN.UTF-8:zh_CN:zh",
-    "INSTALL_NOVNC": "false",
-    "VNC_RESOLUTION": "1680x1050x16",
-    "NODE_OPTIONS": "--max-old-space-size=4096",
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
   "customizations": {

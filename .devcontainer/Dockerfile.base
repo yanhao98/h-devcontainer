@@ -114,7 +114,7 @@ RUN set -eux; \
     -x && \
     sed -i "/export LANG='en_US.UTF-8'/d;/export LANGUAGE='en_US:en'/d;/export LC_ALL='en_US.UTF-8'/d" $HOME/.zshrc
 
-# >>>>> zsh 配置
+# >>>>>>>>>>>>>>>>>>>> zsh 配置
 RUN cat <<'EOF' >> /home/usr_vscode/.zshrc
 
 # >>>>> VS Code Shell Integration
@@ -125,6 +125,7 @@ RUN cat <<'EOF' >> /home/usr_vscode/.zshrc
 alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf node_modules/*; unsetopt rm_star_silent'
 # <<<<< 自定义别名
 EOF
+# <<<<<<<<<<<<<<<<<<<< zsh 配置
 
 # >>>>> 复制内置脚本到 /usr/local/bin
 COPY --chmod=755 _build-context/builtin-scripts/* /usr/local/bin/
@@ -137,10 +138,18 @@ ENV PATH="${PATH}:/usr/local/bun-node-fallback-bin"
 
 # ENV XDG_CACHE_HOME="/vscode/xdg-cache"
 # ENV XDG_CONFIG_HOME="/vscode/xdg-config"
-ENV XDG_DATA_HOME="/vscode/xdg-data"
-ENV XDG_STATE_HOME="/vscode/xdg-state"
+ENV XDG_DATA_HOME="/vscode/xdg-data" \
+    XDG_STATE_HOME="/vscode/xdg-state"
 
 ENV PNPM_HOME="${HOME}/.pnpm"
 ENV PATH="${PNPM_HOME}:${PATH}"
+
+ENV LANG="zh_CN.UTF-8" \
+    # 这个值是一个由高到低的优先级列表，系统会从左往右匹配，直到找到程序支持的语言包为止
+    LANGUAGE="zh_CN.UTF-8:zh_CN:zh" \
+    INSTALL_NOVNC="false" \
+    VNC_RESOLUTION="1680x1050x16" \
+    NODE_OPTIONS="--max-old-space-size=4096" \
+    TZ="${localEnv:TZ:Asia/Shanghai}"
 
 CMD [ "sleep", "infinity" ]
