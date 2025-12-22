@@ -21,16 +21,16 @@
 | delegated         | 容器 (Container)   | 写入速度极快，读取一般 | 构建任务、日志生成、大规模文件处理   | 容器崩溃时，未同步回主机的少量数据可能丢失 |
 
 ## 参考资料
-- https://code.visualstudio.com/docs/devcontainers/containers
+
 - https://containers.dev/implementors/json_reference/
+- https://code.visualstudio.com/docs/devcontainers/containers
 
 - https://github.com/devcontainers/features
 - https://github.com/devcontainers/feature-starter
 
-- https://bun.sh/docs/runtime/nodejs-compat
-
-- https://github.com/Kilo-Org/kilocode/blob/3cd45ec127d5a86c4c103fc4684545cf6aa3e30c/cli/Dockerfile
+- https://github.com/Kilo-Org/kilocode/blob/19fd3f45b4d4fed80824b0992129becf2d636961/cli/Dockerfile
 - https://code.claude.com/docs/zh-CN/devcontainer
+  - https://github.com/anthropics/claude-code/blob/d213a74fc8e3b6efded52729196e0c2d4c3abb3e/.devcontainer/Dockerfile
 - https://github.com/google-gemini/gemini-cli/blob/dadd606c0de07de4e372304eb93839ae12ec3465/.gcp/Dockerfile.gemini-code-builder
 
 ## 已知问题与解决方案
@@ -38,6 +38,9 @@
 ### JavaScript 调试器的 autoAttachFilter 问题
 
 在 Dev Container 中使用 JavaScript 调试器时，`autoAttachFilter` 设置存在以下问题：
+
+<details>
+<summary>问题详情与解决方案</summary>
 
 **问题描述：**
 
@@ -58,7 +61,13 @@
 "debug.javascript.autoAttachFilter": "disabled"
 ```
 
+</details>
+
 **相关参考：**
 
 - https://stackoverflow.com/questions/75708866/vscode-dev-container-fails-to-load-ms-vscode-js-debug-extension-correctly
 - https://davidwesst.com/blog/missing-bootloader-in-vscode-devcontainer/
+
+## 一些资料
+
+- https://github.com/agent-infra/sandbox

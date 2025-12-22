@@ -3,6 +3,7 @@ set -euo pipefail
 
 # 参考:
 #   https://bun.com/install
+#   https://bun.sh/docs/runtime/nodejs-compat
 #   https://github.com/oven-sh/bun/blob/277fc558e2039e3ab25ecebecc5a3f04c5c3199a/dockerhub/debian-slim/Dockerfile
 
 # 验证 zip 文件的校验和
