@@ -33,5 +33,3 @@ sudo sed -i 's/ -localhost / -localhost no --I-KNOW-THIS-IS-INSECURE /g' /usr/lo
 
 # 启动桌面进程
 /usr/local/share/desktop-init.sh
-/usr/local/share/desktop-init.sh
-/usr/local/share/desktop-init.sh
