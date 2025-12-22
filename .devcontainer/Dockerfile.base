@@ -152,4 +152,9 @@ ENV LANG="zh_CN.UTF-8" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="TZ:Asia/Shanghai"
 
-CMD [ "sleep", "infinity" ]
+# 设置入口点为 /bin/sh
+ENTRYPOINT ["/bin/sh"]
+
+# 设置默认执行的命令
+# 注意：这里使用了 -c 来执行字符串脚本，"-" 是为了给 $@ 占位
+CMD ["-c", "echo Container started\ntrap \"exit 0\" 15\n\nexec \"$@\"\nwhile sleep 1 & wait $!; do :; done", "-"]
