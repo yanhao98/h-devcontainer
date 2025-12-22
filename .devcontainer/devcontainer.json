@@ -34,13 +34,13 @@
     "vscode": {
       "extensions": [
         "mads-hartmann.bash-ide-vscode",
-        "esbenp.prettier-vscode",
+        "prettier.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "kilocode.kilo-code"
       ],
       "settings": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "prettier.prettier-vscode",
         "chat.extensionUnification.enabled": true,
         "chat.tools.terminal.autoApprove": {
           "/.*/": true,
