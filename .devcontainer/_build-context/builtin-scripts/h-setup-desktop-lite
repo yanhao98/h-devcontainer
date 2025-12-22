@@ -33,6 +33,7 @@ sudo sed -i 's/ -localhost / -localhost no --I-KNOW-THIS-IS-INSECURE /g' /usr/lo
 
 # 启动桌面进程
 nohup setsid /usr/local/share/desktop-init.sh >/dev/null 2>&1 &
+# postStartCommand 完成后，VS Code 会终止其所有子进程（包括后台启动的 VNC 服务器）。
 # - nohup: 忽略 SIGHUP 信号
 # - setsid: 创建新的 session，进程成为 session leader，完全脱离原终端/进程组
 # 另外，keepRunningInBackground() 函数内部的 ( ... & ...) 也可能需要类似处理，但先试试改外层脚本，看是否足够。
