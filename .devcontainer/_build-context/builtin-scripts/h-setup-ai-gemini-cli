@@ -27,7 +27,7 @@ export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json
 EOF
 fi
 
-local GEMINI_SETTINGS_CONTENT='{
+GEMINI_SETTINGS_CONTENT='{
   "security": {
     "auth": {
       "selectedType": "gemini-api-key"

@@ -22,14 +22,14 @@ fi
 
 mkdir -p /vscode/claude-config
 
-local CLAUDE_JSON_CONTENT='{
+CLAUDE_JSON_CONTENT='{
   "numStartups": 1,
   "theme": "light-daltonized",
   "bypassPermissionsModeAccepted": true,
   "hasCompletedOnboarding": true
 }'
 
-local SETTINGS_JSON_CONTENT='{
+SETTINGS_JSON_CONTENT='{
   "model": "opus",
   "alwaysThinkingEnabled": false,
   "defaultMode": "bypassPermissions"
