@@ -56,8 +56,6 @@
   "updateContentCommand": "/usr/local/bin/run-lifecycle-scripts.sh updateContentCommand",
   "postCreateCommand": "/usr/local/bin/run-lifecycle-scripts.sh postCreateCommand",
   "postStartCommand": "/usr/local/bin/run-lifecycle-scripts.sh postStartCommand",
-  "postAttachCommand": "/usr/local/bin/run-lifecycle-scripts.sh postAttachCommand",
-  // "waitFor": "", // 用户在UI启动时需要等待的命令，以便在后台继续执行。默认值为"updateContentCommand"。
-  "updateRemoteUserUID": true,
-  "remoteUser": "usr_vscode"
+  "postAttachCommand": "/usr/local/bin/run-lifecycle-scripts.sh postAttachCommand"
+  // "waitFor": "", // 用户在UI启动时需要等待的命令，以便在后台继续执行。默认值为"updateContentCommand"
 }

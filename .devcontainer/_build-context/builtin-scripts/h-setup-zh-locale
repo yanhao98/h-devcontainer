@@ -27,7 +27,7 @@ fi
 run_sys locale-gen zh_CN.UTF-8 en_US.UTF-8
 
 zshrc="$HOME/.zshrc"
-mkdir -p "${zshrc:h}"
+mkdir -p "$(dirname "$zshrc")"
 touch "$zshrc"
 
 # 将 locale 相关的环境变量添加到 .zshrc 的最前面
