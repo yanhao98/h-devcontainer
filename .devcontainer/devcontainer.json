@@ -11,8 +11,12 @@
     "--hostname=devcontainer-host",
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
-  "forwardPorts": [1116, 5901 /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */],
-  "portsAttributes": { "1116": { "label": "开发服务器端口", "onAutoForward": "notify" } },
+  "forwardPorts": /* 🖍️ */ [
+    1116, 5901 /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
+  ],
+  "portsAttributes": /* 🖍️ */ {
+    "1116": { "label": "开发服务器端口", "onAutoForward": "notify" }
+  },
   "remoteEnv": {},
   "containerEnv": {
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
@@ -21,21 +25,7 @@
     "vscode": {
       "extensions": ["mads-hartmann.bash-ide-vscode", "prettier.prettier-vscode"],
       "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "prettier.prettier-vscode",
-        "chat.extensionUnification.enabled": true,
-        "chat.tools.terminal.autoApprove": {
-          "/.*/": true,
-          "git push": false
-        },
-        // * 尽管使用了“/.*/”，但有些还是会失败，因为有几个错误的默认值：
-        // * https://github.com/microsoft/vscode/issues/266651#issuecomment-3292581459
-        "chat.tools.terminal.ignoreDefaultAutoApproveRules": true,
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        "tasks": {
-          "version": "2.0.0",
-          "tasks": []
-        },
+        "tasks": { "version": "2.0.0", "tasks": [] },
         "github.copilot.chat.codeGeneration.instructions": [
           {
             "text": "This dev container includes a lightweight Fluxbox based desktop that can be accessed using a VNC viewer or the web. GUI-based commands executed from the built-in VS Code terminal will open on the desktop automatically."
