@@ -9,6 +9,7 @@ h-setup-ai-gemini-cli --config
 
 h-setup-chromium
 h-setup-desktop-lite
+h-gen-wallpaper
 
 h-install-node-modules
 

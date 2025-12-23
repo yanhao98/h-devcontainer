@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+#-------------------------------------------------------------------------------------------------------------
+# 生成包含主机名和工作区名称的壁纸并应用
+#-------------------------------------------------------------------------------------------------------------
+
+# 检查并安装依赖
+# feh: 设置壁纸
+# imagemagick: 生成图片 (convert)
+# x11-utils: 获取屏幕分辨率 (xdpyinfo)
+DEPENDENCIES="feh imagemagick x11-utils"
+MISSING_DEPS=""
+
+for dep in $DEPENDENCIES; do
+    # 简单的命令检查映射
+    cmd="$dep"
+    if [ "$dep" = "imagemagick" ]; then cmd="convert"; fi
+    if [ "$dep" = "x11-utils" ]; then cmd="xdpyinfo"; fi
+    
+    if ! command -v "$cmd" &> /dev/null; then
+        MISSING_DEPS="$MISSING_DEPS $dep"
+    fi
+done
+
+if [ -n "$MISSING_DEPS" ]; then
+    echo "正在安装依赖: $MISSING_DEPS..."
+    # shellcheck disable=SC2086
+    curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- $MISSING_DEPS
+fi
+
+# 配置 (支持环境变量覆盖)
+WALLPAPER_PATH="${WALLPAPER_PATH:-/tmp/wallpaper-info.jpg}"
+BG_COLOR="${BG_COLOR:-#333333}"
+BG_COLOR_END="${BG_COLOR_END:-#000000}"
+TEXT_COLOR="${TEXT_COLOR:-white}"
+SHADOW_COLOR="${SHADOW_COLOR:-rgba(0,0,0,0.5)}"
+FONT="${FONT:-DejaVu-Sans-Bold}"
+DEFAULT_RESOLUTION="1920x1200"
+
+# 获取信息
+HOST_NAME=$(hostname)
+# 尝试获取工作区名称，优先使用环境变量，否则使用当前目录名
+WORKSPACE_NAME="${DEVCONTAINER_WORKSPACE_FOLDER_BASENAME:-$(basename "$PWD")}"
+
+# 自动检测 DISPLAY
+if [ -z "${DISPLAY:-}" ]; then
+    # 查找 /tmp/.X11-unix/ 下的 socket 文件
+    SOCKET=$(ls /tmp/.X11-unix/X* 2>/dev/null | head -n 1 || true)
+    if [ -n "$SOCKET" ]; then
+        # 提取数字，例如 X1 -> :1
+        DISPLAY_NUM=$(echo "$SOCKET" | sed 's|.*/X|:|')
+        export DISPLAY="$DISPLAY_NUM"
+        echo "自动检测到 DISPLAY=$DISPLAY"
+    else
+        # 默认回退
+        export DISPLAY=":1"
+        echo "未检测到 X socket，尝试默认 DISPLAY=$DISPLAY"
+    fi
+fi
+
+# 获取分辨率
+RESOLUTION="$DEFAULT_RESOLUTION"
+if command -v xdpyinfo &> /dev/null; then
+    # 尝试从 xdpyinfo 获取分辨率，如果失败则保持默认
+    DETECTED_RES=$(xdpyinfo 2>/dev/null | awk '/dimensions:/ {print $2}' || true)
+    if [ -n "$DETECTED_RES" ]; then
+        RESOLUTION="$DETECTED_RES"
+    fi
+fi
+
+echo "正在生成壁纸... Host: $HOST_NAME, Workspace: $WORKSPACE_NAME, Resolution: $RESOLUTION"
+
+# 检查字体
+# grep -i 忽略大小写
+AVAILABLE_FONTS=$(convert -list font)
+# 移除 FONT 变量中的空格，以防万一
+FONT=$(echo "$FONT" | tr -d ' ')
+
+# 使用 grep -c 统计匹配行数，避免 pipefail 导致的 141 错误
+if [ "$(echo "$AVAILABLE_FONTS" | grep -i -c "Font: $FONT$")" -eq 0 ]; then
+    echo "警告: 字体 '$FONT' 未找到，尝试使用 'DejaVu-Sans'。"
+    FONT="DejaVu-Sans"
+    if [ "$(echo "$AVAILABLE_FONTS" | grep -i -c "Font: $FONT$")" -eq 0 ]; then
+         # 尝试查找任何可用字体
+         FIRST_FONT=$(echo "$AVAILABLE_FONTS" | grep "Font:" | head -n 1 | awk '{print $2}')
+         if [ -n "$FIRST_FONT" ]; then
+             echo "警告: 字体 '$FONT' 未找到，尝试使用第一个可用字体 '$FIRST_FONT'。"
+             FONT="$FIRST_FONT"
+         else
+             echo "警告: 未找到任何可用字体，尝试使用 'fixed'。"
+             FONT="fixed"
+         fi
+    fi
+fi
+
+# 生成图片
+# -size: 分辨率
+# -gravity NorthEast: 右上角
+# 使用渐变背景和文字阴影
+convert -size "$RESOLUTION" -define gradient:direction=NorthWest gradient:"$BG_COLOR"-"$BG_COLOR_END" \
+    -font "$FONT" \
+    -gravity NorthEast \
+    -pointsize 72 -fill "$SHADOW_COLOR" -annotate +45+55 "Host: $HOST_NAME" \
+    -pointsize 72 -fill "$TEXT_COLOR"   -annotate +50+50 "Host: $HOST_NAME" \
+    -pointsize 36 -fill "$SHADOW_COLOR" -annotate +45+145 "Workspace: $WORKSPACE_NAME" \
+    -pointsize 36 -fill "$TEXT_COLOR"   -annotate +50+140 "Workspace: $WORKSPACE_NAME" \
+    -gravity SouthEast \
+    -pointsize 24 -fill "$SHADOW_COLOR" -annotate +15+15 "Generated: $(date '+%Y-%m-%d %H:%M')" \
+    -pointsize 24 -fill "$TEXT_COLOR"   -annotate +20+20 "Generated: $(date '+%Y-%m-%d %H:%M')" \
+    "$WALLPAPER_PATH"
+
+echo "壁纸已生成: $WALLPAPER_PATH"
+
+# 应用壁纸
+echo "正在应用壁纸到 $DISPLAY..."
+if command -v fbsetbg &> /dev/null; then
+    fbsetbg -f "$WALLPAPER_PATH"
+elif command -v feh &> /dev/null; then
+    feh --bg-scale "$WALLPAPER_PATH"
+else
+    echo "警告: 未找到 fbsetbg 或 feh。壁纸已生成但未应用。"
+    exit 1
+fi
