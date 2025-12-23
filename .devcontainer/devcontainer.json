@@ -11,28 +11,15 @@
     "--hostname=devcontainer-host",
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
-  "forwardPorts": [ /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */
-    1116,
-    5901
-  ],
-  "portsAttributes": {
-    "1116": {
-      "label": "开发服务器端口",
-      "onAutoForward": "notify"
-    }
-  },
+  "forwardPorts": [1116, 5901 /* vscode://settings/remote.localPortHost -> 默认只监听 localhost */],
+  "portsAttributes": { "1116": { "label": "开发服务器端口", "onAutoForward": "notify" } },
   "remoteEnv": {},
   "containerEnv": {
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
   "customizations": {
     "vscode": {
-      "extensions": [
-        "mads-hartmann.bash-ide-vscode",
-        "prettier.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "kilocode.kilo-code"
-      ],
+      "extensions": ["mads-hartmann.bash-ide-vscode", "prettier.prettier-vscode"],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "prettier.prettier-vscode",
