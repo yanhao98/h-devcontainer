@@ -1,5 +1,7 @@
-#!/bin/zsh
-set -euo pipefail
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
 
 # >>>>> Claude Code 工具
 # 参考: https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
