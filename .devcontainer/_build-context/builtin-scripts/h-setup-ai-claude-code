@@ -30,8 +30,13 @@ CLAUDE_JSON_CONTENT='{
 }'
 
 SETTINGS_JSON_CONTENT='{
+  "env": {
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "DISABLE_TELEMETRY": "1",
+    "ANTHROPIC_AUTH_TOKEN": "",
+    "ANTHROPIC_BASE_URL": ""
+  },
   "model": "opus",
-  "alwaysThinkingEnabled": false,
   "defaultMode": "bypassPermissions"
 }'
 
