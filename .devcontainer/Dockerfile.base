@@ -147,7 +147,7 @@ ENV PATH="${PNPM_HOME}:${PATH}"
 ENV LANG="zh_CN.UTF-8" \
     # 这个值是一个由高到低的优先级列表，系统会从左往右匹配，直到找到程序支持的语言包为止
     LANGUAGE="zh_CN.UTF-8:zh_CN:zh" \
-    INSTALL_NOVNC="false" \
+    INSTALL_NOVNC=false \
     VNC_RESOLUTION="1680x1050x16" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
@@ -156,7 +156,7 @@ ENV DEVCONTAINER=true \
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
     DISABLE_TELEMETRY=1 \
     CLAUDE_CONFIG_DIR=/vscode/claude-config \
-    IS_SANDBOX="true"
+    IS_SANDBOX=true
 
 
 # 设置入口点为 /bin/sh
