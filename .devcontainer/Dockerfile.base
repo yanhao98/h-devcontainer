@@ -152,12 +152,11 @@ ENV LANG="zh_CN.UTF-8" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
 
-ENV IS_SANDBOX="true"
-
 ENV DEVCONTAINER=true \
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
     DISABLE_TELEMETRY=1 \
-    CLAUDE_CONFIG_DIR=/vscode/claude-config
+    CLAUDE_CONFIG_DIR=/vscode/claude-config \
+    IS_SANDBOX="true"
 
 
 # 设置入口点为 /bin/sh
