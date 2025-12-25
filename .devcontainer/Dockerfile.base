@@ -152,6 +152,8 @@ ENV LANG="zh_CN.UTF-8" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
 
+ENV IS_SANDBOX="true"
+
 # 设置入口点为 /bin/sh
 ENTRYPOINT ["/bin/sh"]
 
