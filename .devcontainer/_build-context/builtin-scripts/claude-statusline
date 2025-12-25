@@ -1,0 +1,46 @@
+#!/bin/bash
+# https://code.claude.com/docs/zh-CN/statusline
+# 从 stdin 读取 JSON 输入
+input=$(cat)
+
+# 定义颜色
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# 1. 提取模型名称
+MODEL_DISPLAY=$(echo "$input" | jq -r '.model.display_name // "Claude"')
+
+# 2. 提取并格式化当前目录 (相对于项目根目录)
+DIR_DISPLAY=$(echo "$input" | jq -r '
+  .workspace as $ws |
+  $ws.current_dir as $cwd |
+  $ws.project_dir as $pdir |
+  if ($cwd | startswith($pdir)) then
+    ($pdir | split("/") | last) + ($cwd | .[($pdir | length):])
+  else
+    ($cwd | split("/") | last)
+  end
+')
+
+# 3. 提取成本信息 (仅当大于0时显示)
+COST_DISPLAY=$(echo "$input" | jq -r '
+  if (.cost.total_cost_usd // 0) > 0 then
+    " 💸 $" + (.cost.total_cost_usd | tostring)
+  else
+    ""
+  end
+')
+
+# 4. 获取 Git 分支信息
+GIT_BRANCH=""
+if command -v git >/dev/null 2>&1 && git rev-parse --git-dir > /dev/null 2>&1; then
+    BRANCH=$(git branch --show-current 2>/dev/null)
+    if [ -n "$BRANCH" ]; then
+        GIT_BRANCH=" 🌿 $BRANCH"
+    fi
+fi
+
+# 输出格式化后的状态行
+echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}${NC}${GREEN}${COST_DISPLAY}${NC}"

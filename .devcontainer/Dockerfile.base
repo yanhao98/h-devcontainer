@@ -152,6 +152,7 @@ ENV LANG="zh_CN.UTF-8" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
 
+RUN mkdir -p /vscode/claude-config
 ENV DEVCONTAINER=true \
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
     DISABLE_TELEMETRY=1 \

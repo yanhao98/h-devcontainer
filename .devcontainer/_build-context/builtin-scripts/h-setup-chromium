@@ -14,6 +14,9 @@ cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #                           df -h /dev/shm  查看 /dev/shm 分区大小
 #-------------------------------------------------------------------------------------------------------------
 
+# 快速查看所有 chromium 进程：
+# ps -C chromium -o pid,command --width 1000
+
   # "--disable-setuid-sandbox"
 CHROME_ARGS=(
   "--no-sandbox"

@@ -1,0 +1,149 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
+# https://code.claude.com/docs/zh-CN/settings#可用设置
+# https://code.claude.com/docs/zh-CN/statusline
+echo "🚀 正在启动 Claude Code 包装器 ($0)..."
+
+# bun add -g @anthropic-ai/claude-code@latest
+# bun remove -g @anthropic-ai/claude-code
+
+claude="bunx"
+# CLAUDE_ARGS=("--bun" "--package" "@anthropic-ai/claude-code@latest" "claude")
+echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
+bun add -g @anthropic-ai/claude-code@latest > /dev/null 2>&1
+CLAUDE_ARGS=("--no-install" "--bun" "-g" "claude")
+
+CLAUDE_ARGS+=("--dangerously-skip-permissions")
+
+# 初始化 Claude Code 配置文件
+init_claude_config() {
+  local config_file="/vscode/claude-config/.claude.json"
+  local config_content='{
+  "numStartups": 0,
+  "theme": "light-daltonized",
+  "bypassPermissionsModeAccepted": true,
+  "hasCompletedOnboarding": true
+}'
+
+  if [[ -f "$config_file" ]]; then
+    # echo "Claude Code 配置文件 (.claude.json) 已存在，跳过覆盖。"
+    :
+  else
+    mkdir -p "$(dirname "$config_file")"
+    echo "$config_content" > "$config_file"
+    echo "⚙️  已初始化配置文件: $config_file"
+  fi
+}
+
+init_claude_config
+
+# 检测并选择 settings 文件
+select_settings_file() {
+  local settings_dir="/vscode/claude-config"
+  local settings_files=()
+
+  # 检查目录是否存在
+  if [[ ! -d "$settings_dir" ]]; then
+    echo "⚠️  警告: 目录 $settings_dir 不存在，跳过加载 settings 文件"
+    return
+  fi
+
+  # 查找所有 settings.*.json 文件
+  while IFS= read -r -d '' file; do
+    settings_files+=("$file")
+  done < <(find "$settings_dir" -maxdepth 1 -type f -name "settings.*.json" -print0 2>/dev/null)
+
+  # 如果没有找到文件
+  if [[ ${#settings_files[@]} -eq 0 ]]; then
+    echo "⚠️  警告: 未找到 settings.*.json 文件，跳过加载 settings 文件"
+    return
+  fi
+
+  # 如果只有一个文件，直接使用
+  if [[ ${#settings_files[@]} -eq 1 ]]; then
+    echo "✅ 找到 settings 文件: $(basename "${settings_files[0]}")"
+    CLAUDE_ARGS+=("--settings=${settings_files[0]}")
+    export SELECTED_SETTINGS_FILE="${settings_files[0]}"
+    return
+  fi
+
+  # 如果有多个文件，让用户选择
+  local selected_name
+  local filenames=()
+  for file in "${settings_files[@]}"; do
+    filenames+=("$(basename "$file")")
+  done
+
+  # 使用 fzf 进行选择
+  set +e # 避免 fzf 取消时退出脚本
+  selected_name=$(printf "%s
+" "${filenames[@]}" | fzf --prompt="请选择 settings 文件: " --height=10 --layout=reverse)
+  set -e
+
+  if [[ -n "$selected_name" ]]; then
+    local selected_file="$settings_dir/$selected_name"
+    echo "✅ 已选择: $selected_name"
+    CLAUDE_ARGS+=("--settings=$selected_file")
+    export SELECTED_SETTINGS_FILE="$selected_file"
+  else
+    echo "⚠️ 未选择 settings 文件，跳过加载"
+  fi
+}
+
+select_settings_file
+
+# 设置 Claude Code 的托管配置
+setup_managed_settings() {
+  local announcement="✨ Welcome to Claude Code!"
+  if [[ -n "${SELECTED_SETTINGS_FILE:-}" ]] && [[ -f "$SELECTED_SETTINGS_FILE" ]]; then
+    local extracted_url
+    extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$SELECTED_SETTINGS_FILE" 2>/dev/null)
+    if [[ -n "$extracted_url" ]]; then
+      announcement="🚀 Base URL: $extracted_url"
+    fi
+  fi
+
+  local settings_json='{
+  "companyAnnouncements": ["'"$announcement"'"],
+  "defaultMode": "bypassPermissions",
+  "statusLine": {
+    "type": "command",
+    "command": "claude-statusline",
+    "padding": 0
+  }
+}'
+  
+  sudo mkdir -p /etc/claude-code
+  echo "$settings_json" | sudo tee /etc/claude-code/managed-settings.json > /dev/null
+  sudo chmod 666 /etc/claude-code/managed-settings.json
+  echo "⚙️  已生成托管配置: /etc/claude-code/managed-settings.json"
+}
+
+setup_managed_settings
+
+# ANTHROPIC_AUTH_TOKEN
+# ANTHROPIC_BASE_URL
+
+# 直接指定当前使用的模型
+# ANTHROPIC_MODEL
+
+# 用于 haiku 的模型，或后台功能
+# ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5-20251001
+
+# 用于 opus 的模型，或在计划模式活跃时用于 opusplan 的模型。
+# ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-5-20251101
+
+# 用于 sonnet 的模型，或在计划模式不活跃时用于 opusplan 的模型。
+# ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-5-20250929
+
+# CLAUDE_CODE_SUBAGENT_MODEL	用于子代理的模型
+
+# "apiKeyHelper": "/bin/generate_temp_api_key.sh",
+
+
+echo "🚀 正在执行: $claude ${CLAUDE_ARGS[*]} $*"
+exec "$claude" "${CLAUDE_ARGS[@]}" "$@"

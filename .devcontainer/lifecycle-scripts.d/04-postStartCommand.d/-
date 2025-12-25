@@ -4,7 +4,6 @@ h-setup-zh-locale
 h-setup-bun-bin
 h-setup-pnpm-bin
 
-h-setup-ai-claude-code --config
 h-setup-ai-gemini-cli --config
 
 h-setup-chromium
