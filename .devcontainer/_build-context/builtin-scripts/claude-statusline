@@ -7,6 +7,7 @@ input=$(cat)
 BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # 1. 提取模型名称
@@ -42,5 +43,17 @@ if command -v git >/dev/null 2>&1 && git rev-parse --git-dir > /dev/null 2>&1; t
     fi
 fi
 
+# 5. 提取代码变更行数
+LINES_ADDED=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
+LINES_REMOVED=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
+
+LINES_CHANGE_DISPLAY=""
+if [ "$LINES_ADDED" -gt 0 ]; then
+    LINES_CHANGE_DISPLAY="${LINES_CHANGE_DISPLAY} ${GREEN}+${LINES_ADDED}${NC}"
+fi
+if [ "$LINES_REMOVED" -gt 0 ]; then
+    LINES_CHANGE_DISPLAY="${LINES_CHANGE_DISPLAY} ${RED}-${LINES_REMOVED}${NC}"
+fi
+
 # 输出格式化后的状态行
-echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}${NC}${GREEN}${COST_DISPLAY}${NC}"
+echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}${NC}${GREEN}${COST_DISPLAY}${NC}${LINES_CHANGE_DISPLAY}"
