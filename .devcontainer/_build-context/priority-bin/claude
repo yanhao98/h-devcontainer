@@ -3,8 +3,13 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
+# 获取并打印调用者信息
+PARENT_INFO=$(ps -p $PPID -o args= 2>/dev/null || echo "unknown")
+echo "🔍 调用者: $PARENT_INFO (PID: $PPID)"
+
 # https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
 # https://code.claude.com/docs/zh-CN/settings#可用设置
+# https://code.claude.com/docs/zh-CN/settings#环境变量
 # https://code.claude.com/docs/zh-CN/statusline
 echo "🚀 正在启动 Claude Code 包装器 ($0)..."
 
@@ -15,9 +20,9 @@ claude="bunx"
 # CLAUDE_ARGS=("--bun" "--package" "@anthropic-ai/claude-code@latest" "claude")
 echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
 bun add -g @anthropic-ai/claude-code@latest > /dev/null 2>&1
-CLAUDE_ARGS=("--no-install" "--bun" "-g" "claude")
+BUNX_ARGS=("--no-install" "--bun" "-g" "claude")
 
-CLAUDE_ARGS+=("--dangerously-skip-permissions")
+CLAUDE_ARGS=("--dangerously-skip-permissions")
 
 # 初始化 Claude Code 配置文件
 init_claude_config() {
@@ -44,6 +49,7 @@ init_claude_config
 # 检测并选择 settings 文件
 select_settings_file() {
   local settings_dir="/vscode/claude-config"
+  local target_settings_file="/vscode/claude-config/settings.json"
   local settings_files=()
 
   # 检查目录是否存在
@@ -55,42 +61,84 @@ select_settings_file() {
   # 查找所有 settings.*.json 文件
   while IFS= read -r -d '' file; do
     settings_files+=("$file")
-  done < <(find "$settings_dir" -maxdepth 1 -type f -name "settings.*.json" -print0 2>/dev/null)
+  done < <(find "$settings_dir" -maxdepth 1 -type f -name "settings.*.json" -print0 | sort -z)
 
   # 如果没有找到文件
   if [[ ${#settings_files[@]} -eq 0 ]]; then
-    echo "⚠️  警告: 未找到 settings.*.json 文件，跳过加载 settings 文件"
+    echo "⚠️  警告: 在 $settings_dir 中未找到 settings.*.json 文件，跳过加载 settings 文件"
     return
   fi
+
+  local selected_file=""
 
   # 如果只有一个文件，直接使用
   if [[ ${#settings_files[@]} -eq 1 ]]; then
-    echo "✅ 找到 settings 文件: $(basename "${settings_files[0]}")"
-    CLAUDE_ARGS+=("--settings=${settings_files[0]}")
-    export SELECTED_SETTINGS_FILE="${settings_files[0]}"
-    return
+    selected_file="${settings_files[0]}"
+    echo "✅ 找到 settings 文件: $selected_file"
+  else
+    # 如果有多个文件，让用户选择
+    local selected_name
+    local filenames=()
+    for file in "${settings_files[@]}"; do
+      filenames+=("$(basename "$file")")
+    done
+
+    # 使用 fzf 进行选择
+    set +e # 避免 fzf 取消时退出脚本
+    selected_name=$(printf "%s\n" "${filenames[@]}" | fzf --prompt="请选择 settings 文件: " --height=10 --layout=reverse)
+    set -e
+
+    if [[ -n "$selected_name" ]]; then
+      selected_file="$settings_dir/$selected_name"
+      echo "✅ 已选择: $selected_file"
+    else
+      echo "⚠️ 未选择 settings 文件，跳过加载"
+      return
+    fi
   fi
 
-  # 如果有多个文件，让用户选择
-  local selected_name
-  local filenames=()
-  for file in "${settings_files[@]}"; do
-    filenames+=("$(basename "$file")")
-  done
-
-  # 使用 fzf 进行选择
-  set +e # 避免 fzf 取消时退出脚本
-  selected_name=$(printf "%s
-" "${filenames[@]}" | fzf --prompt="请选择 settings 文件: " --height=10 --layout=reverse)
-  set -e
-
-  if [[ -n "$selected_name" ]]; then
-    local selected_file="$settings_dir/$selected_name"
-    echo "✅ 已选择: $selected_name"
-    CLAUDE_ARGS+=("--settings=$selected_file")
+  if [[ -n "$selected_file" ]]; then
     export SELECTED_SETTINGS_FILE="$selected_file"
-  else
-    echo "⚠️ 未选择 settings 文件，跳过加载"
+    
+    # 合并 settings 文件到 target_settings_file
+    if [[ -f "$target_settings_file" ]]; then
+      echo "🔄 正在合并 settings 到 $target_settings_file ..."
+      
+      # 使用临时文件，避免 jq 失败导致原文件损坏
+      local temp_merged_file
+      temp_merged_file=$(mktemp)
+
+      # 尝试合并。如果目标文件为空，将其视为 {}
+      if [[ ! -s "$target_settings_file" ]]; then
+        echo "{}" > "$target_settings_file"
+      fi
+
+      # 定义需要重置的环境变量字段，防止旧配置残留
+      local reset_json='{
+        "env": {
+          "ANTHROPIC_AUTH_TOKEN": "",
+          "ANTHROPIC_BASE_URL": "",
+          "ANTHROPIC_MODEL": "",
+          "ANTHROPIC_DEFAULT_HAIKU_MODEL": "",
+          "ANTHROPIC_DEFAULT_OPUS_MODEL": "",
+          "ANTHROPIC_DEFAULT_SONNET_MODEL": "",
+          "CLAUDE_CODE_SUBAGENT_MODEL": ""
+        }
+      }'
+
+      if jq -s --argjson reset "$reset_json" '.[0] * $reset * .[1]' "$target_settings_file" "$selected_file" > "$temp_merged_file"; then
+        mv "$temp_merged_file" "$target_settings_file"
+        chmod 666 "$target_settings_file" 2>/dev/null || true # 尝试确保权限正确
+        echo "✅ Settings 合并成功"
+      else
+        echo "⚠️ Settings 合并失败 (JSON 格式错误?)，将直接覆盖原文件"
+        cp "$selected_file" "$target_settings_file"
+        rm -f "$temp_merged_file"
+      fi
+    else
+      echo "📄 正在复制 settings 到 $target_settings_file ..."
+      cp "$selected_file" "$target_settings_file"
+    fi
   fi
 }
 
@@ -98,17 +146,48 @@ select_settings_file
 
 # 设置 Claude Code 的托管配置
 setup_managed_settings() {
-  local announcement="✨ Welcome to Claude Code!"
-  if [[ -n "${SELECTED_SETTINGS_FILE:-}" ]] && [[ -f "$SELECTED_SETTINGS_FILE" ]]; then
+  local announcements=()
+  local target_settings_file="/vscode/claude-config/settings.json"
+
+  if [[ -f "$target_settings_file" ]]; then
     local extracted_url
-    extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$SELECTED_SETTINGS_FILE" 2>/dev/null)
+    local extracted_model
+    
+    extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$target_settings_file" 2>/dev/null)
+    extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$target_settings_file" 2>/dev/null)
+    
     if [[ -n "$extracted_url" ]]; then
-      announcement="🚀 Base URL: $extracted_url"
+      announcements+=("🚀 $extracted_url")
+    fi
+    if [[ -n "$extracted_model" ]]; then
+      announcements+=("🤖 $extracted_model")
     fi
   fi
 
+  if [[ -n "${SELECTED_SETTINGS_FILE:-}" ]]; then
+      announcements+=("📄 $(basename "$SELECTED_SETTINGS_FILE")")
+  fi
+
+  # 如果没有信息，提示用户
+  if [[ ${#announcements[@]} -eq 0 ]]; then
+    announcements+=("⚠️ 未找到配置信息，请检查 settings 文件。")
+  fi
+
+  # 合并成一个字符串，用 \n 分隔
+  local combined_announcement=""
+  for item in "${announcements[@]}"; do
+    if [[ -n "$combined_announcement" ]]; then
+      combined_announcement="${combined_announcement}\n${item}"
+    else
+      combined_announcement="${item}"
+    fi
+  done
+  
+  # 转义双引号
+  combined_announcement="${combined_announcement//\"/\\\"}"
+
   local settings_json='{
-  "companyAnnouncements": ["'"$announcement"'"],
+  "companyAnnouncements": ["'"$combined_announcement"'"],
   "defaultMode": "bypassPermissions",
   "statusLine": {
     "type": "command",
@@ -145,11 +224,11 @@ setup_managed_settings
 # "apiKeyHelper": "/bin/generate_temp_api_key.sh",
 
 
-echo "🚀 正在执行: $claude ${CLAUDE_ARGS[*]} $*"
+echo "🚀 正在执行: $claude ${BUNX_ARGS[*]} ${CLAUDE_ARGS[*]} $*"
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
 export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
-exec "$claude" "${CLAUDE_ARGS[@]}" "$@"
+exec "$claude" "${BUNX_ARGS[@]}" "${CLAUDE_ARGS[@]}" "$@"
