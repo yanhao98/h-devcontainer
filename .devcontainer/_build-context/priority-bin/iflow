@@ -11,7 +11,6 @@ BUN_ARGS+=("run")
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/iflow")
 
 CLI_ARGS=()
-# CLI_ARGS+=("--sandbox")
 CLI_ARGS+=("--yolo")
 CLI_ARGS+=("--show-memory-usage")
 
