@@ -7,9 +7,8 @@ mkdir -p /vscode/bun-priority-bin/
 bun --no-progress --cwd=/vscode/bun-priority-bin/ add @iflow-ai/iflow-cli@latest
 
 BUN_ARGS=("--bun")
-BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
 BUN_ARGS+=("run")
-BUN_ARGS+=("iflow")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/iflow")
 
 CLI_ARGS=()
 

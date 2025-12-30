@@ -220,9 +220,8 @@ setup_managed_settings
 
 
 BUN_ARGS=("--bun")
-BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
 BUN_ARGS+=("run")
-BUN_ARGS+=("claude")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/claude")
 
 CLI_ARGS=("--dangerously-skip-permissions")
 

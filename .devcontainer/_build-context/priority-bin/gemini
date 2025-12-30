@@ -17,11 +17,9 @@ mkdir -p /vscode/bun-priority-bin/
 bun --no-progress --cwd=/vscode/bun-priority-bin/ add @google/gemini-cli@latest
 
 BUN_ARGS=("--bun")
-BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
+BUN_ARGS+=("--env-file=/vscode/bun-priority-bin/.env.local")
 BUN_ARGS+=("run")
-BUN_ARGS+=("gemini")
-# BUN_ARGS+=("--env-file=<val>")
-# /vscode/bun-priority-bin/.env.local
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/gemini")
 
 CLI_ARGS=("--yolo")
 # CLI_ARGS+=("--model=gemini-1.5-flash")
