@@ -1,0 +1,63 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+# >>>>> Gemini CLI
+# 限制: bunx 不支持 --env-file 参数
+# 相关问题: https://github.com/oven-sh/bun/issues/12430
+
+# gemini-cli 的 GEMINI_DIR 路径被硬编码为 '.gemini'
+# 源码参考: https://github.com/google-gemini/gemini-cli/blob/bc168bbae4f4907f0518ba69964fffab670d84ec/packages/core/src/utils/paths.ts#L11
+
+# 解决方案: 在项目根目录创建 .env.local 文件来配置 GOOGLE_GEMINI_BASE_URL 和 GEMINI_API_KEY
+# 环境变量文档: https://bun.com/docs/runtime/environment-variables#setting-environment-variables
+# <<<<< Gemini CLI
+
+mkdir -p /vscode/bun-priority-bin/
+bun --no-progress --cwd=/vscode/bun-priority-bin/ add @google/gemini-cli@latest
+
+BUN_ARGS=("--bun")
+BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
+BUN_ARGS+=("run")
+BUN_ARGS+=("gemini")
+# BUN_ARGS+=("--env-file=<val>")
+# /vscode/bun-priority-bin/.env.local
+
+CLI_ARGS=("--yolo")
+# CLI_ARGS+=("--model=gemini-1.5-flash")
+
+mkdir -p /vscode/gemini-home
+if [ -d "$HOME/.gemini" ]; then
+    rm -rf "$HOME/.gemini"
+fi
+
+ln -sfn /vscode/gemini-home ~/.gemini
+
+
+ensure_gemini_settings() {
+  local content='{
+  "security": { "auth": { "selectedType": "gemini-api-key" } },
+  "ide": { "enabled": true },
+  "general": { "previewFeatures": true }
+}'
+
+  if [[ -f /vscode/gemini-system-settings.json ]]; then
+    echo "Gemini CLI 配置文件已存在，跳过覆盖。"
+  else
+    echo "$content" > /vscode/gemini-system-settings.json
+  fi
+}
+
+ensure_gemini_settings
+
+echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
+# bun --bun --cwd=/vscode/bun-priority-bin/ run gemini --version
+
+# 从 PATH 中移除当前脚本所在的目录，防止无限递归
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+
+export SANDBOX=h-devctr
+export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json
+exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"

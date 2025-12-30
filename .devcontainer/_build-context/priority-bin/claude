@@ -37,7 +37,7 @@ echo "🚀 正在启动 Claude Code 包装器 ($0)..."
 
 echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
 mkdir -p /vscode/bun-priority-bin/
-bun --cwd=/vscode/bun-priority-bin/ add @anthropic-ai/claude-code@latest
+bun --no-progress --cwd=/vscode/bun-priority-bin/ add @anthropic-ai/claude-code@latest
 
 
 # 初始化 Claude Code 配置文件
@@ -224,9 +224,9 @@ BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
 BUN_ARGS+=("run")
 BUN_ARGS+=("claude")
 
-CLAUDE_ARGS=("--dangerously-skip-permissions")
+CLI_ARGS=("--dangerously-skip-permissions")
 
-echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLAUDE_ARGS[*]} $*"
+echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run claude --version
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归
@@ -234,4 +234,4 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
 export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
-exec bun "${BUN_ARGS[@]}" "${CLAUDE_ARGS[@]}" "$@"
+exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
