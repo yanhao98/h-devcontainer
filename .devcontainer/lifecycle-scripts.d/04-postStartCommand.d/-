@@ -1,4 +1,8 @@
 #!/bin/zsh -eu
+
+curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+  hyperfine
+
 h-setup-zh-locale
 
 h-setup-bun-bin

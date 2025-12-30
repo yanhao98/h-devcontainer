@@ -2,27 +2,43 @@
 set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
+# https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
+# https://code.claude.com/docs/zh-CN/settings#可用设置
+# https://code.claude.com/docs/zh-CN/settings#环境变量
+# https://code.claude.com/docs/zh-CN/statusline
+
+#-------------------------------------------------------------------------------------------------------------
+# ANTHROPIC_AUTH_TOKEN
+# ANTHROPIC_BASE_URL
+
+# 直接指定当前使用的模型
+# ANTHROPIC_MODEL
+
+# 用于 haiku 的模型，或后台功能
+# ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5-20251001
+
+# 用于 opus 的模型，或在计划模式活跃时用于 opusplan 的模型。
+# ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-5-20251101
+
+# 用于 sonnet 的模型，或在计划模式不活跃时用于 opusplan 的模型。
+# ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-5-20250929
+
+# CLAUDE_CODE_SUBAGENT_MODEL	用于子代理的模型
+
+# "apiKeyHelper": "/bin/generate_temp_api_key.sh",
+#-------------------------------------------------------------------------------------------------------------
+
 
 # 获取并打印调用者信息
 PARENT_INFO=$(ps -p $PPID -o args= 2>/dev/null || echo "unknown")
 echo "🔍 调用者: $PARENT_INFO (PID: $PPID)"
 
-# https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
-# https://code.claude.com/docs/zh-CN/settings#可用设置
-# https://code.claude.com/docs/zh-CN/settings#环境变量
-# https://code.claude.com/docs/zh-CN/statusline
 echo "🚀 正在启动 Claude Code 包装器 ($0)..."
 
-# bun add -g @anthropic-ai/claude-code@latest
-# bun remove -g @anthropic-ai/claude-code
-
-claude="bunx"
-# CLAUDE_ARGS=("--bun" "--package" "@anthropic-ai/claude-code@latest" "claude")
 echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
-bun add -g @anthropic-ai/claude-code@latest > /dev/null 2>&1
-BUNX_ARGS=("--no-install" "--bun" "-g" "claude")
+mkdir -p /vscode/bun-priority-bin/
+bun --cwd=/vscode/bun-priority-bin/ add @anthropic-ai/claude-code@latest
 
-CLAUDE_ARGS=("--dangerously-skip-permissions")
 
 # 初始化 Claude Code 配置文件
 init_claude_config() {
@@ -43,8 +59,6 @@ init_claude_config() {
     echo "⚙️  已初始化配置文件: $config_file"
   fi
 }
-
-init_claude_config
 
 # 检测并选择 settings 文件
 select_settings_file() {
@@ -142,8 +156,6 @@ select_settings_file() {
   fi
 }
 
-select_settings_file
-
 # 设置 Claude Code 的托管配置
 setup_managed_settings() {
   local announcements=()
@@ -202,33 +214,24 @@ setup_managed_settings() {
   echo "⚙️  已生成托管配置: /etc/claude-code/managed-settings.json"
 }
 
+init_claude_config
+select_settings_file
 setup_managed_settings
 
-# ANTHROPIC_AUTH_TOKEN
-# ANTHROPIC_BASE_URL
 
-# 直接指定当前使用的模型
-# ANTHROPIC_MODEL
+BUN_ARGS=("--bun")
+BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
+BUN_ARGS+=("run")
+BUN_ARGS+=("claude")
 
-# 用于 haiku 的模型，或后台功能
-# ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5-20251001
+CLAUDE_ARGS=("--dangerously-skip-permissions")
 
-# 用于 opus 的模型，或在计划模式活跃时用于 opusplan 的模型。
-# ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-5-20251101
-
-# 用于 sonnet 的模型，或在计划模式不活跃时用于 opusplan 的模型。
-# ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-5-20250929
-
-# CLAUDE_CODE_SUBAGENT_MODEL	用于子代理的模型
-
-# "apiKeyHelper": "/bin/generate_temp_api_key.sh",
-
-
-echo "🚀 正在执行: $claude ${BUNX_ARGS[*]} ${CLAUDE_ARGS[*]} $*"
+echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLAUDE_ARGS[*]} $*"
+# bun --bun --cwd=/vscode/bun-priority-bin/ run claude --version
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
 export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
-exec "$claude" "${BUNX_ARGS[@]}" "${CLAUDE_ARGS[@]}" "$@"
+exec bun "${BUN_ARGS[@]}" "${CLAUDE_ARGS[@]}" "$@"
