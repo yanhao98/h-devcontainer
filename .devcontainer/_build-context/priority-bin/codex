@@ -50,9 +50,8 @@ ensure_default_config
 BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
-# CLI_ARGS=()
-# CLI_ARGS+=("--yolo")
-# CLI_ARGS+=("--show-memory-usage")
+CLI_ARGS=()
+CLI_ARGS+=("--sandbox=danger-full-access")
 
 echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run codex --version
