@@ -8,6 +8,7 @@ curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-ins
 
 cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
 #!/bin/bash
+export DISPLAY=:1
 #-------------------------------------------------------------------------------------------------------------
 # --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
 #                           使用此选项可以强制 Chromium 使用磁盘而不是共享内存来存储这些文件，从而避免内存不足的问题。
