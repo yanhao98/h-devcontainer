@@ -7,7 +7,6 @@ set -o pipefail   # 对应 -o pipefail
 ensure_default_config() {
     local config_dir="/vscode/codex-home"
     local config_file="$config_dir/config.toml"
-    local auth_file="$config_dir/auth.json"
     
     mkdir -p "$config_dir"
     
@@ -26,17 +25,7 @@ preferred_auth_method = "apikey"
 name = "New API"
 base_url = "https://new-api.example.com/v1"
 wire_api = "chat"
-EOF
-    fi
-    
-    if [ -f "$auth_file" ]; then
-        echo "📝 认证文件已存在: $auth_file"
-    else
-        echo "📝 创建默认认证文件: $auth_file"
-        cat > "$auth_file" << 'EOF'
-{
-  "OPENAI_API_KEY": ""
-}
+http_headers = {"Authorization" = "Bearer your_api_key_here"}
 EOF
     fi
 }
