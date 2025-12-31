@@ -162,6 +162,8 @@ ENV DEVCONTAINER=true \
     CLAUDE_CONFIG_DIR=/vscode/claude-config \
     IS_SANDBOX=true
 
+ENV CODEX_HOME=/vscode/codex-home
+
 
 # 设置入口点为 /bin/sh
 ENTRYPOINT ["/bin/sh"]

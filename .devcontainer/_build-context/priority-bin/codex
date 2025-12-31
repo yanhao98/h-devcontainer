@@ -1,0 +1,65 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# 确保默认配置文件存在
+ensure_default_config() {
+    local config_dir="/vscode/codex-home"
+    local config_file="$config_dir/config.toml"
+    local auth_file="$config_dir/auth.json"
+    
+    mkdir -p "$config_dir"
+    
+    if [ -f "$config_file" ]; then
+        echo "📝 配置文件已存在: $config_file"
+    else
+        echo "📝 创建默认配置文件: $config_file"
+        cat > "$config_file" << 'EOF'
+model = "gemini-3-pro-preview"
+model_provider = "NewAPI"
+preferred_auth_method = "apikey"
+# 禁止将 AI 响应写入本地存储
+# disable_response_storage = true
+
+[model_providers.NewAPI]
+name = "New API"
+base_url = "https://new-api.example.com/v1"
+wire_api = "chat"
+EOF
+    fi
+    
+    if [ -f "$auth_file" ]; then
+        echo "📝 认证文件已存在: $auth_file"
+    else
+        echo "📝 创建默认认证文件: $auth_file"
+        cat > "$auth_file" << 'EOF'
+{
+  "OPENAI_API_KEY": ""
+}
+EOF
+    fi
+}
+
+mkdir -p /vscode/bun-priority-bin/
+bun --no-progress --cwd=/vscode/bun-priority-bin/ add @openai/codex@latest
+
+# 调用函数确保配置文件存在
+ensure_default_config
+
+BUN_ARGS=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
+# CLI_ARGS=()
+# CLI_ARGS+=("--yolo")
+# CLI_ARGS+=("--show-memory-usage")
+
+echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
+# bun --bun --cwd=/vscode/bun-priority-bin/ run codex --version
+
+# 从 PATH 中移除当前脚本所在的目录，防止无限递归
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+
+exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
