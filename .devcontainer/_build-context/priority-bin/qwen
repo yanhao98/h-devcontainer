@@ -1,0 +1,31 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+mkdir -p /vscode/bun-priority-bin/
+bun --no-progress --cwd=/vscode/bun-priority-bin/ add @qwen-code/qwen-code@latest
+
+BUN_ARGS=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/qwen")
+CLI_ARGS=()
+CLI_ARGS+=("--yolo")
+CLI_ARGS+=("--show-memory-usage")
+
+mkdir -p /vscode/qwen-home
+if [ -d "$HOME/.qwen" ]; then
+    rm -rf "$HOME/.qwen"
+fi
+
+ln -sfn /vscode/qwen-home ~/.qwen
+
+echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
+# bun --bun --cwd=/vscode/bun-priority-bin/ run iflow --version
+
+# 从 PATH 中移除当前脚本所在的目录，防止无限递归
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+
+exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
