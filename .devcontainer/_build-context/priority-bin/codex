@@ -5,6 +5,7 @@ set -o pipefail   # 对应 -o pipefail
 
 # 确保默认配置文件存在
 ensure_default_config() {
+    # Dockerfile: CODEX_HOME=/vscode/codex-home
     local config_dir="/vscode/codex-home"
     local config_file="$config_dir/config.toml"
     

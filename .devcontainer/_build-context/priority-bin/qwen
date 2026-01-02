@@ -11,14 +11,19 @@ BUN_ARGS+=("run")
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/qwen")
 CLI_ARGS=()
 CLI_ARGS+=("--yolo")
-CLI_ARGS+=("--show-memory-usage")
+# CLI_ARGS+=("--show-memory-usage")
+CLI_ARGS+=("--experimental-skills")
 
 mkdir -p /vscode/qwen-home
-if [ -d "$HOME/.qwen" ]; then
-    rm -rf "$HOME/.qwen"
+# 检查软链接是否已正确建立，如果是则跳过
+if [ -L "$HOME/.qwen" ] && [ "$(readlink "$HOME/.qwen")" = "/vscode/qwen-home" ]; then
+    : # 软链接已正确建立，跳过
+else
+    if [ -d "$HOME/.qwen" ]; then
+        rm -rf "$HOME/.qwen"
+    fi
+    ln -sfn /vscode/qwen-home ~/.qwen
 fi
-
-ln -sfn /vscode/qwen-home ~/.qwen
 
 echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run iflow --version

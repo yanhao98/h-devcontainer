@@ -25,11 +25,15 @@ CLI_ARGS=("--yolo")
 # CLI_ARGS+=("--model=gemini-1.5-flash")
 
 mkdir -p /vscode/gemini-home
-if [ -d "$HOME/.gemini" ]; then
-    rm -rf "$HOME/.gemini"
+# 检查软链接是否已正确建立，如果是则跳过
+if [ -L "$HOME/.gemini" ] && [ "$(readlink "$HOME/.gemini")" = "/vscode/gemini-home" ]; then
+    : # 软链接已正确建立，跳过
+else
+    if [ -d "$HOME/.gemini" ]; then
+        rm -rf "$HOME/.gemini"
+    fi
+    ln -sfn /vscode/gemini-home ~/.gemini
 fi
-
-ln -sfn /vscode/gemini-home ~/.gemini
 
 
 ensure_gemini_settings() {
