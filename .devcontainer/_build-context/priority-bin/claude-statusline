@@ -3,6 +3,9 @@
 # 从 stdin 读取 JSON 输入
 input=$(cat)
 
+# 将 input 写入调试文件
+# echo "$input" > "/vscode/claude-config/debug-statusline/$(date +%Y%m%d-%H%M%S).json"
+
 # 定义颜色
 BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
@@ -25,16 +28,28 @@ DIR_DISPLAY=$(echo "$input" | jq -r '
   end
 ')
 
-# 3. 提取成本信息 (仅当大于0时显示)
+# 3. 提取成本信息 (仅当大于0时显示，保留6位小数)
 COST_DISPLAY=$(echo "$input" | jq -r '
   if (.cost.total_cost_usd // 0) > 0 then
-    " 💸 $" + (.cost.total_cost_usd | tostring)
+    " 💸 $" + ((.cost.total_cost_usd * 1000000 | floor) / 1000000 | tostring)
   else
     ""
   end
 ')
 
-# 4. 获取 Git 分支信息
+# 4. 提取耗时信息
+TOTAL_DURATION_MS=$(echo "$input" | jq -r '.cost.total_duration_ms // 0')
+TOTAL_API_DURATION_MS=$(echo "$input" | jq -r '.cost.total_api_duration_ms // 0')
+
+DURATION_DISPLAY=""
+if [ "$TOTAL_DURATION_MS" -gt 0 ]; then
+    # 转换为秒，保留1位小数
+    TOTAL_DURATION_S=$(awk "BEGIN {printf \"%.1f\", $TOTAL_DURATION_MS / 1000}")
+    API_DURATION_S=$(awk "BEGIN {printf \"%.1f\", $TOTAL_API_DURATION_MS / 1000}")
+    DURATION_DISPLAY=" ⏱️ ${TOTAL_DURATION_S}s (API:${API_DURATION_S}s)"
+fi
+
+# 5. 获取 Git 分支信息
 GIT_BRANCH=""
 if command -v git >/dev/null 2>&1 && git rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git branch --show-current 2>/dev/null)
@@ -43,7 +58,7 @@ if command -v git >/dev/null 2>&1 && git rev-parse --git-dir > /dev/null 2>&1; t
     fi
 fi
 
-# 5. 提取代码变更行数
+# 6. 提取代码变更行数
 LINES_ADDED=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
 LINES_REMOVED=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
 
@@ -55,5 +70,33 @@ if [ "$LINES_REMOVED" -gt 0 ]; then
     LINES_CHANGE_DISPLAY="${LINES_CHANGE_DISPLAY} ${RED}-${LINES_REMOVED}${NC}"
 fi
 
+# 7. 提取 Token 使用信息 (在 context_window 字段下)
+TOTAL_INPUT_TOKENS=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
+TOTAL_OUTPUT_TOKENS=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
+CONTEXT_WINDOW_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
+
+# 当前使用量 (current_usage 可能为 null)
+CURRENT_INPUT=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
+CURRENT_OUTPUT=$(echo "$input" | jq -r '.context_window.current_usage.output_tokens // 0')
+CACHE_CREATION=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
+CACHE_READ=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
+
+# 格式化 Token 显示
+TOKEN_DISPLAY=""
+if [ "$TOTAL_INPUT_TOKENS" -gt 0 ] || [ "$TOTAL_OUTPUT_TOKENS" -gt 0 ]; then
+    # 计算上下文使用百分比
+    if [ "$CONTEXT_WINDOW_SIZE" -gt 0 ]; then
+        USAGE_PERCENT=$((TOTAL_INPUT_TOKENS * 100 / CONTEXT_WINDOW_SIZE))
+        TOKEN_DISPLAY=" 📊 ${TOTAL_INPUT_TOKENS}/${CONTEXT_WINDOW_SIZE} (${USAGE_PERCENT}%) ⬆️ ${TOTAL_OUTPUT_TOKENS}"
+    else
+        TOKEN_DISPLAY=" 📊 ⬇️${TOTAL_INPUT_TOKENS} ⬆️${TOTAL_OUTPUT_TOKENS}"
+    fi
+    
+    # 如果有缓存信息，添加缓存显示
+    if [ "$CACHE_READ" -gt 0 ] || [ "$CACHE_CREATION" -gt 0 ]; then
+        TOKEN_DISPLAY="${TOKEN_DISPLAY} 💾${CACHE_READ}"
+    fi
+fi
+
 # 输出格式化后的状态行
-echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}${NC}${GREEN}${COST_DISPLAY}${NC}${LINES_CHANGE_DISPLAY}"
+echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}${NC}${GREEN}${COST_DISPLAY}${NC}${DURATION_DISPLAY}${LINES_CHANGE_DISPLAY}${TOKEN_DISPLAY}"

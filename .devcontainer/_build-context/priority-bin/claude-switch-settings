@@ -1,0 +1,125 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# 选择并切换 Claude Code 的 settings 配置文件
+# 将选中的 settings.*.json 合并到 /vscode/claude-config/settings.json
+
+SETTINGS_DIR="/vscode/claude-config"
+TARGET_SETTINGS_FILE="/vscode/claude-config/settings.json"
+
+select_settings_file() {
+  local settings_files=()
+
+  # 检查目录是否存在
+  if [[ ! -d "$SETTINGS_DIR" ]]; then
+    echo "⚠️  警告: 目录 $SETTINGS_DIR 不存在，跳过加载 settings 文件"
+    return 1
+  fi
+
+  # 查找所有 settings.*.json 文件
+  while IFS= read -r -d '' file; do
+    settings_files+=("$file")
+  done < <(find "$SETTINGS_DIR" -maxdepth 1 -type f -name "settings.*.json" -print0 | sort -z)
+
+  # 如果没有找到文件
+  if [[ ${#settings_files[@]} -eq 0 ]]; then
+    echo "⚠️  警告: 在 $SETTINGS_DIR 中未找到 settings.*.json 文件，跳过加载 settings 文件"
+    return 1
+  fi
+
+  local selected_file=""
+
+  # 如果只有一个文件，直接使用
+  if [[ ${#settings_files[@]} -eq 1 ]]; then
+    selected_file="${settings_files[0]}"
+    echo "✅ 找到 settings 文件: $selected_file"
+  else
+    # 如果有多个文件，让用户选择
+    local selected_name
+    local filenames=()
+    for file in "${settings_files[@]}"; do
+      filenames+=("$(basename "$file")")
+    done
+
+    # 使用 fzf 进行选择
+    set +e # 避免 fzf 取消时退出脚本
+    selected_name=$(printf "%s\n" "${filenames[@]}" | fzf --prompt="请选择 settings 文件: " --height=10 --layout=reverse)
+    set -e
+
+    if [[ -n "$selected_name" ]]; then
+      selected_file="$SETTINGS_DIR/$selected_name"
+      echo "✅ 已选择: $selected_file"
+    else
+      echo "⚠️ 未选择 settings 文件，跳过加载"
+      return 1
+    fi
+  fi
+
+  if [[ -n "$selected_file" ]]; then
+    merge_settings "$selected_file"
+  fi
+}
+
+merge_settings() {
+  local selected_file="$1"
+  
+  export SELECTED_SETTINGS_FILE="$selected_file"
+  
+  # 合并 settings 文件到 target_settings_file
+  if [[ -f "$TARGET_SETTINGS_FILE" ]]; then
+    echo "🔄 正在合并 settings 到 $TARGET_SETTINGS_FILE ..."
+    
+    # 使用临时文件，避免 jq 失败导致原文件损坏
+    local temp_merged_file
+    temp_merged_file=$(mktemp)
+
+    # 尝试合并。如果目标文件为空，将其视为 {}
+    if [[ ! -s "$TARGET_SETTINGS_FILE" ]]; then
+      echo "{}" > "$TARGET_SETTINGS_FILE"
+    fi
+
+    # 定义需要重置的环境变量字段，防止旧配置残留
+    local reset_json='{
+      "env": {
+        "ANTHROPIC_AUTH_TOKEN": "",
+        "ANTHROPIC_BASE_URL": "",
+        "ANTHROPIC_MODEL": "",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "",
+        "CLAUDE_CODE_SUBAGENT_MODEL": ""
+      }
+    }'
+
+    if jq -s --argjson reset "$reset_json" '.[0] * $reset * .[1]' "$TARGET_SETTINGS_FILE" "$selected_file" > "$temp_merged_file"; then
+      mv "$temp_merged_file" "$TARGET_SETTINGS_FILE"
+      chmod 666 "$TARGET_SETTINGS_FILE" 2>/dev/null || true # 尝试确保权限正确
+      echo "✅ Settings 合并成功"
+    else
+      echo "⚠️ Settings 合并失败 (JSON 格式错误?)，将直接覆盖原文件"
+      cp "$selected_file" "$TARGET_SETTINGS_FILE"
+      rm -f "$temp_merged_file"
+    fi
+  else
+    echo "📄 正在复制 settings 到 $TARGET_SETTINGS_FILE ..."
+    cp "$selected_file" "$TARGET_SETTINGS_FILE"
+  fi
+  
+  # 显示当前配置信息
+  echo ""
+  echo "📋 当前配置:"
+  local extracted_url extracted_model
+  extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
+  extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
+  
+  if [[ -n "$extracted_url" ]]; then
+    echo "   🚀 API: $extracted_url"
+  fi
+  if [[ -n "$extracted_model" ]]; then
+    echo "   🤖 模型: $extracted_model"
+  fi
+}
+
+select_settings_file

@@ -33,6 +33,18 @@ set -o pipefail   # 对应 -o pipefail
 PARENT_INFO=$(ps -p $PPID -o args= 2>/dev/null || echo "unknown")
 echo "🔍 调用者: $PARENT_INFO (PID: $PPID)"
 
+# 解析命令行参数，检查是否有 --skip-settings
+CLAUDE_ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--skip-settings" ]]; then
+    export CLAUDE_SKIP_SETTINGS=1
+    echo "⏭️  检测到 --skip-settings 参数"
+  else
+    CLAUDE_ARGS+=("$arg")
+  fi
+done
+set -- "${CLAUDE_ARGS[@]}"
+
 echo "🚀 正在启动 Claude Code 包装器 ($0)..."
 
 echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
@@ -60,99 +72,45 @@ init_claude_config() {
   fi
 }
 
-# 检测并选择 settings 文件
+# 选择 settings 文件
+# 设置环境变量 CLAUDE_SKIP_SETTINGS=1 可跳过选择
+# 或使用命令行参数 --skip-settings
 select_settings_file() {
-  local settings_dir="/vscode/claude-config"
-  local target_settings_file="/vscode/claude-config/settings.json"
-  local settings_files=()
-
-  # 检查目录是否存在
-  if [[ ! -d "$settings_dir" ]]; then
-    echo "⚠️  警告: 目录 $settings_dir 不存在，跳过加载 settings 文件"
+  if [[ "${CLAUDE_SKIP_SETTINGS:-}" == "1" ]]; then
+    echo "⏭️  已跳过选择 settings 文件 (CLAUDE_SKIP_SETTINGS=1)"
     return
   fi
 
-  # 查找所有 settings.*.json 文件
-  while IFS= read -r -d '' file; do
-    settings_files+=("$file")
-  done < <(find "$settings_dir" -maxdepth 1 -type f -name "settings.*.json" -print0 | sort -z)
-
-  # 如果没有找到文件
-  if [[ ${#settings_files[@]} -eq 0 ]]; then
-    echo "⚠️  警告: 在 $settings_dir 中未找到 settings.*.json 文件，跳过加载 settings 文件"
-    return
-  fi
-
-  local selected_file=""
-
-  # 如果只有一个文件，直接使用
-  if [[ ${#settings_files[@]} -eq 1 ]]; then
-    selected_file="${settings_files[0]}"
-    echo "✅ 找到 settings 文件: $selected_file"
+  # 调用独立的 claude-switch-settings 脚本
+  # 使用 source 以便获取 SELECTED_SETTINGS_FILE 环境变量
+  local switch_script
+  switch_script="$(get_switch_settings_path)"
+  if [[ -n "$switch_script" ]]; then
+    source "$switch_script"
   else
-    # 如果有多个文件，让用户选择
-    local selected_name
-    local filenames=()
-    for file in "${settings_files[@]}"; do
-      filenames+=("$(basename "$file")")
-    done
-
-    # 使用 fzf 进行选择
-    set +e # 避免 fzf 取消时退出脚本
-    selected_name=$(printf "%s\n" "${filenames[@]}" | fzf --prompt="请选择 settings 文件: " --height=10 --layout=reverse)
-    set -e
-
-    if [[ -n "$selected_name" ]]; then
-      selected_file="$settings_dir/$selected_name"
-      echo "✅ 已选择: $selected_file"
-    else
-      echo "⚠️ 未选择 settings 文件，跳过加载"
-      return
-    fi
+    echo "⚠️  警告: 未找到 claude-switch-settings 脚本"
   fi
+}
 
-  if [[ -n "$selected_file" ]]; then
-    export SELECTED_SETTINGS_FILE="$selected_file"
-    
-    # 合并 settings 文件到 target_settings_file
-    if [[ -f "$target_settings_file" ]]; then
-      echo "🔄 正在合并 settings 到 $target_settings_file ..."
-      
-      # 使用临时文件，避免 jq 失败导致原文件损坏
-      local temp_merged_file
-      temp_merged_file=$(mktemp)
+# 获取 claude-switch-settings 脚本的路径
+get_switch_settings_path() {
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [[ -x "$script_dir/claude-switch-settings" ]]; then
+    echo "$script_dir/claude-switch-settings"
+  elif command -v claude-switch-settings &>/dev/null; then
+    command -v claude-switch-settings
+  fi
+}
 
-      # 尝试合并。如果目标文件为空，将其视为 {}
-      if [[ ! -s "$target_settings_file" ]]; then
-        echo "{}" > "$target_settings_file"
-      fi
-
-      # 定义需要重置的环境变量字段，防止旧配置残留
-      local reset_json='{
-        "env": {
-          "ANTHROPIC_AUTH_TOKEN": "",
-          "ANTHROPIC_BASE_URL": "",
-          "ANTHROPIC_MODEL": "",
-          "ANTHROPIC_DEFAULT_HAIKU_MODEL": "",
-          "ANTHROPIC_DEFAULT_OPUS_MODEL": "",
-          "ANTHROPIC_DEFAULT_SONNET_MODEL": "",
-          "CLAUDE_CODE_SUBAGENT_MODEL": ""
-        }
-      }'
-
-      if jq -s --argjson reset "$reset_json" '.[0] * $reset * .[1]' "$target_settings_file" "$selected_file" > "$temp_merged_file"; then
-        mv "$temp_merged_file" "$target_settings_file"
-        chmod 666 "$target_settings_file" 2>/dev/null || true # 尝试确保权限正确
-        echo "✅ Settings 合并成功"
-      else
-        echo "⚠️ Settings 合并失败 (JSON 格式错误?)，将直接覆盖原文件"
-        cp "$selected_file" "$target_settings_file"
-        rm -f "$temp_merged_file"
-      fi
-    else
-      echo "📄 正在复制 settings 到 $target_settings_file ..."
-      cp "$selected_file" "$target_settings_file"
-    fi
+# 获取 claude-statusline 脚本的路径
+get_statusline_path() {
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [[ -x "$script_dir/claude-statusline" ]]; then
+    echo "$script_dir/claude-statusline"
+  elif command -v claude-statusline &>/dev/null; then
+    command -v claude-statusline
+  else
+    echo "claude-statusline"
   fi
 }
 
@@ -169,10 +127,10 @@ setup_managed_settings() {
     extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$target_settings_file" 2>/dev/null)
     
     if [[ -n "$extracted_url" ]]; then
-      announcements+=("🚀 $extracted_url")
+      announcements+=("🚀 ANTHROPIC_BASE_URL: $extracted_url")
     fi
     if [[ -n "$extracted_model" ]]; then
-      announcements+=("🤖 $extracted_model")
+      announcements+=("🤖 ANTHROPIC_MODEL:    $extracted_model")
     fi
   fi
 
@@ -186,24 +144,34 @@ setup_managed_settings() {
   fi
 
   # 合并成一个字符串，用 \n 分隔
+  # 查找 claude-switch-settings 脚本的实际路径
+  local switch_script_path
+  switch_script_path="$(get_switch_settings_path)"
+  
   local combined_announcement=""
+  local separator="─────────────────────────────────────────────"
+  if [[ -n "$switch_script_path" ]]; then
+    combined_announcement="💡 运行 $switch_script_path 切换配置\n$separator"
+  else
+    combined_announcement="💡 运行 claude-switch-settings 切换配置\n$separator"
+  fi
   for item in "${announcements[@]}"; do
-    if [[ -n "$combined_announcement" ]]; then
-      combined_announcement="${combined_announcement}\n${item}"
-    else
-      combined_announcement="${item}"
-    fi
+    combined_announcement="${combined_announcement}\n${item}"
   done
   
   # 转义双引号
   combined_announcement="${combined_announcement//\"/\\\"}"
+
+  # 获取 claude-statusline 的实际路径
+  local statusline_path
+  statusline_path="$(get_statusline_path)"
 
   local settings_json='{
   "companyAnnouncements": ["'"$combined_announcement"'"],
   "defaultMode": "bypassPermissions",
   "statusLine": {
     "type": "command",
-    "command": "claude-statusline",
+    "command": "'"$statusline_path"'",
     "padding": 0
   }
 }'
@@ -215,7 +183,7 @@ setup_managed_settings() {
 }
 
 init_claude_config
-select_settings_file
+# select_settings_file
 setup_managed_settings
 
 
