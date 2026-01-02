@@ -4,7 +4,9 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 mkdir -p /vscode/bun-priority-bin/
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add claude-code-logger
+# git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
+
+# bun --no-progress --cwd=/vscode/bun-priority-bin/ add claude-code-logger
 
 # https://github.com/dreampulse/claude-code-logger?tab=readme-ov-file#-usage-examples
 # Usage: claude-code-logger start [options]
@@ -175,7 +177,7 @@ for key in "${OPTION_KEYS[@]}"; do
 done
 
 echo ""
-echo "🚀 正在执行: /vscode/bun-priority-bin/node_modules/.bin/claude-code-logger ${CLI_ARGS[*]} $*"
+echo "🚀 正在执行: tsx /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*"
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -215,10 +217,12 @@ if [[ $ENABLE_LOG_FILE -eq 1 ]]; then
     SESSION_DIR="$LOG_DIR/$SESSION_NAME"
     mkdir -p "$SESSION_DIR"
     LOG_FILE="$SESSION_DIR/$SESSION_NAME.log"
+    JSON_LOG_DIR="$SESSION_DIR"
     echo "📝 日志文件: $LOG_FILE"
-    /vscode/bun-priority-bin/node_modules/.bin/claude-code-logger "${CLI_ARGS[@]}" "$@" > "$LOG_FILE" 2>&1 &
+    echo "📁 JSON 日志目录: $JSON_LOG_DIR"
+    CLAUDE_CODE_LOGGER_DIR="$JSON_LOG_DIR" tsx /vscode/claude-code-logger/src/cli.ts "${CLI_ARGS[@]}" "$@" > "$LOG_FILE" 2>&1 &
 else
-    /vscode/bun-priority-bin/node_modules/.bin/claude-code-logger "${CLI_ARGS[@]}" "$@" &
+    tsx /vscode/claude-code-logger/src/cli.ts "${CLI_ARGS[@]}" "$@" &
 fi
 LOGGER_PID=$!
 
