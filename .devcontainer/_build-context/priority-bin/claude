@@ -55,19 +55,47 @@ bun --no-progress --cwd=/vscode/bun-priority-bin/ add @anthropic-ai/claude-code@
 # 初始化 Claude Code 配置文件
 init_claude_config() {
   local config_file="/vscode/claude-config/.claude.json"
-  local config_content='{
-  "numStartups": 0,
-  "theme": "light-daltonized",
-  "bypassPermissionsModeAccepted": true,
-  "hasCompletedOnboarding": true
-}'
-
-  if [[ -f "$config_file" ]]; then
-    # echo "Claude Code 配置文件 (.claude.json) 已存在，跳过覆盖。"
-    :
-  else
-    mkdir -p "$(dirname "$config_file")"
-    echo "$config_content" > "$config_file"
+  local updated=0
+  
+  mkdir -p "$(dirname "$config_file")"
+  
+  # 如果文件不存在，创建空 JSON 对象
+  if [[ ! -f "$config_file" ]]; then
+    echo '{}' > "$config_file"
+    updated=1
+  fi
+  
+  # 读取当前配置
+  local current_config
+  current_config=$(cat "$config_file")
+  
+  # 检查并设置 numStartups
+  if ! echo "$current_config" | jq -e 'has("numStartups")' > /dev/null 2>&1; then
+    current_config=$(echo "$current_config" | jq '.numStartups = 0')
+    updated=1
+  fi
+  
+  # 检查并设置 theme
+  if ! echo "$current_config" | jq -e 'has("theme")' > /dev/null 2>&1; then
+    current_config=$(echo "$current_config" | jq '.theme = "light-daltonized"')
+    updated=1
+  fi
+  
+  # 检查并设置 bypassPermissionsModeAccepted
+  if ! echo "$current_config" | jq -e 'has("bypassPermissionsModeAccepted")' > /dev/null 2>&1; then
+    current_config=$(echo "$current_config" | jq '.bypassPermissionsModeAccepted = true')
+    updated=1
+  fi
+  
+  # 检查并设置 hasCompletedOnboarding
+  if ! echo "$current_config" | jq -e 'has("hasCompletedOnboarding")' > /dev/null 2>&1; then
+    current_config=$(echo "$current_config" | jq '.hasCompletedOnboarding = true')
+    updated=1
+  fi
+  
+  # 如果有更新，写入文件
+  if [[ $updated -eq 1 ]]; then
+    echo "$current_config" > "$config_file"
     echo "⚙️  已初始化配置文件: $config_file"
   fi
 }
