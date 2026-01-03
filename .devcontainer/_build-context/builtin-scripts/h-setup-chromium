@@ -5,34 +5,3 @@ set -o pipefail   # 对应 -o pipefail
 
 curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
   chromium chromium-l10n ffmpeg
-
-cat << 'EOF' | sudo tee /usr/local/bin/chromium > /dev/null
-#!/bin/bash
-export DISPLAY=:1
-#-------------------------------------------------------------------------------------------------------------
-# --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
-#                           使用此选项可以强制 Chromium 使用磁盘而不是共享内存来存储这些文件，从而避免内存不足的问题。
-#                           df -h /dev/shm  查看 /dev/shm 分区大小
-#-------------------------------------------------------------------------------------------------------------
-
-# 快速查看所有 chromium 进程：
-# ps -C chromium -o pid,command --width 1000
-
-  # "--disable-setuid-sandbox"
-CHROME_ARGS=(
-  "--no-sandbox"
-  "--start-maximized"
-  "--disable-gpu"
-  "--disable-software-rasterizer"
-  "--deny-permission-prompts"
-  "--disable-device-discovery-notifications"
-  "--test-type"
-)
-
-if { [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ "${DBUS_SESSION_BUS_ADDRESS}" = "autolaunch:" ]; } && [ -x "$(command -v dbus-launch)" ]; then
-  exec dbus-launch --exit-with-session /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
-else
-  exec /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
-fi
-EOF
-sudo chmod +x /usr/local/bin/chromium

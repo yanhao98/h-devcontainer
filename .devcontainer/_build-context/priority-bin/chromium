@@ -1,0 +1,45 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+export DISPLAY=:1
+#-------------------------------------------------------------------------------------------------------------
+# --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
+#                           使用此选项可以强制 Chromium 使用磁盘而不是共享内存来存储这些文件，从而避免内存不足的问题。
+#                           df -h /dev/shm  查看 /dev/shm 分区大小
+#-------------------------------------------------------------------------------------------------------------
+
+# 快速查看所有 chromium 进程：
+# ps -C chromium -o pid,command --width 1000
+
+  # "--disable-setuid-sandbox"
+CHROME_ARGS=(
+  "--no-sandbox"                   # 禁用沙箱（容器中以 root 或无特权用户运行时必需）
+  "--start-maximized"              # 启动时窗口最大化
+  "--disable-gpu"                  # 禁用 GPU 硬件加速（容器中通常无 GPU）
+  "--disable-software-rasterizer"  # 禁用软件光栅化（避免 CPU 模拟 GPU 渲染）
+  "--deny-permission-prompts"      # 自动拒绝所有权限请求（摄像头、麦克风、通知等）
+  "--disable-features=MediaRouter" # 禁用媒体路由（Chromecast 等设备发现），替代已废弃的 --disable-device-discovery-notifications
+  "--password-store=basic"         # 使用基本密码存储，避免 GNOME Keyring 弹窗。参考: https://chromium.googlesource.com/chromium/src/+/HEAD/docs/linux/password_storage.md
+  "--test-type"                    # 测试模式，禁用某些安全警告和提示
+)
+
+# if { [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] || [ "${DBUS_SESSION_BUS_ADDRESS}" = "autolaunch:" ]; } && [ -x "$(command -v dbus-launch)" ]; then
+#   exec dbus-launch --exit-with-session /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
+# else
+#   exec /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
+# fi
+
+#-------------------------------------------------------------------------------------------------------------
+# DBUS_SESSION_BUS_ADDRESS 选项：
+#   - "autolaunch:"  : 自动查找或启动会话总线，功能完整（剪贴板、通知等），但会有 UPower 等服务警告
+#   - "disabled:"    : 完全禁用 D-Bus，无警告，但剪贴板等功能会失效
+#   - "unix:path=..."  : 直接连接到指定的会话总线 socket
+# 参考: https://codereview.chromium.org/2861163002
+#
+# 容器环境中 UPower 等服务不存在，会产生无害的 D-Bus 警告
+# 如需抑制警告，可在命令末尾添加 2>/dev/null（会隐藏所有错误信息）
+# 参考: https://raspberrypi.stackexchange.com/questions/100755
+#-------------------------------------------------------------------------------------------------------------
+export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-"autolaunch:"}"
+exec /usr/bin/chromium "${CHROME_ARGS[@]}" "$@"
