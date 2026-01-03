@@ -29,23 +29,24 @@ set -o pipefail   # 对应 -o pipefail
 #-------------------------------------------------------------------------------------------------------------
 
 
-# 获取并打印调用者信息
+# 获取调用者信息
 PARENT_INFO=$(ps -p $PPID -o args= 2>/dev/null || echo "unknown")
-echo "🔍 调用者: $PARENT_INFO (PID: $PPID)"
 
 # 解析命令行参数，检查是否有 --skip-settings
 CLAUDE_ARGS=()
+SKIP_SETTINGS_MSG=""
 for arg in "$@"; do
   if [[ "$arg" == "--skip-settings" ]]; then
     export CLAUDE_SKIP_SETTINGS=1
-    echo "⏭️  检测到 --skip-settings 参数"
+    SKIP_SETTINGS_MSG=" | ⏭️ --skip-settings"
   else
     CLAUDE_ARGS+=("$arg")
   fi
 done
 set -- "${CLAUDE_ARGS[@]}"
 
-echo "🚀 正在启动 Claude Code 包装器 ($0)..."
+echo "🚀 正在启动 Claude Code 包装器 ($0)"
+echo "   调用者: $PARENT_INFO (PID: $PPID)${SKIP_SETTINGS_MSG}"
 
 echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
 mkdir -p /vscode/bun-priority-bin/
@@ -150,15 +151,20 @@ setup_managed_settings() {
   if [[ -f "$target_settings_file" ]]; then
     local extracted_url
     local extracted_model
+    local extracted_haiku_model
     
     extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$target_settings_file" 2>/dev/null)
     extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$target_settings_file" 2>/dev/null)
+    extracted_haiku_model=$(jq -r '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL // empty' "$target_settings_file" 2>/dev/null)
     
     if [[ -n "$extracted_url" ]]; then
       announcements+=("🚀 ANTHROPIC_BASE_URL: $extracted_url")
     fi
     if [[ -n "$extracted_model" ]]; then
       announcements+=("🤖 ANTHROPIC_MODEL:    $extracted_model")
+    fi
+    if [[ -n "$extracted_haiku_model" ]]; then
+      announcements+=("🐇 HAIKU_MODEL:        $extracted_haiku_model")
     fi
   fi
 
@@ -179,9 +185,9 @@ setup_managed_settings() {
   local combined_announcement=""
   local separator="─────────────────────────────────────────────"
   if [[ -n "$switch_script_path" ]]; then
-    combined_announcement="💡 运行 $switch_script_path 切换配置\n$separator"
+    combined_announcement="💡 切换配置: $switch_script_path\n$separator"
   else
-    combined_announcement="💡 运行 claude-switch-settings 切换配置\n$separator"
+    combined_announcement="💡 切换配置: claude-switch-settings\n$separator"
   fi
   for item in "${announcements[@]}"; do
     combined_announcement="${combined_announcement}\n${item}"
