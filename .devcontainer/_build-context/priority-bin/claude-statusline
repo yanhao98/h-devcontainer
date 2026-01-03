@@ -4,6 +4,9 @@
 input=$(cat)
 
 # 将 input 写入调试文件
+# if [ ! -d /vscode/claude-config/debug-statusline ]; then
+#     mkdir -p /vscode/claude-config/debug-statusline/
+# fi
 # echo "$input" > "/vscode/claude-config/debug-statusline/$(date +%Y%m%d-%H%M%S).json"
 
 # 定义颜色
@@ -84,12 +87,13 @@ CACHE_READ=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_inp
 # 格式化 Token 显示
 TOKEN_DISPLAY=""
 if [ "$TOTAL_INPUT_TOKENS" -gt 0 ] || [ "$TOTAL_OUTPUT_TOKENS" -gt 0 ]; then
-    # 计算上下文使用百分比
+    # 计算上下文使用百分比 (使用当前输入而非累计总量)
     if [ "$CONTEXT_WINDOW_SIZE" -gt 0 ]; then
-        USAGE_PERCENT=$((TOTAL_INPUT_TOKENS * 100 / CONTEXT_WINDOW_SIZE))
-        TOKEN_DISPLAY=" 📊 ${TOTAL_INPUT_TOKENS}/${CONTEXT_WINDOW_SIZE} (${USAGE_PERCENT}%) ⬆️ ${TOTAL_OUTPUT_TOKENS}"
+        USAGE_PERCENT=$((CURRENT_INPUT * 100 / CONTEXT_WINDOW_SIZE))
+        # 格式: 当前/窗口大小 (百分比) | 累计输入 📤累计输出
+        TOKEN_DISPLAY=" 📊 ${CURRENT_INPUT}/${CONTEXT_WINDOW_SIZE} (${USAGE_PERCENT}%) | Σⁱⁿ${TOTAL_INPUT_TOKENS} 📤ᵒᵘᵗ${TOTAL_OUTPUT_TOKENS}"
     else
-        TOKEN_DISPLAY=" 📊 ⬇️${TOTAL_INPUT_TOKENS} ⬆️${TOTAL_OUTPUT_TOKENS}"
+        TOKEN_DISPLAY=" 📊 ⬇️${CURRENT_INPUT} | Σⁱⁿ${TOTAL_INPUT_TOKENS} 📤ᵒᵘᵗ${TOTAL_OUTPUT_TOKENS}"
     fi
     
     # 如果有缓存信息，添加缓存显示
