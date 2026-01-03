@@ -12,7 +12,7 @@ h-setup-chromium
 h-setup-desktop-lite
 h-gen-wallpaper
 
-h-install-node-modules
+h-smart-install-node-modules
 
 echo "-----------------------------"
 echo "开发容器已启动并配置完成！"

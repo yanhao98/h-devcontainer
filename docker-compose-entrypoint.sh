@@ -11,7 +11,7 @@ h-setup-pnpm-bin
 h-setup-ai-claude-code --config
 h-setup-ai-gemini-cli --config
 
-# h-install-node-modules
+# h-smart-install-node-modules
 
 h-setup-desktop-lite
 h-setup-chromium
