@@ -110,19 +110,27 @@ merge_settings() {
   # 显示当前配置信息
   echo ""
   echo "📋 当前配置:"
-  local extracted_url extracted_model extracted_haiku
+  local extracted_url extracted_model extracted_opus extracted_sonnet extracted_haiku
   extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
   extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
+  extracted_opus=$(jq -r '.env.ANTHROPIC_DEFAULT_OPUS_MODEL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
+  extracted_sonnet=$(jq -r '.env.ANTHROPIC_DEFAULT_SONNET_MODEL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
   extracted_haiku=$(jq -r '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL // empty' "$TARGET_SETTINGS_FILE" 2>/dev/null)
   
   if [[ -n "$extracted_url" ]]; then
     echo "   🚀 API: $extracted_url"
   fi
   if [[ -n "$extracted_model" ]]; then
-    echo "   🤖 模型: $extracted_model"
+    echo "   🤖 默认模型: $extracted_model"
+  fi
+  if [[ -n "$extracted_opus" ]]; then
+    echo "   🧠 Opus 模型: $extracted_opus"
+  fi
+  if [[ -n "$extracted_sonnet" ]]; then
+    echo "   🎵 Sonnet 模型: $extracted_sonnet"
   fi
   if [[ -n "$extracted_haiku" ]]; then
-    echo "   🐇 Haiku: $extracted_haiku"
+    echo "   🐇 Haiku 模型: $extracted_haiku"
   fi
 }
 

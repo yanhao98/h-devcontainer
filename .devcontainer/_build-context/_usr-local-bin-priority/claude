@@ -151,20 +151,30 @@ setup_managed_settings() {
   if [[ -f "$target_settings_file" ]]; then
     local extracted_url
     local extracted_model
+    local extracted_opus_model
+    local extracted_sonnet_model
     local extracted_haiku_model
     
     extracted_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$target_settings_file" 2>/dev/null)
     extracted_model=$(jq -r '.env.ANTHROPIC_MODEL // empty' "$target_settings_file" 2>/dev/null)
+    extracted_opus_model=$(jq -r '.env.ANTHROPIC_DEFAULT_OPUS_MODEL // empty' "$target_settings_file" 2>/dev/null)
+    extracted_sonnet_model=$(jq -r '.env.ANTHROPIC_DEFAULT_SONNET_MODEL // empty' "$target_settings_file" 2>/dev/null)
     extracted_haiku_model=$(jq -r '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL // empty' "$target_settings_file" 2>/dev/null)
     
     if [[ -n "$extracted_url" ]]; then
-      announcements+=("🚀 ANTHROPIC_BASE_URL: $extracted_url")
+      announcements+=("🚀 API: $extracted_url")
     fi
     if [[ -n "$extracted_model" ]]; then
-      announcements+=("🤖 ANTHROPIC_MODEL:    $extracted_model")
+      announcements+=("🤖 默认模型: $extracted_model")
+    fi
+    if [[ -n "$extracted_opus_model" ]]; then
+      announcements+=("🧠 Opus 模型: $extracted_opus_model")
+    fi
+    if [[ -n "$extracted_sonnet_model" ]]; then
+      announcements+=("🎵 Sonnet 模型: $extracted_sonnet_model")
     fi
     if [[ -n "$extracted_haiku_model" ]]; then
-      announcements+=("🐇 HAIKU_MODEL:        $extracted_haiku_model")
+      announcements+=("🐇 Haiku 模型: $extracted_haiku_model")
     fi
   fi
 
