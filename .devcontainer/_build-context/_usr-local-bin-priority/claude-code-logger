@@ -2,6 +2,9 @@
 set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
+#-------------------------------------------------------------------------------------------------------------
+# https://github.com/badlogic/lemmy/tree/main/apps/claude-trace
+#-------------------------------------------------------------------------------------------------------------
 
 mkdir -p /vscode/bun-priority-bin/
 # git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
