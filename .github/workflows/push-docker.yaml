@@ -13,6 +13,7 @@ env:
   # Event: push tag, Ref: refs/tags/v2.0.8-rc1, Tags: 2.0.8-rc1
   METADATA_TAGS: |
     type=ref,event=branch
+    type=ref,event=pr
     type=semver,pattern={{version}}
     type=semver,pattern={{major}}.{{minor}}
     type=semver,pattern={{major}}
