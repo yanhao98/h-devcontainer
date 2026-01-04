@@ -6,7 +6,7 @@ set -o pipefail   # 对应 -o pipefail
 mkdir -p /vscode/bun-priority-bin/
 # git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
 
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add tsx@latest
+add-bun-priority-bin-pkg tsx@latest
 
 # https://github.com/dreampulse/claude-code-logger?tab=readme-ov-file#-usage-examples
 # Usage: claude-code-logger start [options]

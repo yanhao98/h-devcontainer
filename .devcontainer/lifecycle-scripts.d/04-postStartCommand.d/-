@@ -1,4 +1,7 @@
-#!/bin/zsh -eu
+#!/bin/zsh
+# set -o errexit    # 对应 -e
+# set -o nounset    # 对应 -u
+# set -o pipefail   # 对应 -o pipefail
 
 curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
   hyperfine

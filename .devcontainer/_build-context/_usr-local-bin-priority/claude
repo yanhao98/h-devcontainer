@@ -2,6 +2,7 @@
 set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
+
 # https://github.com/anthropics/claude-code/blob/1fe9e369a7c30805189cbbb72eb69c15ed4ec96b/.devcontainer/Dockerfile#L42
 # https://code.claude.com/docs/zh-CN/settings#可用设置
 # https://code.claude.com/docs/zh-CN/settings#环境变量
@@ -45,12 +46,11 @@ for arg in "$@"; do
 done
 set -- "${CLAUDE_ARGS[@]}"
 
-echo "🚀 正在启动 Claude Code 包装器 ($0)"
+echo "🚀 正在运行 Claude Code 包装器 ($0)"
 echo "   调用者: $PARENT_INFO (PID: $PPID)${SKIP_SETTINGS_MSG}"
 
-echo "📦 正在检查并安装 @anthropic-ai/claude-code@latest..."
 mkdir -p /vscode/bun-priority-bin/
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add @anthropic-ai/claude-code@latest
+add-bun-priority-bin-pkg @anthropic-ai/claude-code@latest
 
 
 # 初始化 Claude Code 配置文件
@@ -162,19 +162,19 @@ setup_managed_settings() {
     extracted_haiku_model=$(jq -r '.env.ANTHROPIC_DEFAULT_HAIKU_MODEL // empty' "$target_settings_file" 2>/dev/null)
     
     if [[ -n "$extracted_url" ]]; then
-      announcements+=("🚀 API: $extracted_url")
+      announcements+=("🚀         API: $extracted_url")
     fi
     if [[ -n "$extracted_model" ]]; then
-      announcements+=("🤖 默认模型: $extracted_model")
+      announcements+=("🤖    默认模型: $extracted_model")
     fi
     if [[ -n "$extracted_opus_model" ]]; then
-      announcements+=("🧠 Opus 模型: $extracted_opus_model")
+      announcements+=("🧠   Opus 模型: $extracted_opus_model")
     fi
     if [[ -n "$extracted_sonnet_model" ]]; then
       announcements+=("🎵 Sonnet 模型: $extracted_sonnet_model")
     fi
     if [[ -n "$extracted_haiku_model" ]]; then
-      announcements+=("🐇 Haiku 模型: $extracted_haiku_model")
+      announcements+=("🐇  Haiku 模型: $extracted_haiku_model")
     fi
   fi
 
@@ -191,6 +191,11 @@ setup_managed_settings() {
   # 查找 claude-switch-settings 脚本的实际路径
   local switch_script_path
   switch_script_path="$(get_switch_settings_path)"
+
+  # 如果 switch_script_path 以当前工作目录开头，则移除该前缀
+  if [[ "$switch_script_path" == "$PWD"* ]]; then
+    switch_script_path="${switch_script_path#$PWD/}"
+  fi
   
   local combined_announcement=""
   local separator="─────────────────────────────────────────────"
@@ -221,9 +226,20 @@ setup_managed_settings() {
 }'
   
   sudo mkdir -p /etc/claude-code
-  echo "$settings_json" | sudo tee /etc/claude-code/managed-settings.json > /dev/null
-  sudo chmod 666 /etc/claude-code/managed-settings.json
-  echo "⚙️  已生成托管配置: /etc/claude-code/managed-settings.json"
+  
+  local target_file="/etc/claude-code/managed-settings.json"
+  local current_content=""
+  if [[ -f "$target_file" ]]; then
+    current_content=$(cat "$target_file")
+  fi
+  
+  if [[ "$settings_json" != "$current_content" ]]; then
+    echo "$settings_json" | sudo tee "$target_file" > /dev/null
+    sudo chmod 666 "$target_file"
+    echo "⚙️  已更新托管配置: $target_file"
+  else
+    echo "⚙️  托管配置无变化: $target_file"
+  fi
 }
 
 init_claude_config

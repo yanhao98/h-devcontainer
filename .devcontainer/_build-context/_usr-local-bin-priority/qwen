@@ -4,7 +4,7 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 mkdir -p /vscode/bun-priority-bin/
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add @qwen-code/qwen-code@latest
+add-bun-priority-bin-pkg @qwen-code/qwen-code@latest
 
 BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
