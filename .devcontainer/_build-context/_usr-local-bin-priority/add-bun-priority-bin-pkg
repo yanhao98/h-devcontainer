@@ -1,0 +1,7 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+echo "📦 安装: $*"
+bun --silent --no-env-file --no-progress --no-summary --cwd=/vscode/bun-priority-bin/ add "$@"
