@@ -11,6 +11,7 @@ env:
   # Event: push,     Ref: refs/head/main,       Tags: main
   # Event: push tag, Ref: refs/tags/v1.2.3,     Tags: 1.2.3, 1.2, 1, latest
   # Event: push tag, Ref: refs/tags/v2.0.8-rc1, Tags: 2.0.8-rc1
+  # Event: pr,       Ref: refs/pull/123/merge,  Tags: pr-123
   METADATA_TAGS: |
     type=ref,event=branch
     type=ref,event=pr
