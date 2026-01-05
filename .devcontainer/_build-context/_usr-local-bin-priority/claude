@@ -249,6 +249,7 @@ setup_managed_settings
 
 BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
+# /vscode/bun-priority-bin/node_modules/@anthropic-ai/claude-code/cli.js
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/claude")
 
 CLI_ARGS=("--dangerously-skip-permissions")

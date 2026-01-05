@@ -128,6 +128,7 @@ EOF
 # <<<<<<<<<<<<<<<<<<<< zsh 配置
 
 # >>>>> 复制内置脚本
+COPY _build-context/rootfs /
 # 优先级脚本放到单独目录，确保在 PATH 最前面
 COPY --chmod=755 _build-context/_usr-local-bin-priority/* /usr/local/bin-priority/
 # 其他脚本放到 /usr/local/bin
