@@ -14,7 +14,6 @@ h-setup-ai-gemini-cli --config
 # h-smart-install-node-modules
 
 h-setup-desktop-lite
-h-setup-chromium
 
 echo "✅ 容器初始化脚本执行完毕。"
 
