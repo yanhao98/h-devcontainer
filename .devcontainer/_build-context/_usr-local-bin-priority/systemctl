@@ -1,0 +1,10 @@
+#!/bin/sh
+# https://github.com/devcontainers/features/blob/b0188f0a5ef98f1c3217b6c0fe14c3ee472fad68/src/common-utils/main.sh#L603
+# systemctl shim for Debian/Ubuntu - tells people to use 'service' if systemd is not running
+
+set -e
+if [ -d "/run/systemd/system" ]; then
+    exec /bin/systemctl "$@"
+else
+    echo '\n"systemd" is not running in this container due to its overhead.\nUse the "service" command to start services instead. e.g.: \n\nservice --status-all'
+fi
