@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+mkdir -p /vscode/lingma-home
+# 检查软链接是否已正确建立，如果是则跳过
+if [ -L "$HOME/.lingma" ] && [ "$(readlink "$HOME/.lingma")" = "/vscode/lingma-home" ]; then
+    echo "✅ Lingma 主目录软链接已就绪，跳过配置。"
+    : # 软链接已正确建立，跳过
+else
+    if [ -d "$HOME/.lingma" ]; then
+        echo "🗑️  清理现有的 .lingma 目录..."
+        rm -rf "$HOME/.lingma"
+    fi
+    echo "🔗 创建 Lingma 主目录软链接..."
+    ln -sfn /vscode/lingma-home ~/.lingma
+fi
