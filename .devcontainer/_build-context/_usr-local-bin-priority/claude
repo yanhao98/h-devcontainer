@@ -224,21 +224,8 @@ setup_managed_settings() {
   }
 }'
   
-  sudo mkdir -p /etc/claude-code
-  
   local target_file="/etc/claude-code/managed-settings.json"
-  local current_content=""
-  if [[ -f "$target_file" ]]; then
-    current_content=$(cat "$target_file")
-  fi
-  
-  if [[ "$settings_json" != "$current_content" ]]; then
-    echo "$settings_json" | sudo tee "$target_file" > /dev/null
-    sudo chmod 666 "$target_file" # 所有人都可以读取和写入该文件,但任何人都不能执行。
-    echo "⚙️  已更新托管配置: $target_file"
-  else
-    echo "⚙️  托管配置无变化: $target_file"
-  fi
+  echo "$settings_json" | h-update-file-if-changed "$target_file" 666 "托管配置"
 }
 
 init_claude_config
