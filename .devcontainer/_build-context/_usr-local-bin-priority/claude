@@ -49,7 +49,6 @@ set -- "${CLAUDE_ARGS[@]}"
 echo "🚀 正在运行 Claude Code 包装器 ($0)"
 echo "   调用者: $PARENT_INFO (PID: $PPID)${SKIP_SETTINGS_MSG}"
 
-mkdir -p /vscode/bun-priority-bin/
 add-bun-priority-bin-pkg @anthropic-ai/claude-code@latest
 
 
@@ -235,7 +234,7 @@ setup_managed_settings() {
   
   if [[ "$settings_json" != "$current_content" ]]; then
     echo "$settings_json" | sudo tee "$target_file" > /dev/null
-    sudo chmod 666 "$target_file"
+    sudo chmod 666 "$target_file" # 所有人都可以读取和写入该文件,但任何人都不能执行。
     echo "⚙️  已更新托管配置: $target_file"
   else
     echo "⚙️  托管配置无变化: $target_file"
@@ -257,9 +256,9 @@ CLI_ARGS=("--dangerously-skip-permissions")
 echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run claude --version
 
-# 从 PATH 中移除当前脚本所在的目录，防止无限递归
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
 exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"

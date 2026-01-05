@@ -6,7 +6,6 @@ set -o pipefail   # 对应 -o pipefail
 # https://github.com/badlogic/lemmy/tree/main/apps/claude-trace
 #-------------------------------------------------------------------------------------------------------------
 
-mkdir -p /vscode/bun-priority-bin/
 if [ ! -d "/vscode/claude-code-logger" ]; then
     git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
 fi

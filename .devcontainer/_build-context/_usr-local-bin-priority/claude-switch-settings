@@ -95,7 +95,7 @@ merge_settings() {
 
     if jq -s --argjson reset "$reset_json" '.[0] * $reset * .[1]' "$TARGET_SETTINGS_FILE" "$selected_file" > "$temp_merged_file"; then
       mv "$temp_merged_file" "$TARGET_SETTINGS_FILE"
-      chmod 666 "$TARGET_SETTINGS_FILE" 2>/dev/null || true # 尝试确保权限正确
+      chmod 666 "$TARGET_SETTINGS_FILE" 2>/dev/null || true # 所有人都可以读取和写入该文件,但任何人都不能执行。
       echo "✅ 合并成功"
     else
       echo "⚠️ Settings 合并失败 (JSON 格式错误?)，将直接覆盖原文件"

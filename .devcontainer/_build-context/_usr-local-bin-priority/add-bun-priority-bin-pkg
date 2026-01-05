@@ -4,4 +4,13 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 echo "📦 安装: $*"
-bun --silent --no-env-file --no-progress --no-summary --cwd=/vscode/bun-priority-bin/ add "$@"
+mkdir -p /vscode/bun-priority-bin/
+
+BUN_ARGS=()
+BUN_ARGS+=("--silent")
+BUN_ARGS+=("--no-env-file")
+BUN_ARGS+=("--no-progress")
+BUN_ARGS+=("--no-summary")
+BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
+
+bun "${BUN_ARGS[@]}" add "$@"

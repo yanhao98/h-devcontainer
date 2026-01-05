@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# claude mcp add --transport stdio --scope=user chrome-devtools -- mcp_chrome-devtools-mcp
+
+add-bun-priority-bin-pkg chrome-devtools-mcp@latest
+
+BUN_ARGS=()
+BUN_ARGS+=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/chrome-devtools-mcp")
+
+BIN_ARGS=()
+BIN_ARGS+=("--isolated")
+BIN_ARGS+=("--executablePath=/usr/local/bin-priority/chromium")
+
+exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}"

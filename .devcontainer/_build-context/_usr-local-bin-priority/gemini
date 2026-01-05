@@ -13,8 +13,7 @@ set -o pipefail   # 对应 -o pipefail
 # 环境变量文档: https://bun.com/docs/runtime/environment-variables#setting-environment-variables
 # <<<<< Gemini CLI
 
-mkdir -p /vscode/bun-priority-bin/
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add @google/gemini-cli@latest
+add-bun-priority-bin-pkg @google/gemini-cli@latest
 
 BUN_ARGS=("--bun")
 BUN_ARGS+=("--env-file=/vscode/bun-priority-bin/.env.local")

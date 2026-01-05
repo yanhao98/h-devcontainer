@@ -3,7 +3,6 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-mkdir -p /vscode/bun-priority-bin/
 add-bun-priority-bin-pkg @qwen-code/qwen-code@latest
 
 BUN_ARGS=("--bun")

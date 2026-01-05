@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# claude mcp remove searxng
+# claude mcp add --transport stdio --scope=user searxng --env SEARXNG_URL=URL -- mcp_mcp-searxng
+
+add-bun-priority-bin-pkg mcp-searxng@latest
+
+BUN_ARGS=()
+BUN_ARGS+=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/mcp-searxng")
+
+BIN_ARGS=()
+
+exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}"

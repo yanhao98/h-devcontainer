@@ -31,7 +31,6 @@ EOF
     fi
 }
 
-mkdir -p /vscode/bun-priority-bin/
 bun --no-progress --cwd=/vscode/bun-priority-bin/ add @openai/codex@latest
 
 # 调用函数确保配置文件存在

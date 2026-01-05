@@ -3,8 +3,7 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-mkdir -p /vscode/bun-priority-bin/
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add @iflow-ai/iflow-cli@latest
+add-bun-priority-bin-pkg @iflow-ai/iflow-cli@latest
 
 BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
