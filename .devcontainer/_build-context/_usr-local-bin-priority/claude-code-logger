@@ -7,7 +7,14 @@ set -o pipefail   # 对应 -o pipefail
 #-------------------------------------------------------------------------------------------------------------
 
 mkdir -p /vscode/bun-priority-bin/
-# git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
+if [ ! -d "/vscode/claude-code-logger" ]; then
+    git clone https://github.com/yanhao98/claude-code-logger.git /vscode/claude-code-logger
+fi
+
+if [ ! -d "/vscode/claude-code-logger/node_modules" ]; then
+    echo "📦 Installing dependencies for claude-code-logger..."
+    (cd /vscode/claude-code-logger && bun install)
+fi
 
 add-bun-priority-bin-pkg tsx@latest
 
@@ -187,10 +194,10 @@ TSX_CMD="/vscode/bun-priority-bin/node_modules/.bin/tsx"
 
 echo "🚀 正在执行: $TSX_CMD /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*"
 
-# 从 PATH 中移除当前脚本所在的目录，防止无限递归
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
 LOG_DIR="/vscode/claude-config/claude-code-logger"
 mkdir -p "$LOG_DIR"
@@ -215,9 +222,9 @@ else
     exit 1
 fi
 
-# 从 PATH 中移除当前脚本所在的目录，防止无限递归
-# 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
+# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
+# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
 # 启动 claude-code-logger 在后台
 if [[ $ENABLE_LOG_FILE -eq 1 ]]; then
