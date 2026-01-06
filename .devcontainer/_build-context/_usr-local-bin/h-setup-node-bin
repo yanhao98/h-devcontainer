@@ -80,12 +80,6 @@ fi
 # 安装
 echo "正在安装 Node.js 到 /usr/local..."
 
-# 检查 xz-utils
-if ! command -v xz >/dev/null; then
-    echo "正在安装 xz-utils..."
-    sudo apt-get update && sudo apt-get install -y xz-utils
-fi
-
 # 使用 sudo 解压
 sudo tar -xJf "$cached_file" -C /usr/local --strip-components=1 --no-same-owner
 
