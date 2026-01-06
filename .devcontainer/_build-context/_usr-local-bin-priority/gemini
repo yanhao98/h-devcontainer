@@ -42,7 +42,7 @@ ensure_gemini_settings() {
   "general": { "previewFeatures": true }
 }'
   local target_file="/vscode/gemini-system-settings.json"
-  echo "$content" | _h-update-file-if-changed "$target_file" 666 "Gemini CLI 配置"
+  echo "$content" | _update-file-if-changed "$target_file" 666 "Gemini CLI 配置"
 }
 
 ensure_gemini_settings
