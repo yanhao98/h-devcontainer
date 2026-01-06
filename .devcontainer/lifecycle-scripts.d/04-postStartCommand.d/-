@@ -7,8 +7,9 @@ h-setup-lingma
 
 h-setup-zh-locale
 
-h-setup-bun-bin
-h-setup-pnpm-bin
+# h-setup-node-bin
+# h-setup-bun-bin
+# h-setup-pnpm-bin
 
 h-setup-desktop-lite
 h-gen-wallpaper
