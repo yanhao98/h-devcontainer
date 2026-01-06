@@ -15,7 +15,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
     eatmydata \
     # 开发工具
-    less git procps sudo fzf zsh man-db unzip gnupg2 \
+    less git procps sudo fzf zsh man-db unzip gnupg2 xz-utils \
     # 编辑器和实用工具
     jq nano vim \
     # 网络工具
@@ -38,8 +38,12 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     esac \
     && set -ex \
     # libatomic1 for arm
-    && apt-get update -qq && apt-get install -qq -y ca-certificates curl wget gnupg dirmngr xz-utils libatomic1 --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/* \
+
+    # ➖
+    # && apt-get update -qq && apt-get install -qq -y ca-certificates curl wget gnupg dirmngr xz-utils libatomic1 --no-install-recommends \
+    # && rm -rf /var/lib/apt/lists/* \
+    # ➖
+
     # use pre-existing gpg directory, see https://github.com/nodejs/docker-node/pull/1895#issuecomment-1550389150
     && export GNUPGHOME="$(mktemp -d)" \
     # gpg keys listed at https://github.com/nodejs/node#release-keys
@@ -76,12 +80,17 @@ RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
       | xargs -r apt-mark manual \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+
+    # ➕
+    && rm -f /usr/local/README.md /usr/local/LICENSE /usr/local/CHANGELOG.md \
+    # ➕
+
     # smoke tests
     && node --version \
     && npm --version \
     && rm -rf /tmp/*
 
-# RUN curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
+# RUN curl -fsSL --compressed https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
 #     eatmydata apt-get install -qq -y nodejs && \
 #     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -103,7 +112,7 @@ RUN sudo mkdir /vscode && sudo chown usr_vscode:usr_vscode /vscode
 ARG ZSH_IN_DOCKER_VERSION=1.2.1
 ENV POWERLEVEL9K_DISABLE_GITSTATUS=true
 RUN set -eux; \
-    sh -c "$(curl -L https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
+    sh -c "$(curl -fsSL --compressed https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
     # # Default powerline10k theme
     # -t robbyrussell \
     -p git \
@@ -164,6 +173,9 @@ ENV DEVCONTAINER=true \
     IS_SANDBOX=true
 
 ENV CODEX_HOME=/vscode/codex-home
+
+# https://github.com/devcontainers/features/blob/b0188f0a5ef98f1c3217b6c0fe14c3ee472fad68/src/common-utils/scripts/rc_snippet.sh#L22
+ENV GIT_EDITOR="code --wait"
 
 
 # 设置入口点为 /bin/sh

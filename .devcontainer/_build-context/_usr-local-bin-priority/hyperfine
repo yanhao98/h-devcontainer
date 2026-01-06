@@ -10,7 +10,7 @@ if ! dpkg --status hyperfine &>/dev/null; then
   export APT_CONFIG="$APT_WAIT_CONF"
   
   # -E 选项：保留（preserve）当前的环境变量
-  curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh  | sudo -E bash -s -- \
+  _curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh  | sudo -E bash -s -- \
     hyperfine
   
   rm -f "$APT_WAIT_CONF"

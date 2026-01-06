@@ -15,7 +15,7 @@ run_sys() {
 }
 
 if ! dpkg -s locales >/dev/null 2>&1; then
-  curl -fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+  _curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
     locales
 fi
 

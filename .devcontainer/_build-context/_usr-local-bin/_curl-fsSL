@@ -1,0 +1,12 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# -f (--fail): 失败时不输出内容，直接返回非零状态码
+# -s (--silent): 静默模式，不显示进度条和错误信息
+# -S (--show-error): 与 -s 一起使用时，在失败时显示错误信息
+# -L (--location): 遇到重定向时，自动跟随新的 URL
+# --compressed: 请求压缩内容，并自动解压响应
+
+exec curl -fsSL --compressed "$@"

@@ -58,7 +58,7 @@ else
 fi
 
 echo "正在获取 pnpm 版本信息..."
-release_info=$(curl --fail --location --silent "$release_api_uri")
+release_info=$(_curl-fsSL "$release_api_uri")
 version=$(echo "$release_info" | jq -r ".tag_name")
 pnpm_uri=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
 expected_checksum=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .digest" | cut -d: -f2)
@@ -90,7 +90,7 @@ if [[ "$need_download" == "true" ]]; then
     echo "正在为 $(uname -ms) 下载 pnpm ${version}..."
     echo "下载链接: ${pnpm_uri}"
 
-    curl --fail --location --progress-bar --output "$cached_pnpm_path" "$pnpm_uri" || {
+    _curl-fsSL -o "$cached_pnpm_path" "$pnpm_uri" || {
         echo "从 \"$pnpm_uri\" 下载 pnpm 失败"; exit 1;
     }
 
