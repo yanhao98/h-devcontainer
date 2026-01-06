@@ -8,8 +8,8 @@ set -o pipefail   # 对应 -o pipefail
 #   https://nodejs.org/dist/
 
 if [ -z "${NODE_VERSION:-}" ]; then
-    NODE_VERSION=$(_curl-fsSL https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
-    # NODE_VERSION=$(_curl-fsSL https://nodejs.org/dist/index.tab | sed -n '2p' | awk '{print $1}' | tr -d 'v')
+    NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
+    # NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.tab | sed -n '2p' | awk '{print $1}' | tr -d 'v')
 fi
 
 # 确定架构
@@ -47,7 +47,7 @@ verify_checksum() {
     # 下载 SHASUMS256.txt 并查找对应文件的校验和
     echo "正在获取校验和..."
     local shasum_line
-    shasum_line=$(_curl-fsSL "$shasums_url" | grep " $filename\$") || {
+    shasum_line=$(_curl-fsSL--compressed "$shasums_url" | grep " $filename\$") || {
         echo "在 SHASUMS256.txt 中未找到 $filename"; return 1;
     }
 
@@ -70,7 +70,7 @@ fi
 
 if [[ "$need_download" == "true" ]]; then
     echo "正在下载 Node.js v$NODE_VERSION ($ARCH)..."
-    _curl-fsSL -o "$cached_file" "$tarball_url" || {
+    _curl-fsSL--compressed -o "$cached_file" "$tarball_url" || {
         echo "下载失败: $tarball_url"; exit 1;
     }
 

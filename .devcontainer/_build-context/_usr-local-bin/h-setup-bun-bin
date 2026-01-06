@@ -11,7 +11,7 @@ set -o pipefail   # 对应 -o pipefail
 # 验证 zip 文件的校验和
 # 返回值: 0 表示验证成功，1 表示验证失败
 verify_checksum() {
-    if ! _curl-fsSL "$shasums_uri" | \
+    if ! _curl-fsSL--compressed "$shasums_uri" | \
          grep " bun-linux-$build.zip\$" | \
          (cd "$(dirname "$zip")" && sha256sum -c -) 2>/dev/null; then
         return 1
@@ -49,7 +49,7 @@ fi
 # 下载 zip 文件（如果需要）
 if [[ "$need_download" == "true" ]]; then
     echo "正在为 $(uname -ms) 下载 bun..."
-    _curl-fsSL -o "$zip" "$bun_uri" || {
+    _curl-fsSL--compressed -o "$zip" "$bun_uri" || {
         echo "从 \"$bun_uri\" 下载 bun 失败"; exit 1;
     }
 
