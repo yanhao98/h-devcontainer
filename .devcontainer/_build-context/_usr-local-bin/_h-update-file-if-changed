@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# Usage: echo "content" | _h-update-file-if-changed <target_file> [chmod_mode] [description]
+
+TARGET_FILE="${1:-}"
+CHMOD_MODE="${2:-}"
+DESCRIPTION="${3:-文件}"
+
+if [[ -z "$TARGET_FILE" ]]; then
+  echo "❌ 错误: _h-update-file-if-changed 未指定目标文件。" >&2
+  exit 1
+fi
+
+# Create a temporary file to hold stdin content
+TEMP_FILE=$(mktemp)
+# Ensure cleanup on exit
+trap 'rm -f "$TEMP_FILE"' EXIT
+
+# Save stdin to the temp file exactly as is
+cat > "$TEMP_FILE"
+
+CHANGED=false
+
+# Compare content
+if [[ ! -f "$TARGET_FILE" ]]; then
+  CHANGED=true
+else
+  # Check readability
+  if [[ -r "$TARGET_FILE" ]]; then
+    if ! cmp -s "$TEMP_FILE" "$TARGET_FILE"; then
+      CHANGED=true
+    fi
+  else
+    # Try with sudo
+    if sudo -n true 2>/dev/null; then
+       if ! sudo cmp -s "$TEMP_FILE" "$TARGET_FILE"; then
+         CHANGED=true
+       fi
+    else
+       # Can't read, assume changed
+       echo "⚠️ 警告: 无法读取 $TARGET_FILE，将尝试直接写入。" >&2
+       CHANGED=true
+    fi
+  fi
+fi
+
+if [[ "$CHANGED" == "true" ]]; then
+  DIR_NAME=$(dirname "$TARGET_FILE")
+
+  # Ensure directory exists
+  if [[ ! -d "$DIR_NAME" ]]; then
+    if [[ -w "$(dirname "$DIR_NAME")" ]]; then
+      mkdir -p "$DIR_NAME"
+    else
+      sudo mkdir -p "$DIR_NAME"
+    fi
+  fi
+
+  # Write content
+  CAN_WRITE=false
+  if [[ -e "$TARGET_FILE" ]]; then
+     if [[ -w "$TARGET_FILE" ]]; then CAN_WRITE=true; fi
+  else
+     if [[ -w "$DIR_NAME" ]]; then CAN_WRITE=true; fi
+  fi
+
+  if $CAN_WRITE; then
+    cat "$TEMP_FILE" > "$TARGET_FILE"
+  else
+    cat "$TEMP_FILE" | sudo tee "$TARGET_FILE" > /dev/null
+  fi
+
+  # Set permissions if specified
+  if [[ -n "$CHMOD_MODE" ]]; then
+    if [[ -w "$TARGET_FILE" ]]; then
+      chmod "$CHMOD_MODE" "$TARGET_FILE"
+    else
+      sudo chmod "$CHMOD_MODE" "$TARGET_FILE"
+    fi
+  fi
+
+  echo "⚙️  已更新${DESCRIPTION}: $TARGET_FILE"
+else
+  echo "⚙️  ${DESCRIPTION}无变化: $TARGET_FILE"
+fi

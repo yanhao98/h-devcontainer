@@ -225,7 +225,7 @@ setup_managed_settings() {
 }'
   
   local target_file="/etc/claude-code/managed-settings.json"
-  echo "$settings_json" | h-update-file-if-changed "$target_file" 666 "托管配置"
+  echo "$settings_json" | _h-update-file-if-changed "$target_file" 666 "托管配置"
 }
 
 init_claude_config
