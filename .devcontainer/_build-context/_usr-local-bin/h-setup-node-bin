@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -o errexit
-set -o nounset
-set -o pipefail
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
 
 # 资料:
 #   https://github.com/nodejs/docker-node
