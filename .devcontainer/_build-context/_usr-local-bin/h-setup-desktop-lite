@@ -12,7 +12,7 @@ _curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-ins
     at-spi2-core xterm nautilus mousepad seahorse \
     gnome-icon-theme gnome-keyring \
     libx11-dev libxkbfile-dev libsecret-1-dev libgbm-dev libnotify4 \
-    libnss3 libxss1 libasound2 libasound2-dev \
+    libnss3 libxss1 libasound2-dev \
     xfonts-base xfonts-terminus fonts-noto fonts-wqy-microhei fonts-droid-fallback fonts-noto-color-emoji \
     htop ncdu curl ca-certificates unzip nano locales \
     python3-minimal python3-numpy \
