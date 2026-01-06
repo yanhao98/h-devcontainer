@@ -9,6 +9,8 @@ set -o pipefail
 
 if [ -z "${NODE_VERSION:-}" ]; then
     NODE_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
+    # NODE_VERSION=$(curl -s https://nodejs.org/dist/index.tab | \
+    #   sed -n '2p' | awk '{print $1}' | tr -d 'v')
 fi
 
 # 确定架构
