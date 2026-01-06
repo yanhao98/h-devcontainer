@@ -13,4 +13,4 @@ BUN_ARGS+=("--no-progress")
 BUN_ARGS+=("--no-summary")
 BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
 
-bun "${BUN_ARGS[@]}" add "$@"
+exec bun "${BUN_ARGS[@]}" add "$@"
