@@ -147,7 +147,6 @@ COPY --chmod=755 _build-context/run-lifecycle-scripts.sh /usr/local/bin/
 ENV BUN_INSTALL_CACHE_DIR="/vscode/bun/install-cache"
 ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
 ENV PATH="/usr/local/bin-priority:${HOME}/.bun/bin:${PATH}"
-ENV PATH="${PATH}:/usr/local/bun-node-fallback-bin"
 
 # ENV XDG_CACHE_HOME="/vscode/xdg-cache"
 # ENV XDG_CONFIG_HOME="/vscode/xdg-config"

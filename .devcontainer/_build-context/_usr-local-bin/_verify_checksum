@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 通用的 SHA256 校验和验证工具
+#
+# 用法:
+#   _verify_checksum <文件路径> <期望的校验和>
+#   _verify_checksum <文件路径> <SHASUMS256.txt URL>
+#
+# 示例:
+#   _verify_checksum /path/to/file.zip abc123...
+#   _verify_checksum /path/to/file.tar.xz https://example.com/SHASUMS256.txt
+
+if [[ $# -lt 2 ]]; then
+    echo "❌ 用法: _verify_checksum <文件路径> <期望的校验和|SHASUMS256.txt URL>"
+    exit 1
+fi
+
+file_path="$1"
+filename="$(basename "$file_path")"
+checksum_or_url="$2"
+
+if [[ ! -f "$file_path" ]]; then
+    echo "❌ 错误: 文件不存在: $file_path"
+    exit 1
+fi
+
+if [[ "$checksum_or_url" =~ ^https?:// ]]; then
+    # 从 URL 获取校验和
+    shasums_url="$checksum_or_url"
+
+    # 从 SHASUMS256.txt 获取对应文件的校验和行
+    shasum_line=$(_curl-fsSL--compressed "$shasums_url" | grep " $filename\$") || {
+        echo "❌ 错误: 在 SHASUMS256.txt 中未找到 $filename (来源: $shasums_url)"
+        exit 1
+    }
+
+    # 使用 sha256sum -c 验证
+    if echo "$shasum_line" | (cd "$(dirname "$file_path")" && sha256sum -c - >/dev/null 2>&1); then
+        expected_checksum=$(echo "$shasum_line" | awk '{print $1}')
+        echo "☑️  校验和验证成功: $file_path (校验和: $expected_checksum, 来源: $shasums_url)"
+        exit 0
+    else
+        expected_checksum=$(echo "$shasum_line" | awk '{print $1}')
+        actual_checksum=$(sha256sum "$file_path" | awk '{print $1}')
+        echo "❌ 校验和验证失败: $file_path"
+        echo "  期望值: $expected_checksum"
+        echo "  实际值: $actual_checksum"
+        echo "  来源: $shasums_url"
+        exit 1
+    fi
+else
+    # 直接传入期望的校验和
+    expected_checksum="$checksum_or_url"
+
+    if [[ -z "$expected_checksum" ]]; then
+        echo "❌ 错误: 未提供期望的校验和"
+        exit 1
+    fi
+
+    actual_checksum=$(sha256sum "$file_path" | awk '{print $1}')
+
+    if [[ "$actual_checksum" == "$expected_checksum" ]]; then
+        echo "☑️  校验和验证成功: $file_path ($expected_checksum)"
+        exit 0
+    else
+        echo "❌ 校验和验证失败: $file_path"
+        echo "  期望值: $expected_checksum"
+        echo "  实际值: $actual_checksum"
+        exit 1
+    fi
+fi
