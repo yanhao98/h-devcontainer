@@ -98,5 +98,5 @@ fi
 
 # 验证安装
 echo "✓ Node.js 安装成功："
-echo "  node: $(node -v)"
-echo "  npm: $(npm -v)"
+echo "  node: $(/usr/local/bin/node -v)"
+echo "  npm: $(/usr/local/bin/npm -v)"
