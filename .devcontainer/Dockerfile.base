@@ -138,15 +138,12 @@ EOF
 
 # >>>>> 复制内置脚本
 COPY _build-context/rootfs /
-# 优先级脚本放到单独目录，确保在 PATH 最前面
-COPY --chmod=755 _build-context/_usr-local-bin-priority/* /usr/local/bin-priority/
-# 其他脚本放到 /usr/local/bin
-COPY --chmod=755 _build-context/_usr-local-bin/* /usr/local/bin/
-COPY --chmod=755 _build-context/run-lifecycle-scripts.sh /usr/local/bin/
+
+# 优先级脚本，确保在 PATH 最前面
+ENV PATH="/usr/local/bin-priority:${HOME}/.bun/bin:${PATH}"
 
 ENV BUN_INSTALL_CACHE_DIR="/vscode/bun/install-cache"
 ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
-ENV PATH="/usr/local/bin-priority:${HOME}/.bun/bin:${PATH}"
 
 # ENV XDG_CACHE_HOME="/vscode/xdg-cache"
 # ENV XDG_CONFIG_HOME="/vscode/xdg-config"
