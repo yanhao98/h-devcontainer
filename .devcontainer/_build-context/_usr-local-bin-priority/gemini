@@ -41,12 +41,8 @@ ensure_gemini_settings() {
   "ide": { "enabled": true },
   "general": { "previewFeatures": true }
 }'
-
-  if [[ -f /vscode/gemini-system-settings.json ]]; then
-    echo "Gemini CLI 配置文件已存在，跳过覆盖。"
-  else
-    echo "$content" > /vscode/gemini-system-settings.json
-  fi
+  local target_file="/vscode/gemini-system-settings.json"
+  echo "$content" | _h-update-file-if-changed "$target_file" 666 "Gemini CLI 配置"
 }
 
 ensure_gemini_settings
