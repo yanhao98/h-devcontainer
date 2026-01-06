@@ -7,7 +7,9 @@ set -o pipefail
 #   https://github.com/nodejs/docker-node
 #   https://nodejs.org/dist/
 
-NODE_VERSION="${NODE_VERSION:-24.12.0}"
+if [ -z "${NODE_VERSION:-}" ]; then
+    NODE_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
+fi
 
 # 确定架构
 ARCH=
@@ -86,11 +88,6 @@ sudo tar -xJf "$cached_file" -C /usr/local --strip-components=1 --no-same-owner
 # 清理文档和无用文件
 echo "正在清理无用文件..."
 sudo rm -f /usr/local/README.md /usr/local/LICENSE /usr/local/CHANGELOG.md
-
-# 清理 OpenSSL headers
-if [[ -d "/usr/local/include/node/openssl/archs" ]]; then
-    sudo find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \;
-fi
 
 # 创建兼容性软链接
 if [[ ! -e "/usr/local/bin/nodejs" ]]; then
