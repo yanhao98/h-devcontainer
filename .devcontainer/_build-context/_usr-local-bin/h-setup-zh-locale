@@ -19,21 +19,16 @@ if ! dpkg -s locales >/dev/null 2>&1; then
     locales
 fi
 
-if [ -f /etc/locale.gen ]; then
-  run_sys sed -i 's/^# *zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen
-  run_sys sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
-fi
+grep -q '^en_US.UTF-8 UTF-8' /etc/locale.gen || echo "en_US.UTF-8 UTF-8" | run_sys tee -a /etc/locale.gen > /dev/null
+grep -q '^zh_CN.UTF-8 UTF-8' /etc/locale.gen || echo "zh_CN.UTF-8 UTF-8" | run_sys tee -a /etc/locale.gen > /dev/null
 
-run_sys locale-gen zh_CN.UTF-8 en_US.UTF-8
+run_sys locale-gen
 
 zshrc="$HOME/.zshrc"
 mkdir -p "$(dirname "$zshrc")"
 touch "$zshrc"
 
 # 将 locale 相关的环境变量添加到 .zshrc 的最前面
-# if ! grep -q '^export LC_ALL=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
-#   sed -i '1i export LC_ALL=zh_CN.UTF-8' "$zshrc"
-# fi
 if ! grep -q '^export LANG=zh_CN.UTF-8$' "$zshrc" 2>/dev/null; then
   sed -i '1i export LANG=zh_CN.UTF-8' "$zshrc"
 fi
