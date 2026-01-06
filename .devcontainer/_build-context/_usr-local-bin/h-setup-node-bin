@@ -4,13 +4,12 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 # 资料:
-#   https://github.com/nodejs/docker-node
+#   https://github.com/nodejs/docker-node/blob/main/24/trixie-slim/Dockerfile
 #   https://nodejs.org/dist/
 
 if [ -z "${NODE_VERSION:-}" ]; then
-    NODE_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
-    # NODE_VERSION=$(curl -s https://nodejs.org/dist/index.tab | \
-    #   sed -n '2p' | awk '{print $1}' | tr -d 'v')
+    NODE_VERSION=$(_curl-fsSL https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
+    # NODE_VERSION=$(_curl-fsSL https://nodejs.org/dist/index.tab | sed -n '2p' | awk '{print $1}' | tr -d 'v')
 fi
 
 # 确定架构
