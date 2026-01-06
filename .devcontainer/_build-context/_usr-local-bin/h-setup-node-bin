@@ -90,6 +90,11 @@ sudo tar -xJf "$cached_file" -C /usr/local --strip-components=1 --no-same-owner
 echo "正在清理无用文件..."
 sudo rm -f /usr/local/README.md /usr/local/LICENSE /usr/local/CHANGELOG.md
 
+# 清理 OpenSSL headers
+if [[ -d "/usr/local/include/node/openssl/archs" ]]; then
+    sudo find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \;
+fi
+
 # 创建兼容性软链接
 if [[ ! -e "/usr/local/bin/nodejs" ]]; then
     sudo ln -s /usr/local/bin/node /usr/local/bin/nodejs
