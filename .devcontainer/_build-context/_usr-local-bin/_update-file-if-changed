@@ -3,14 +3,14 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-# Usage: echo "content" | _h-update-file-if-changed <target_file> [chmod_mode] [description]
+# Usage: echo "content" | _update-file-if-changed <target_file> [chmod_mode] [description]
 
 TARGET_FILE="${1:-}"
 CHMOD_MODE="${2:-}"
 DESCRIPTION="${3:-文件}"
 
 if [[ -z "$TARGET_FILE" ]]; then
-  echo "❌ 错误: _h-update-file-if-changed 未指定目标文件。" >&2
+  echo "❌ 错误: _update-file-if-changed 未指定目标文件。" >&2
   exit 1
 fi
 

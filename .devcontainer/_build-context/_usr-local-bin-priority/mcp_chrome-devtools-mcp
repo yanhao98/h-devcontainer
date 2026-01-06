@@ -9,7 +9,7 @@ if ! dpkg --status chromium &>/dev/null; then
   echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
   export APT_CONFIG="$APT_WAIT_CONF"
   
-  _curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo -E bash -s -- \
+  _curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo -E bash -s -- \
     chromium chromium-l10n ffmpeg
   
   rm -f "$APT_WAIT_CONF"

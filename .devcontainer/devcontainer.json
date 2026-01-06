@@ -25,6 +25,7 @@
     "vscode": {
       "extensions": ["mads-hartmann.bash-ide-vscode", "prettier.prettier-vscode"],
       "settings": {
+        "chat.tools.terminal.blockDetectedFileWrites": "never",
         "tasks": { "version": "2.0.0", "tasks": [] },
         "github.copilot.chat.codeGeneration.instructions": [
           {

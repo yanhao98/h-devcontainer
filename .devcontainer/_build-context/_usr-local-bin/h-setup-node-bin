@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# 资料:
+#   https://github.com/nodejs/docker-node/blob/main/24/trixie-slim/Dockerfile
+#   https://nodejs.org/dist/
+
+if [[ -z "${NODE_VERSION:-}" || "${NODE_VERSION:-}" == "latest" ]]; then
+    NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
+    # NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.tab | sed -n '2p' | awk '{print $1}' | tr -d 'v')
+fi
+
+# 确定架构
+ARCH=
+OPENSSL_ARCH=
+dpkgArch="$(dpkg --print-architecture)"
+case "${dpkgArch##*-}" in
+    amd64) ARCH='x64'; OPENSSL_ARCH='linux-x86_64';;
+    ppc64el) ARCH='ppc64le'; OPENSSL_ARCH='linux-ppc64le';;
+    s390x) ARCH='s390x'; OPENSSL_ARCH='linux*-s390x';;
+    arm64) ARCH='arm64'; OPENSSL_ARCH='linux-aarch64';;
+    armhf) ARCH='armv7l'; OPENSSL_ARCH='linux-armv4';;
+    i386) ARCH='x86'; OPENSSL_ARCH='linux-elf';;
+    *) echo "❌ 错误: 不支持的架构: $dpkgArch"; exit 1 ;;
+esac
+
+# 统一的下载缓存目录
+sudo mkdir -p /vscode/downloads || true
+sudo chown -R $(whoami):$(whoami) /vscode/downloads || true
+cache_dir="/vscode/downloads"
+tarball="node-v$NODE_VERSION-linux-$ARCH.tar.xz"
+cached_file="$cache_dir/$tarball"
+
+# 下载链接
+node_dist_url="https://nodejs.org/dist/v$NODE_VERSION"
+tarball_url="$node_dist_url/$tarball"
+shasums_url="$node_dist_url/SHASUMS256.txt"
+
+# 检查是否存在且校验通过
+need_download=true
+if [[ -f "$cached_file" ]]; then
+    echo "📦 发现已存在的 Node.js 归档文件 ($cached_file)，正在验证校验和..."
+    if _verify_checksum "$cached_file" "$shasums_url"; then
+        echo "✅ 校验和验证成功，跳过下载。"
+        need_download=false
+    else
+        echo "⚠️ 校验和不匹配或验证失败，将重新下载。"
+        rm -f "$cached_file"
+    fi
+fi
+
+if [[ "$need_download" == "true" ]]; then
+    echo "⬇️ 正在下载 Node.js v$NODE_VERSION ($ARCH)..."
+    _curl-fsSL--compressed -o "$cached_file" "$tarball_url" || {
+        echo "❌ 下载失败: $tarball_url"; exit 1;
+    }
+
+    echo "🔐 正在验证下载的文件..."
+    if ! _verify_checksum "$cached_file" "$shasums_url"; then
+        echo "❌ 下载的文件校验失败"; exit 1;
+    fi
+fi
+
+# 安装
+echo "📥 正在安装 Node.js 到 /usr/local..."
+
+# 使用 sudo 解压
+sudo tar -xJf "$cached_file" -C /usr/local --strip-components=1 --no-same-owner
+
+# 清理文档和无用文件
+echo "🧹 正在清理无用文件..."
+sudo rm -f /usr/local/README.md /usr/local/LICENSE /usr/local/CHANGELOG.md
+
+# 清理 OpenSSL headers
+if [[ -d "/usr/local/include/node/openssl/archs" ]]; then
+    sudo find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \;
+fi
+
+# 创建兼容性软链接
+if [[ ! -e "/usr/local/bin/nodejs" ]]; then
+    sudo ln -s /usr/local/bin/node /usr/local/bin/nodejs
+fi
+
+# 验证安装
+echo "✅ Node.js 安装成功："
+echo "   node: $(/usr/local/bin/node -v)"
+echo "   npm: $(/usr/local/bin/npm -v)"

@@ -6,7 +6,7 @@ set -o pipefail   # 对应 -o pipefail
 # https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
 
-_curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+_curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
     fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
     at-spi2-core xterm nautilus mousepad seahorse \
@@ -21,7 +21,7 @@ _curl-fsSL https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-ins
 echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
 
 # 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
-_curl-fsSL https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
+_curl-fsSL--compressed https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
   sed '\#rm -rf /var/lib/apt/lists/\*#d' | \
   sed 's#unzip /tmp#unzip -q /tmp#g' | \
   sudo env INSTALL_NOVNC="${INSTALL_NOVNC:-false}" VNC_RESOLUTION="${VNC_RESOLUTION:-1680x1050x16}" bash
