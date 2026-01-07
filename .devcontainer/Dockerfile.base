@@ -109,18 +109,16 @@ RUN sudo mkdir /vscode && sudo chown usr_vscode:usr_vscode /vscode
 
 # >>>>> zsh-in-docker 安装和配置
 # 要重新触发 zsh 新用户配置向导: autoload -Uz zsh-newuser-install; zsh-newuser-install -f
-ARG ZSH_IN_DOCKER_VERSION=1.2.1
-ENV POWERLEVEL9K_DISABLE_GITSTATUS=true
+COPY zsh-in-docker-v1.2.1.sh /tmp/zsh-in-docker.sh
 RUN set -eux; \
-    sh -c "$(curl -fsSL --compressed https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
+    sh /tmp/zsh-in-docker.sh \
     # # Default powerline10k theme
-    # -t robbyrussell \
+    -t random \
     -p git \
     -p fzf \
     -a "source ~/.oh-my-zsh/lib/key-bindings.zsh" \
-    -a "source ~/.oh-my-zsh/lib/completion.zsh" \
+    -a "source ~/.oh-my-zsh/lib/completion.zsh" && \
     # -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.histfile" \
-    -x && \
     sed -i "/export LANG='en_US.UTF-8'/d;/export LANGUAGE='en_US:en'/d;/export LC_ALL='en_US.UTF-8'/d" $HOME/.zshrc
 
 # >>>>>>>>>>>>>>>>>>>> zsh 配置
@@ -146,10 +144,7 @@ ENV XDG_DATA_HOME="/vscode/xdg-data" \
 
 ENV PNPM_HOME="${HOME}/.pnpm"
 
-ENV LANG="zh_CN.UTF-8" \
-    # 这个值是一个由高到低的优先级列表，系统会从左往右匹配，直到找到程序支持的语言包为止
-    LANGUAGE="zh_CN.UTF-8:zh_CN:zh" \
-    INSTALL_NOVNC=false \
+ENV INSTALL_NOVNC=false \
     VNC_RESOLUTION="1680x1050x16" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"

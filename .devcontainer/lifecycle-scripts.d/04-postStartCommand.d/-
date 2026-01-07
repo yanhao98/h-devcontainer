@@ -5,7 +5,7 @@
 
 h-setup-lingma
 
-h-setup-zh-locale
+# h-setup-zh-locale
 
 # h-setup-node-bin
 # h-setup-bun-bin
