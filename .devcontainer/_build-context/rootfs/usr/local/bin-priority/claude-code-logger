@@ -191,12 +191,7 @@ echo ""
 # 定义 tsx 命令
 TSX_CMD="/vscode/bun-priority-bin/node_modules/.bin/tsx"
 
-echo -e "\e[90m→ exec $TSX_CMD /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*\e[0m"
-
-# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
-# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
+echo -e "\e[90m→ exec $TSX_CMD /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*\e[0m" >&2
 
 LOG_DIR="/vscode/claude-config/claude-code-logger"
 mkdir -p "$LOG_DIR"
@@ -220,10 +215,6 @@ else
     echo "❌ 错误: 找不到 claude 命令"
     exit 1
 fi
-
-# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
-# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
 # 启动 claude-code-logger 在后台
 if [[ $ENABLE_LOG_FILE -eq 1 ]]; then

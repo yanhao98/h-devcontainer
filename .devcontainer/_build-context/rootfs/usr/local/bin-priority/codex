@@ -12,9 +12,9 @@ ensure_default_config() {
     mkdir -p "$config_dir"
     
     if [ -f "$config_file" ]; then
-        echo "📝 配置文件已存在: $config_file"
+        echo "📝 配置文件已存在: $config_file" >&2
     else
-        echo "📝 创建默认配置文件: $config_file"
+        echo "📝 创建默认配置文件: $config_file" >&2
         cat > "$config_file" << 'EOF'
 model = "gemini-3-pro-preview"
 model_provider = "NewAPI"
@@ -42,12 +42,7 @@ BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
 CLI_ARGS=()
 CLI_ARGS+=("--sandbox=danger-full-access")
 
-echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m"
+echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run codex --version
-
-# # 从 PATH 中移除当前脚本所在的目录，防止无限递归
-# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# # 同时移除 /usr/local/bin-priority，因为这是安装后的位置
-# export PATH=$(echo "$PATH" | sed "s|$SCRIPT_DIR||g; s|/usr/local/bin-priority||g; s|::|:|g; s|^:||; s|:$||")
 
 exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"

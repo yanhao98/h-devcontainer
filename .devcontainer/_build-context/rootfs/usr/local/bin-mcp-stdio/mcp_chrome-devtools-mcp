@@ -28,4 +28,4 @@ BIN_ARGS=()
 BIN_ARGS+=("--isolated")
 BIN_ARGS+=("--executablePath=/usr/local/bin-priority/chromium")
 
-exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}"
+exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}" "$@"
