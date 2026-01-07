@@ -42,7 +42,7 @@ BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
 CLI_ARGS=()
 CLI_ARGS+=("--sandbox=danger-full-access")
 
-echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
+echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run codex --version
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归

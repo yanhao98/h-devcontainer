@@ -191,7 +191,7 @@ echo ""
 # 定义 tsx 命令
 TSX_CMD="/vscode/bun-priority-bin/node_modules/.bin/tsx"
 
-echo "🚀 正在执行: $TSX_CMD /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*"
+echo -e "\e[90m→ exec $TSX_CMD /vscode/claude-code-logger/src/cli.ts ${CLI_ARGS[*]} $*\e[0m"
 
 # # 从 PATH 中移除当前脚本所在的目录，防止无限递归
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -251,7 +251,7 @@ if ! kill -0 $LOGGER_PID 2>/dev/null; then
 fi
 
 echo "✅ claude-code-logger 已启动 (PID: $LOGGER_PID)"
-echo "🚀 正在启动 claude..."
+echo -e "\e[90m→ exec claude...\e[0m"
 echo ""
 
 # 设置清理函数，确保退出时关闭 claude-code-logger

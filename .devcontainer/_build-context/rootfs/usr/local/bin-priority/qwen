@@ -24,7 +24,7 @@ else
     ln -sfn /vscode/qwen-home ~/.qwen
 fi
 
-echo "🚀 正在执行: bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*"
+echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m"
 # bun --bun --cwd=/vscode/bun-priority-bin/ run iflow --version
 
 # 从 PATH 中移除当前脚本所在的目录，防止无限递归
