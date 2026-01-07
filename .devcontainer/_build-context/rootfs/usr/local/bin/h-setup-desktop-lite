@@ -18,7 +18,7 @@ _curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devconta
     python3-minimal python3-numpy \
     tilix
 
-echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..."
+echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..." >&2
 
 # 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
 _curl-fsSL--compressed https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \

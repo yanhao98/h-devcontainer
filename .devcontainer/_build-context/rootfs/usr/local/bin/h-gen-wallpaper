@@ -26,7 +26,7 @@ for dep in $DEPENDENCIES; do
 done
 
 if [ -n "$MISSING_DEPS" ]; then
-    echo "正在安装依赖: $MISSING_DEPS..."
+    echo "正在安装依赖: $MISSING_DEPS..." >&2
     # shellcheck disable=SC2086
     _curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- $MISSING_DEPS
 fi
@@ -53,11 +53,11 @@ if [ -z "${DISPLAY:-}" ]; then
         # 提取数字，例如 X1 -> :1
         DISPLAY_NUM=$(echo "$SOCKET" | sed 's|.*/X|:|')
         export DISPLAY="$DISPLAY_NUM"
-        echo "自动检测到 DISPLAY=$DISPLAY"
+        echo "自动检测到 DISPLAY=$DISPLAY" >&2
     else
         # 默认回退
         export DISPLAY=":1"
-        echo "未检测到 X socket，尝试默认 DISPLAY=$DISPLAY"
+        echo "未检测到 X socket，尝试默认 DISPLAY=$DISPLAY" >&2
     fi
 fi
 
@@ -71,7 +71,7 @@ if command -v xdpyinfo &> /dev/null; then
     fi
 fi
 
-echo "正在生成壁纸... Host: $HOST_NAME, Workspace: $WORKSPACE_NAME, Resolution: $RESOLUTION"
+echo "正在生成壁纸... Host: $HOST_NAME, Workspace: $WORKSPACE_NAME, Resolution: $RESOLUTION" >&2
 
 # 检查字体
 # grep -i 忽略大小写
@@ -81,16 +81,16 @@ FONT=$(echo "$FONT" | tr -d ' ')
 
 # 使用 grep -c 统计匹配行数，避免 pipefail 导致的 141 错误
 if [ "$(echo "$AVAILABLE_FONTS" | grep -i -c "Font: $FONT$")" -eq 0 ]; then
-    echo "警告: 字体 '$FONT' 未找到，尝试使用 'DejaVu-Sans'。"
+    echo "警告: 字体 '$FONT' 未找到，尝试使用 'DejaVu-Sans'。" >&2
     FONT="DejaVu-Sans"
     if [ "$(echo "$AVAILABLE_FONTS" | grep -i -c "Font: $FONT$")" -eq 0 ]; then
          # 尝试查找任何可用字体
          FIRST_FONT=$(echo "$AVAILABLE_FONTS" | grep "Font:" | head -n 1 | awk '{print $2}')
          if [ -n "$FIRST_FONT" ]; then
-             echo "警告: 字体 '$FONT' 未找到，尝试使用第一个可用字体 '$FIRST_FONT'。"
+             echo "警告: 字体 '$FONT' 未找到，尝试使用第一个可用字体 '$FIRST_FONT'。" >&2
              FONT="$FIRST_FONT"
          else
-             echo "警告: 未找到任何可用字体，尝试使用 'fixed'。"
+             echo "警告: 未找到任何可用字体，尝试使用 'fixed'。" >&2
              FONT="fixed"
          fi
     fi
@@ -112,15 +112,15 @@ convert -size "$RESOLUTION" -define gradient:direction=NorthWest gradient:"$BG_C
     -pointsize 24 -fill "$TEXT_COLOR"   -annotate +20+20 "Generated: $(date '+%Y-%m-%d %H:%M')" \
     "$WALLPAPER_PATH"
 
-echo "壁纸已生成: $WALLPAPER_PATH"
+echo "壁纸已生成: $WALLPAPER_PATH" >&2
 
 # 应用壁纸
-echo "正在应用壁纸到 $DISPLAY..."
+echo "正在应用壁纸到 $DISPLAY..." >&2
 if command -v fbsetbg &> /dev/null; then
     fbsetbg -f "$WALLPAPER_PATH"
 elif command -v feh &> /dev/null; then
     feh --bg-scale "$WALLPAPER_PATH"
 else
-    echo "警告: 未找到 fbsetbg 或 feh。壁纸已生成但未应用。"
+    echo "警告: 未找到 fbsetbg 或 feh。壁纸已生成但未应用。" >&2
     exit 1
 fi

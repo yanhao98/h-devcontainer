@@ -14,15 +14,15 @@ if [ -f "bun.lock" ]; then
     if command -v bun >/dev/null 2>&1; then
         time bun install
     else
-        echo '⏭️  跳过: bun 未安装'
+        echo '⏭️  跳过: bun 未安装' >&2
     fi
 elif [ -f "pnpm-lock.yaml" ]; then
     if command -v pnpm >/dev/null 2>&1; then
         # 跳过: The modules directory at "/workspaces/h-devcontainers/node_modules" will be removed and reinstalled from scratch. Proceed? (Y/n) ·
         time pnpm install --config.confirmModulesPurge=false
     else
-        echo '⏭️  跳过: pnpm 未安装'
+        echo '⏭️  跳过: pnpm 未安装' >&2
     fi
 else
-    echo '⏭️  跳过: 未找到 lock 文件'
+    echo '⏭️  跳过: 未找到 lock 文件' >&2
 fi

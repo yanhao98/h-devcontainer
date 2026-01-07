@@ -82,7 +82,7 @@ if [[ "$CHANGED" == "true" ]]; then
     fi
   fi
 
-  echo "⚙️  已更新${DESCRIPTION}: $TARGET_FILE"
+  echo "⚙️  已更新${DESCRIPTION}: $TARGET_FILE" >&2
 else
-  echo "⚙️  ${DESCRIPTION}无变化: $TARGET_FILE"
+  echo "⚙️  ${DESCRIPTION}无变化: $TARGET_FILE" >&2
 fi
