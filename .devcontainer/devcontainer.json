@@ -38,15 +38,14 @@
   "mounts": [
     // "source=vscode,target=/vscode,type=volume",
     // 不挂载还可能会遇到：`Cannot run macOS (Mach-O) executable in Docker: Exec format error`
-    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=${localWorkspaceFolder}/.devcontainer/lifecycle-scripts.d,target=/usr/local/etc/lifecycle-scripts.d,type=bind,consistency=delegated"
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
   // "initializeCommand": "docker pull ghcr.io/yanhao98/h-devcontainer:main;",
-  "onCreateCommand": "/usr/local/bin/run-lifecycle-scripts.sh onCreateCommand",
-  "updateContentCommand": "/usr/local/bin/run-lifecycle-scripts.sh updateContentCommand",
-  "postCreateCommand": "/usr/local/bin/run-lifecycle-scripts.sh postCreateCommand",
-  "postStartCommand": "/usr/local/bin/run-lifecycle-scripts.sh postStartCommand",
-  "postAttachCommand": "/usr/local/bin/run-lifecycle-scripts.sh postAttachCommand"
+  "onCreateCommand": "/devcontainer/run-lifecycle-scripts.sh onCreateCommand",
+  "updateContentCommand": "/devcontainer/run-lifecycle-scripts.sh updateContentCommand",
+  "postCreateCommand": "/devcontainer/run-lifecycle-scripts.sh postCreateCommand",
+  "postStartCommand": "/devcontainer/run-lifecycle-scripts.sh postStartCommand",
+  "postAttachCommand": "/devcontainer/run-lifecycle-scripts.sh postAttachCommand"
   // "waitFor": "", // 用户在UI启动时需要等待的命令，以便在后台继续执行。默认值为"updateContentCommand"
 }

@@ -10,7 +10,9 @@ if [ -z "$LIFECYCLE_EVENT" ]; then
 fi
 
 # 支持带数字前缀的目录名（如 01-onCreateCommand.d）以及 .local 后缀的本地目录
-USER_SCRIPTS_DIRS=$(find /usr/local/etc/lifecycle-scripts.d -maxdepth 1 -type d \( -name "*-${LIFECYCLE_EVENT}.d" -o -name "*-${LIFECYCLE_EVENT}.d.local" \) | sort)
+# 从工作区目录读取脚本（workspaceMount 已挂载整个工作区）
+LIFECYCLE_SCRIPTS_BASE="${PWD}/.devcontainer/lifecycle-scripts.d"
+USER_SCRIPTS_DIRS=$(find "$LIFECYCLE_SCRIPTS_BASE" -maxdepth 1 -type d \( -name "*-${LIFECYCLE_EVENT}.d" -o -name "*-${LIFECYCLE_EVENT}.d.local" \) 2>/dev/null | sort)
 
 if [ -n "$USER_SCRIPTS_DIRS" ]; then
     for DIR in $USER_SCRIPTS_DIRS; do
