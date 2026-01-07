@@ -34,7 +34,7 @@ if [[ -f "$zip" ]]; then
         echo "✅ 校验和验证成功，跳过下载。"
         need_download=false
     else
-        echo "⚠️ 校验和不匹配或验证失败，将重新下载。"
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。"
     fi
 fi
 

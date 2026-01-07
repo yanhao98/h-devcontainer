@@ -11,7 +11,7 @@ _print_caller_info
 node_bin="$(_get-real-bin node || true)"
 
 if [ -z "$node_bin" ]; then
-    echo "⚠️ Node.js 未安装，正在自动安装..." >&2
+    echo "⚠️  Node.js 未安装，正在自动安装..." >&2
     # 重定向到 stderr，避免安装输出污染 stdout（pnpm 等工具会捕获 node 的 stdout 来获取版本信息）
     h-setup-node-bin >&2
     node_bin="$(_get-real-bin node || true)"

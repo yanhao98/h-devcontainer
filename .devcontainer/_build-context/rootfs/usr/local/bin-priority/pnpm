@@ -11,7 +11,7 @@ _print_caller_info
 pnpm_bin="$(_get-real-bin pnpm || true)"
 
 if [ -z "$pnpm_bin" ]; then
-    echo "⚠️ pnpm 未安装，正在自动安装..." >&2
+    echo "⚠️  pnpm 未安装，正在自动安装..." >&2
     # 重定向到 stderr，避免安装输出污染 stdout（其他工具可能捕获 pnpm 的 stdout 来获取版本信息）
     h-setup-pnpm-bin >&2
     pnpm_bin="$(_get-real-bin pnpm || true)"

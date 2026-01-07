@@ -41,7 +41,7 @@ else
        fi
     else
        # Can't read, assume changed
-       echo "⚠️ 警告: 无法读取 $TARGET_FILE，将尝试直接写入。" >&2
+       echo "⚠️  警告: 无法读取 $TARGET_FILE，将尝试直接写入。" >&2
        CHANGED=true
     fi
   fi
