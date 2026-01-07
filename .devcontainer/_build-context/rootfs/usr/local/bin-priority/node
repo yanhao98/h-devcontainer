@@ -1,0 +1,33 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# node shim: 自动检测并安装 Node.js，然后执行
+
+# 查找非 bin-priority 目录下的第一个 node 可执行文件
+get_real_node() {
+    while IFS= read -r p; do
+        # 跳过所有 bin-priority 目录下的 node
+        if [[ "$p" != */bin-priority/* ]]; then
+            echo "$p"
+            return 0
+        fi
+    done < <(which -a node 2>/dev/null)
+    return 1
+}
+
+node_bin="$(get_real_node || true)"
+
+if [ -z "$node_bin" ]; then
+    echo "⚠️ Node.js 未安装，正在自动安装..." >&2
+    h-setup-node-bin
+    node_bin="$(get_real_node || true)"
+    if [ -z "$node_bin" ]; then
+        echo "❌ Node.js 安装失败" >&2
+        exit 1
+    fi
+fi
+
+echo -e "\e[90m→ exec $node_bin\e[0m" >&2
+exec "$node_bin" "$@"
