@@ -1,0 +1,7 @@
+#!/bin/bash
+if [[ "$@" == *"api.github.com/repos/novnc/noVNC/releases/latest"* ]]; then
+    echo '  "tag_name": "v1.9.9",'
+else
+    # Fallback to real curl if available, or just mock success for other downloads
+    echo "Mock: curl $@"
+fi

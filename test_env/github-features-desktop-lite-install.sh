@@ -179,7 +179,7 @@ apt_get_update
 
 # On older Ubuntu, Tilix is in a PPA. on Debian stretch its in backports.
 if [[ -z $(apt-cache --names-only search ^tilix$) ]]; then
-    . /etc/os-release
+    . ./os-release
     if [ "${ID}" = "ubuntu" ]; then
         check_packages apt-transport-https software-properties-common
         add-apt-repository -y ppa:webupd8team/terminix
@@ -208,6 +208,10 @@ if [ "${NOVNC_VERSION}" = "latest" ] && [ "${INSTALL_NOVNC}" = "true" ]; then
         # Strip 'v' prefix if present
         NOVNC_VERSION="${LATEST_VERSION#v}"
         echo "Auto-detected latest noVNC version: ${NOVNC_VERSION}"
+echo "FINAL_NOVNC_VERSION=${NOVNC_VERSION}"
+exit 0
+echo "FINAL_NOVNC_VERSION=${NOVNC_VERSION}"
+exit 0
     else
         echo "Failed to detect latest noVNC version, falling back to 1.6.0"
         NOVNC_VERSION="1.6.0"
@@ -216,7 +220,7 @@ fi
 
 # if Ubuntu-24.04, noble(numbat) / Debian-13, trixie found, then will install libasound2-dev instead of libasound2.
 # this change is temporary, https://packages.ubuntu.com/noble/libasound2 will switch to libasound2 once it is available for Ubuntu-24.04, noble(numbat)
-. /etc/os-release
+. ./os-release
 if { [ "${ID}" = "ubuntu" ] && [ "${VERSION_CODENAME}" = "noble" ]; } || { [ "${ID}" = "debian" ] && [ "${VERSION_CODENAME}" = "trixie" ]; }; then
     echo "Detected Noble (Ubuntu 24.04) or Trixie (Debian). Installing libasound2-dev package..."
     check_packages "libasound2-dev"
@@ -224,7 +228,7 @@ else
     check_packages "libasound2"
 fi
 
-# On newer versions of Ubuntu (22.04), 
+# On newer versions of Ubuntu (22.04),
 # we need an additional package that isn't provided in earlier versions
 if ! type vncpasswd > /dev/null 2>&1; then
     check_packages ${package_list_additional}
@@ -316,7 +320,7 @@ LOG=/tmp/container-init.log
 
 export DBUS_SESSION_BUS_ADDRESS="\${DBUS_SESSION_BUS_ADDRESS:-"autolaunch:"}"
 export DISPLAY="\${DISPLAY:-:1}"
-export VNC_RESOLUTION="\${VNC_RESOLUTION:-1440x768x16}" 
+export VNC_RESOLUTION="\${VNC_RESOLUTION:-1440x768x16}"
 export LANG="\${LANG:-"en_US.UTF-8"}"
 export LANGUAGE="\${LANGUAGE:-"en_US.UTF-8"}"
 
