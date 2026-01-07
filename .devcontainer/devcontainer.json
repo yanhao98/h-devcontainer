@@ -8,7 +8,7 @@
     // "--cap-add=NET_ADMIN",
     // "--cap-add=NET_RAW",
     // "--add-host=host.docker.internal:host-gateway",
-    "--hostname=devcontainer-host",
+    "--hostname=devcontainer",
     "--name=${localWorkspaceFolderBasename}-devcontainer"
   ],
   "forwardPorts": /* 🖍️ */ [
