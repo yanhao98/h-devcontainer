@@ -9,7 +9,9 @@ ENV VISUAL=nano
 ENV DISPLAY=:1
 
 # >>>>> 安装系统依赖
-RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
+RUN mkdir -p /var/lib/apt/periodic && \
+    echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' > /etc/apt/apt.conf.d/99update-stamp && \
+    apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 基础工具
     ca-certificates wget curl tree locales \
     # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
@@ -95,7 +97,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
 #     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # >>>>> 创建用户和配置 sudo
-# https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user
+# https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating_a_nonroot_user
 RUN groupadd --gid 1000 usr_vscode \
     && useradd --uid 1000 --gid usr_vscode --shell /bin/zsh --create-home usr_vscode \
     && echo "usr_vscode ALL=(root) NOPASSWD: ALL" > /etc/sudoers.d/usr_vscode_user_config \
