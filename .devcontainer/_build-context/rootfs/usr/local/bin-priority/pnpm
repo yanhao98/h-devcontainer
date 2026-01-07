@@ -1,0 +1,25 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# pnpm shim: 自动检测并安装 pnpm，然后执行
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+pnpm_bin="$(_get-real-bin pnpm || true)"
+
+if [ -z "$pnpm_bin" ]; then
+    echo "⚠️ pnpm 未安装，正在自动安装..." >&2
+    # 重定向到 stderr，避免安装输出污染 stdout（其他工具可能捕获 pnpm 的 stdout 来获取版本信息）
+    h-setup-pnpm-bin >&2
+    pnpm_bin="$(_get-real-bin pnpm || true)"
+    if [ -z "$pnpm_bin" ]; then
+        echo "❌ pnpm 安装失败" >&2
+        exit 1
+    fi
+fi
+
+echo -e "\e[90m→ exec $pnpm_bin\e[0m" >&2
+exec "$pnpm_bin" "$@"

@@ -29,10 +29,6 @@ set -o pipefail   # 对应 -o pipefail
 # "apiKeyHelper": "/bin/generate_temp_api_key.sh",
 #-------------------------------------------------------------------------------------------------------------
 
-
-# 获取调用者信息
-PARENT_INFO=$(ps -p $PPID -o args= 2>/dev/null || echo "unknown")
-
 # 解析命令行参数，检查是否有 --skip-settings
 CLAUDE_ARGS=()
 SKIP_SETTINGS_MSG=""
@@ -47,7 +43,8 @@ done
 set -- "${CLAUDE_ARGS[@]}"
 
 echo "🚀 正在运行 Claude Code 包装器 ($0)"
-echo "   调用者: $PARENT_INFO (PID: $PPID)${SKIP_SETTINGS_MSG}"
+source /devcontainer/shim-utils.sh
+_print_caller_info
 
 add-bun-priority-bin-pkg @anthropic-ai/claude-code@latest
 

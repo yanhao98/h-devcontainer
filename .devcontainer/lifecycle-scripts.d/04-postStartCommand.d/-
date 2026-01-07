@@ -14,7 +14,7 @@ h-setup-zh-locale
 h-setup-desktop-lite
 h-gen-wallpaper
 
-h-smart-install-node-modules
+# h-smart-install-node-modules
 
 echo "-----------------------------"
 echo "开发容器已启动并配置完成！"

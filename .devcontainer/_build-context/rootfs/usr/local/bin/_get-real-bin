@@ -1,0 +1,25 @@
+#!/bin/bash
+# 通用函数：查找非 bin-priority 目录下的第一个指定可执行文件
+# 用法: _get-real-bin <命令名>
+# 示例: _get-real-bin node
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if [[ $# -lt 1 ]]; then
+    echo "用法: _get-real-bin <命令名>" >&2
+    exit 1
+fi
+
+cmd="$1"
+
+while IFS= read -r p; do
+    # 跳过所有 bin-priority 目录下的可执行文件
+    if [[ "$p" != */bin-priority/* ]]; then
+        echo "$p"
+        exit 0
+    fi
+done < <(which -a "$cmd" 2>/dev/null)
+
+exit 1
