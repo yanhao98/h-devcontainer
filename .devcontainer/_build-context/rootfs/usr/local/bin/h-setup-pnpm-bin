@@ -17,7 +17,7 @@ arch="$(dpkg --print-architecture)"
 case "${arch##*-}" in \
 	amd64) build="x64";; \
 	arm64) build="arm64";; \
-	*) echo "❌ 错误: 不支持的架构: $arch"; exit 1 ;; \
+	*) echo "❌ 错误: 不支持的架构: $arch" >&2; exit 1 ;; \
 esac
 
 asset_name="pnpm-linux-${build}"
@@ -33,15 +33,15 @@ else
     release_api_uri="https://api.github.com/repos/pnpm/pnpm/releases/tags/v${PNPM_VERSION}"
 fi
 
-echo "🔍 正在获取 pnpm 版本信息..."
+echo "🔍 正在获取 pnpm 版本信息..." >&2
 release_info=$(_curl-fsSL--compressed "$release_api_uri")
 version=$(echo "$release_info" | jq -r ".tag_name")
 pnpm_uri=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
 expected_checksum=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .digest" | cut -d: -f2)
 
 if [[ -z "$version" || -z "$pnpm_uri" || -z "$expected_checksum" ]]; then
-    echo "❌ 错误: 无法从 GitHub API 获取 pnpm 的发布信息。"
-    echo "API URI: $release_api_uri"
+    echo "❌ 错误: 无法从 GitHub API 获取 pnpm 的发布信息。" >&2
+    echo "API URI: $release_api_uri" >&2
     exit 1
 fi
 
@@ -51,53 +51,53 @@ cached_pnpm_path="/vscode/downloads/${asset_name}-${version}"
 # 检查是否存在且校验通过
 need_download=true
 if [[ -f "$cached_pnpm_path" ]]; then
-    echo "📦 发现已存在的 pnpm 文件 ($cached_pnpm_path)，正在验证校验和..."
+    echo "📦 发现已存在的 pnpm 文件 ($cached_pnpm_path)，正在验证校验和..." >&2
 
     if _verify_checksum "$cached_pnpm_path" "$expected_checksum"; then
-        echo "✅ 校验和验证成功，跳过下载。"
+        echo "✅ 校验和验证成功，跳过下载。" >&2
         need_download=false
     else
-        echo "⚠️  校验和不匹配或验证失败，将重新下载。"
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。" >&2
     fi
 fi
 
 if [[ "$need_download" == "true" ]]; then
-    echo "⬇️ 正在下载 pnpm ${version} ($build)..."
+    echo "⬇️ 正在下载 pnpm ${version} ($build)..." >&2
     _curl-fsSL--compressed -o "$cached_pnpm_path" "$pnpm_uri" || {
-        echo "❌ 下载失败: $pnpm_uri"; exit 1;
+        echo "❌ 下载失败: $pnpm_uri" >&2; exit 1;
     }
 
-    echo "🔐 正在验证下载的文件..."
+    echo "🔐 正在验证下载的文件..." >&2
     if ! _verify_checksum "$cached_pnpm_path" "$expected_checksum"; then
-        echo "❌ 下载的文件校验失败"; exit 1;
+        echo "❌ 下载的文件校验失败" >&2; exit 1;
     fi
-    echo "✅ 校验和验证成功。"
+    echo "✅ 校验和验证成功。" >&2
 fi
 
 # 安装
-echo "📥 正在安装 pnpm..."
+echo "📥 正在安装 pnpm..." >&2
 
 PNPM_HOME="${PNPM_HOME:-$HOME/.pnpm}"
-tmp_dir="$(mktemp -d)" || { echo "❌ 创建临时目录失败"; exit 1; }
+tmp_dir="$(mktemp -d)" || { echo "❌ 创建临时目录失败" >&2; exit 1; }
 trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
 
 cp "$cached_pnpm_path" "$tmp_dir/pnpm"
 chmod +x "$tmp_dir/pnpm"
 
-ENV="$HOME/.zshrc" SHELL="$(which zsh)" "$tmp_dir/pnpm" setup || { echo "❌ pnpm setup 失败"; exit 1; }
+ENV="$HOME/.zshrc" SHELL="$(which zsh)" "$tmp_dir/pnpm" setup || { echo "❌ pnpm setup 失败" >&2; exit 1; }
 
 # 配置 store 目录
 cmd_pnpm="$PNPM_HOME/pnpm"
-$cmd_pnpm config set store-dir /vscode/pnpm/pnpm-store || { echo "❌ pnpm config set store-dir 失败"; exit 1; }
+$cmd_pnpm config set store-dir /vscode/pnpm/pnpm-store || { echo "❌ pnpm config set store-dir 失败" >&2; exit 1; }
 
 # 安装 shell 补全
 $cmd_pnpm completion zsh > ~/completion-for-pnpm.zsh
 if ! grep -q 'source ~/completion-for-pnpm.zsh' ~/.zshrc; then
     echo 'source ~/completion-for-pnpm.zsh' >> ~/.zshrc
-    echo "☑️  已添加 pnpm 自动补全到 ~/.zshrc"
+    echo "☑️  已添加 pnpm 自动补全到 ~/.zshrc" >&2
 else
-    echo "⏭️  pnpm 自动补全已存在于 ~/.zshrc 中"
+    echo "⏭️  pnpm 自动补全已存在于 ~/.zshrc 中" >&2
 fi
 
 # 验证安装
-echo "✅ pnpm 安装成功：$($cmd_pnpm --version) ($PNPM_HOME/pnpm)"
+echo "✅ pnpm 安装成功：$($cmd_pnpm --version) ($PNPM_HOME/pnpm)" >&2

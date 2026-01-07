@@ -23,7 +23,7 @@ case "${dpkgArch##*-}" in
     arm64) ARCH='arm64'; OPENSSL_ARCH='linux-aarch64';;
     armhf) ARCH='armv7l'; OPENSSL_ARCH='linux-armv4';;
     i386) ARCH='x86'; OPENSSL_ARCH='linux-elf';;
-    *) echo "❌ 错误: 不支持的架构: $dpkgArch"; exit 1 ;;
+    *) echo "❌ 错误: 不支持的架构: $dpkgArch" >&2; exit 1 ;;
 esac
 
 # 统一的下载缓存目录
@@ -41,36 +41,36 @@ shasums_url="$node_dist_url/SHASUMS256.txt"
 # 检查是否存在且校验通过
 need_download=true
 if [[ -f "$cached_file" ]]; then
-    echo "📦 发现已存在的 Node.js 归档文件 ($cached_file)，正在验证校验和..."
+    echo "📦 发现已存在的 Node.js 归档文件 ($cached_file)，正在验证校验和..." >&2
     if _verify_checksum "$cached_file" "$shasums_url"; then
-        echo "✅ 校验和验证成功，跳过下载。"
+        echo "✅ 校验和验证成功，跳过下载。" >&2
         need_download=false
     else
-        echo "⚠️  校验和不匹配或验证失败，将重新下载。"
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。" >&2
         rm -f "$cached_file"
     fi
 fi
 
 if [[ "$need_download" == "true" ]]; then
-    echo "⬇️ 正在下载 Node.js v$NODE_VERSION ($ARCH)..."
+    echo "⬇️ 正在下载 Node.js v$NODE_VERSION ($ARCH)..." >&2
     _curl-fsSL--compressed -o "$cached_file" "$tarball_url" || {
-        echo "❌ 下载失败: $tarball_url"; exit 1;
+        echo "❌ 下载失败: $tarball_url" >&2; exit 1;
     }
 
-    echo "🔐 正在验证下载的文件..."
+    echo "🔐 正在验证下载的文件..." >&2
     if ! _verify_checksum "$cached_file" "$shasums_url"; then
-        echo "❌ 下载的文件校验失败"; exit 1;
+        echo "❌ 下载的文件校验失败" >&2; exit 1;
     fi
 fi
 
 # 安装
-echo "📥 正在安装 Node.js 到 /usr/local..."
+echo "📥 正在安装 Node.js 到 /usr/local..." >&2
 
 # 使用 sudo 解压
 sudo tar -xJf "$cached_file" -C /usr/local --strip-components=1 --no-same-owner
 
 # 清理文档和无用文件
-echo "🧹 正在清理无用文件..."
+echo "🧹 正在清理无用文件..." >&2
 sudo rm -f /usr/local/README.md /usr/local/LICENSE /usr/local/CHANGELOG.md
 
 # 清理 OpenSSL headers
@@ -84,6 +84,6 @@ if [[ ! -e "/usr/local/bin/nodejs" ]]; then
 fi
 
 # 验证安装
-echo "✅ Node.js 安装成功："
-echo "   node: $(/usr/local/bin/node -v)"
-echo "   npm: $(/usr/local/bin/npm -v)"
+echo "✅ Node.js 安装成功：" >&2
+echo "   node: $(/usr/local/bin/node -v)" >&2
+echo "   npm: $(/usr/local/bin/npm -v)" >&2
