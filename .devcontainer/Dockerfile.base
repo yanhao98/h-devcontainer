@@ -136,12 +136,6 @@ alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf 
 EOF
 # <<<<<<<<<<<<<<<<<<<< zsh 配置
 
-# >>>>> 复制内置脚本
-COPY _build-context/rootfs /
-
-# 优先级脚本，确保在 PATH 最前面
-ENV PATH="/usr/local/bin-priority:${HOME}/.bun/bin:${PATH}"
-
 ENV BUN_INSTALL_CACHE_DIR="/vscode/bun/install-cache"
 ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
 
@@ -151,7 +145,6 @@ ENV XDG_DATA_HOME="/vscode/xdg-data" \
     XDG_STATE_HOME="/vscode/xdg-state"
 
 ENV PNPM_HOME="${HOME}/.pnpm"
-ENV PATH="${PNPM_HOME}:${PATH}"
 
 ENV LANG="zh_CN.UTF-8" \
     # 这个值是一个由高到低的优先级列表，系统会从左往右匹配，直到找到程序支持的语言包为止
@@ -173,6 +166,13 @@ ENV CODEX_HOME=/vscode/codex-home
 # https://github.com/devcontainers/features/blob/b0188f0a5ef98f1c3217b6c0fe14c3ee472fad68/src/common-utils/scripts/rc_snippet.sh#L22
 ENV GIT_EDITOR="code --wait"
 
+# >>>>> 复制内置脚本
+COPY _build-context/rootfs /
+ENV PATH="${BUN_INSTALL_BIN}:${PATH}"
+ENV PATH="${PNPM_HOME}:${PATH}"
+ENV PATH="/usr/local/bin-mcp-stdio:${PATH}"
+# 优先级脚本，确保在 PATH 最前面
+ENV PATH="/usr/local/bin-priority:${PATH}"
 
 # 设置入口点为 /bin/sh
 ENTRYPOINT ["/bin/sh"]

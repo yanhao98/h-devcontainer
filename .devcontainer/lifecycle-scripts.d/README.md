@@ -59,7 +59,7 @@ chmod +x 04-postStartCommand.d/10-my-custom-script
 - 在 VS Code 中：View → Output → Dev Containers
 - 或者在终端中手动测试脚本：
   ```bash
-  /usr/local/bin/run-lifecycle-scripts.sh onCreateCommand
+  /devcontainer/run-lifecycle-scripts.sh onCreateCommand
   ```
 
 ## 注意事项
