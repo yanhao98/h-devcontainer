@@ -15,7 +15,7 @@ sudoIf() {
 }
 
 if ! dpkg --status locales >/dev/null 2>&1; then
-  _curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+  sudo _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
     locales
 fi
 

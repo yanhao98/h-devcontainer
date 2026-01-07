@@ -6,7 +6,7 @@ set -o pipefail   # 对应 -o pipefail
 # https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
 
-_curl-fsSL--compressed https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh | sudo bash -s -- \
+sudo _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
     fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
     at-spi2-core xterm nautilus mousepad seahorse \
