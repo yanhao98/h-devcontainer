@@ -1,0 +1,60 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <url> [args...]" >&2
+    exit 1
+fi
+
+URL="$1"
+shift
+
+# Determine cache directory
+if [ "$(id -u)" -eq 0 ]; then
+    CACHE_DIR="/var/cache/devcontainer-scripts"
+else
+    CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/devcontainer-scripts"
+fi
+
+mkdir -p "$CACHE_DIR"
+
+# Generate a filename based on the URL hash to avoid collisions
+FILENAME=$(echo -n "$URL" | sha256sum | awk '{print $1}')
+CACHE_FILE="$CACHE_DIR/$FILENAME"
+
+# Helper to ensure _curl-fsSL--compressed is available
+# It should be in the same directory as this script, or in PATH.
+# Assuming it is in PATH or relative.
+CURL_CMD="_curl-fsSL--compressed"
+
+if [ ! -f "$CACHE_FILE" ]; then
+    # Initial download
+    "$CURL_CMD" -o "$CACHE_FILE" "$URL"
+else
+    # Check for updates
+    TMP_FILE="${CACHE_FILE}.tmp"
+    rm -f "$TMP_FILE"
+
+    # curl -z <file> downloads only if remote is newer than <file>
+    # We intentionally ignore errors here if they are just "not modified",
+    # but curl -f might treat 404 as error (which is good).
+    # curl returns 0 on 304 usually.
+
+    "$CURL_CMD" -z "$CACHE_FILE" -o "$TMP_FILE" "$URL"
+
+    if [ -s "$TMP_FILE" ]; then
+        mv "$TMP_FILE" "$CACHE_FILE"
+    else
+        rm -f "$TMP_FILE"
+    fi
+fi
+
+# Ensure it is readable/executable
+chmod +x "$CACHE_FILE"
+
+# Execute the script
+# We use bash to execute it, preserving the previous behavior of `bash -s`
+# but now we have a file.
+exec bash "$CACHE_FILE" "$@"

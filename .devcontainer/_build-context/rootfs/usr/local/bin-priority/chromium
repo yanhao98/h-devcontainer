@@ -2,6 +2,19 @@
 set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
+
+if ! dpkg --status chromium &>/dev/null; then
+  # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
+  APT_WAIT_CONF=$(mktemp)
+  echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
+  export APT_CONFIG="$APT_WAIT_CONF"
+  
+  sudo -E _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
+    chromium chromium-l10n ffmpeg
+  
+  rm -f "$APT_WAIT_CONF"
+fi
+
 export DISPLAY=:1
 #-------------------------------------------------------------------------------------------------------------
 # --disable-dev-shm-usage:  Chromium 在 /dev/shm 分区上使用共享内存来存储临时文件。如果该分区较小，可能会导致内存不足的问题。
