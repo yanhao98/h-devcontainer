@@ -1,0 +1,19 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bats
+      uses: bats-core/bats-action@3.0.1
+      
+    - name: Run Bats tests
+      run: bats tests/node_shim.bats

@@ -17,9 +17,11 @@ cmd="$1"
 while IFS= read -r p; do
     # 跳过所有 bin-priority 目录下的可执行文件
     if [[ "$p" != */bin-priority/* ]]; then
+        echo -e "\e[90m🔍 Found real binary: $p\e[0m" >&2
         echo "$p"
         exit 0
     fi
 done < <(which -a "$cmd" 2>/dev/null)
 
+echo "❌ Error: Could not find real binary for $cmd" >&2
 exit 1

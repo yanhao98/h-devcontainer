@@ -1,0 +1,38 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+#-------------------------------------------------------------------------------------------------------------
+# scripts/cp-bins
+#-------------------------------------------------------------------------------------------------------------
+
+# 获取脚本所在目录的绝对路径
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 项目根目录
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+# 源目录
+SOURCE_DIR="$PROJECT_ROOT/.devcontainer/_build-context/rootfs/usr/local"
+# 目标目录
+TARGET_DIR="/usr/local"
+
+echo "📂 正在将 $SOURCE_DIR 复制到 $TARGET_DIR ..."
+
+if [ ! -d "$SOURCE_DIR" ]; then
+    echo "❌ 错误: 源目录不存在: $SOURCE_DIR" >&2
+    exit 1
+fi
+
+# 使用 rsync 进行复制，保留权限，递归复制
+# -a: 归档模式，保留权限、所有者、时间戳等
+# -v: 详细输出
+# -h: 人类可读格式
+# --no-owner --no-group: 不保留所有者和组（因为在容器内可能不同，通常希望归属于 root）
+if [ -x "/usr/bin/rsync" ] || [ -x "/bin/rsync" ]; then
+    sudo rsync -avh --no-owner --no-group "$SOURCE_DIR/" "$TARGET_DIR/"
+else
+    echo "⚠️  未找到系统 rsync，回退到 cp 命令..."
+    sudo cp -R "$SOURCE_DIR/"* "$TARGET_DIR/"
+fi
+
+echo "✅ 复制完成！"

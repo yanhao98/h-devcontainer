@@ -23,7 +23,12 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["mads-hartmann.bash-ide-vscode", "prettier.prettier-vscode"],
+      "extensions": [
+        "mads-hartmann.bash-ide-vscode",
+        "prettier.prettier-vscode",
+        "jetmartin.bats",
+        "kherring.bats-test-runner"
+      ],
       "settings": {
         "chat.tools.terminal.blockDetectedFileWrites": "never",
         "tasks": { "version": "2.0.0", "tasks": [] },

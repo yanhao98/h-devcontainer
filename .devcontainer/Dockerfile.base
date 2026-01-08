@@ -109,7 +109,7 @@ RUN sudo mkdir /vscode && sudo chown usr_vscode:usr_vscode /vscode
 
 # >>>>> zsh-in-docker 安装和配置
 # 要重新触发 zsh 新用户配置向导: autoload -Uz zsh-newuser-install; zsh-newuser-install -f
-COPY zsh-in-docker-v1.2.1.sh /tmp/zsh-in-docker.sh
+COPY _build-context/zsh-in-docker-v1.2.1.sh /tmp/zsh-in-docker.sh
 RUN set -eux; \
     sh /tmp/zsh-in-docker.sh \
     # # Default powerline10k theme
@@ -168,6 +168,11 @@ ENV PATH="${PNPM_HOME}:${PATH}"
 ENV PATH="/usr/local/bin-mcp-stdio:${PATH}"
 # 优先级脚本，确保在 PATH 最前面
 ENV PATH="/usr/local/bin-priority:${PATH}"
+
+# 配置 sudo 的 secure_path，确保 sudo 能找到 bin-priority 中的脚本
+# 验证: sudo -l | grep -q 'bin-priority'
+# 验证: echo $PATH && sudo env | grep PATH
+RUN sudo chmod 0440 /etc/sudoers.d/secure_path_config
 
 # 设置入口点为 /bin/sh
 ENTRYPOINT ["/bin/sh"]
