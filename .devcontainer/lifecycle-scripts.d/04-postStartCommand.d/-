@@ -3,7 +3,7 @@
 # set -o nounset    # 对应 -u
 # set -o pipefail   # 对应 -o pipefail
 
-h-setup-lingma
+# h-setup-lingma
 
 # h-setup-zh-locale
 
