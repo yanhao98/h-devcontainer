@@ -4,15 +4,8 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 if ! dpkg --status chromium &>/dev/null; then
-  # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
-  APT_WAIT_CONF=$(mktemp)
-  echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
-  export APT_CONFIG="$APT_WAIT_CONF"
-  
   sudo -E _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
     chromium chromium-l10n ffmpeg
-  
-  rm -f "$APT_WAIT_CONF"
 fi
 
 export DISPLAY=:1

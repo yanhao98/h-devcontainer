@@ -8,6 +8,27 @@ add-bun-priority-bin-pkg opencode-ai
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
 CLI_ARGS=()
 
+
+
+# 初始化 Opencode 配置文件
+init_opencode_config() {
+  local config_file="/vscode/opencode-config/opencode.jsonc"
+  
+  if [[ ! -f "$config_file" ]]; then
+    mkdir -p "$(dirname "$config_file")"
+    cat > "$config_file" <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json"
+}
+EOF
+    echo "⚙️  已初始化配置文件: $config_file" >&2
+  fi
+}
+
+init_opencode_config
+
+export OPENCODE_CONFIG_DIR=/vscode/opencode-config
+
 echo -e "\e[90m→ exec ${TARGET_BIN} ${CLI_ARGS[*]} $*\e[0m" >&2
 
 exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
