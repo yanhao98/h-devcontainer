@@ -2,8 +2,9 @@
 set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
-#-------------------------------------------------------------------------------------------------------------
+
 if false; then
+#-------------------------------------------------------------------------------------------------------------
 # 示例：
 hyperfine --warmup 10 --min-runs 50 \
   '/usr/local/bin/node /vscode/bun-priority-bin/node_modules/.bin/claude -v' \
@@ -12,13 +13,12 @@ hyperfine --warmup 10 --min-runs 50 \
 hyperfine --warmup 10 --min-runs 50 \
   '/usr/local/bin/node /vscode/bun-priority-bin/node_modules/.bin/codex --version' \
   '/home/usr_vscode/.bun/bin/bun --bun run /vscode/bun-priority-bin/node_modules/.bin/codex --version'
-fi
 
 hyperfine --warmup 20 --min-runs 100 \
   '/usr/local/bin/node -e "console.log(\"hello\")" > /dev/null' \
   '/home/usr_vscode/.bun/bin/bun -e "console.log(\"hello\")" > /dev/null'
-
 #-------------------------------------------------------------------------------------------------------------
+fi
 
 if ! dpkg --status hyperfine &>/dev/null; then
   # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
