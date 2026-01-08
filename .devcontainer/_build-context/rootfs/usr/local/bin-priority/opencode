@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+add-bun-priority-bin-pkg opencode-ai
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
+CLI_ARGS=()
+
+echo -e "\e[90m→ exec ${TARGET_BIN} ${CLI_ARGS[*]} $*\e[0m" >&2
+
+exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"

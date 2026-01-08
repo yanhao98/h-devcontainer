@@ -3,7 +3,7 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-echo "📦 安装: $*" >&2
+echo -e "\033[0;90m📦 安装: $*\033[0m" >&2
 mkdir -p /vscode/bun-priority-bin/
 
 BUN_ARGS=()
