@@ -13,7 +13,7 @@ setup() {
     export PATH="$MOCK_DIR:$PATH"
     
     # 模拟 shim-utils.sh
-    mkdir -p "/devcontainer"
+    # mkdir -p "/devcontainer" (removed to avoid permission denied)
     echo '_print_caller_info() { echo "mock caller info" >&2; }' > "$MOCK_DIR/shim-utils.sh"
     # 为了让 source /devcontainer/shim-utils.sh 工作，我们需要拦截它或者确保文件存在
     # 由于脚本中使用绝对路径 source，我们可能需要创建一个临时的 shim-utils.sh 在测试环境中
