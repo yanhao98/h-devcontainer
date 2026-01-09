@@ -21,5 +21,6 @@ if [ -z "$uvx_bin" ]; then
     fi
 fi
 
+export UV_CACHE_DIR="/vscode/uv-cache"
 echo -e "\e[90m→ exec $uvx_bin\e[0m" >&2
 exec "$uvx_bin" "$@"
