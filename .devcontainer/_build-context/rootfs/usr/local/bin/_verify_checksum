@@ -7,19 +7,23 @@ set -o pipefail
 #
 # 用法:
 #   _verify_checksum <文件路径> <期望的校验和>
-#   _verify_checksum <文件路径> <SHASUMS256.txt URL>
+#   _verify_checksum <文件路径> <SHASUMS256.txt URL> [upstream_filename]
+#
+# 参数:
+#   upstream_filename: 可选，如果本地文件名与 SHASUMS256.txt 中的文件名不一致（例如本地包含版本号），
+#                      则指定此参数为远程 SHASUMS256.txt 中的文件名。
 #
 # 示例:
 #   _verify_checksum /path/to/file.zip abc123...
 #   _verify_checksum /path/to/file.tar.xz https://example.com/SHASUMS256.txt
+#   _verify_checksum /path/to/local-v1.0.tar.gz https://example.com/SHASUMS.txt remote.tar.gz
 
 if [[ $# -lt 2 ]]; then
-    echo "❌ 用法: _verify_checksum <文件路径> <期望的校验和|SHASUMS256.txt URL>" >&2
+    echo "❌ 用法: _verify_checksum <文件路径> <期望的校验和|SHASUMS256.txt URL> [upstream_filename]" >&2
     exit 1
 fi
 
 file_path="$1"
-filename="$(basename "$file_path")"
 checksum_or_url="$2"
 
 if [[ ! -f "$file_path" ]]; then
@@ -31,20 +35,22 @@ if [[ "$checksum_or_url" =~ ^https?:// ]]; then
     # 从 URL 获取校验和
     shasums_url="$checksum_or_url"
 
+    # 如果提供了第三个参数，则使用它作为搜索的文件名，否则使用本地文件的 basename
+    search_filename="${3:-$(basename "$file_path")}"
+
     # 从 SHASUMS256.txt 获取对应文件的校验和行
-    shasum_line=$(_curl-fsSL--compressed "$shasums_url" | grep " $filename\$") || {
-        echo "❌ 错误: 在 SHASUMS256.txt 中未找到 $filename (来源: $shasums_url)" >&2
+    shasum_line=$(_curl-fsSL--compressed "$shasums_url" | grep " $search_filename\$") || {
+        echo "❌ 错误: 在 SHASUMS256.txt 中未找到 $search_filename (来源: $shasums_url)" >&2
         exit 1
     }
 
-    # 使用 sha256sum -c 验证
-    if echo "$shasum_line" | (cd "$(dirname "$file_path")" && sha256sum -c - >/dev/null 2>&1); then
-        expected_checksum=$(echo "$shasum_line" | awk '{print $1}')
+    expected_checksum=$(echo "$shasum_line" | awk '{print $1}')
+    actual_checksum=$(sha256sum "$file_path" | awk '{print $1}')
+
+    if [[ "$actual_checksum" == "$expected_checksum" ]]; then
         echo "☑️  校验和验证成功: $file_path (校验和: $expected_checksum, 来源: $shasums_url)" >&2
         exit 0
     else
-        expected_checksum=$(echo "$shasum_line" | awk '{print $1}')
-        actual_checksum=$(sha256sum "$file_path" | awk '{print $1}')
         echo "❌ 校验和验证失败: $file_path" >&2
         echo "  期望值: $expected_checksum" >&2
         echo "  实际值: $actual_checksum" >&2
