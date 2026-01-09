@@ -39,7 +39,18 @@ uv_uri="https://github.com/astral-sh/uv/releases/download/${version}/${asset_nam
 shasums_uri="${uv_uri}.sha256"
 
 # 缓存路径（包含版本号）
-cached_uv_path="/vscode/downloads/uv-${version}-${build}.tar.gz"
+# 注意：_verify_checksum 期望本地文件名与 SHASUMS256.txt 中的文件名匹配
+# 但 uv 的 SHASUMS256 文件中包含的文件名是 generic 的 (如 uv-x86_64-unknown-linux-gnu.tar.gz)
+# 而我们本地缓存的文件名包含了版本号 (uv-0.9.22-x86_64-unknown-linux-gnu.tar.gz)
+# 所以下载时我们保留原始文件名，用目录区分版本，或者下载后改名
+# 简单方案：本地缓存文件名不带版本号，存放在带版本号的目录里？
+# 或者：修改 _verify_checksum 逻辑？不，不要修改通用工具。
+
+# 方案：下载为标准文件名
+cached_uv_dir="/vscode/downloads/uv-${version}"
+sudo mkdir -p "$cached_uv_dir" || true
+sudo chown -R $(whoami):$(whoami) "$cached_uv_dir" || true
+cached_uv_path="$cached_uv_dir/${asset_name}"
 
 # 检查是否存在且校验通过
 need_download=true
