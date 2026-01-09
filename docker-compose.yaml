@@ -1,4 +1,8 @@
-# docker compose up -d; docker compose logs -f
+x-ignore_this: |
+  Docker Compose 明确规定所有以 x- 开头的字段都会被解析器忽略。
+  docker compose --file ~/Workspaces/docker-compose.yaml pull;
+  docker compose --file ~/Workspaces/docker-compose.yaml up -d;
+  docker compose --file ~/Workspaces/docker-compose.yaml logs -f
 services:
   devcontainer:
     image: ghcr.io/yanhao98/h-devcontainer:main
@@ -13,22 +17,17 @@ services:
       - NODE_OPTIONS=--max-old-space-size=4096
       - TZ=Asia/Shanghai
     volumes:
-      # 挂载当前工作目录
-      - .:/workspaces/h-devcontainers:delegated
+      - .:/workspaces:delegated
       # 挂载 vscode 扩展缓存卷 (外部卷)
       - vscode:/vscode
-      - h-devcontainers-node_modules:/workspaces/h-devcontainers/node_modules
-      - ./docker-compose-entrypoint.sh:/docker-compose-entrypoint.sh:delegated
+      # - ./docker-compose-entrypoint.sh:/docker-compose-entrypoint.sh:delegated
     ports:
-      # 开发服务器端口
-      - "1116:1116"
       # VNC 端口
-      - "127.0.0.1:5901:5901"
-      - "127.0.0.1:6080:6080"
-    command: /bin/bash /docker-compose-entrypoint.sh
+      - "127.0.0.1:5909:5901"
+      # - "127.0.0.1:6080:6080"
+    # command: /bin/bash /docker-compose-entrypoint.sh
     restart: unless-stopped
 
 volumes:
-  h-devcontainers-node_modules:
   vscode:
     external: true
