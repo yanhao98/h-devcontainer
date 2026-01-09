@@ -42,7 +42,7 @@ shasums_url="$node_dist_url/SHASUMS256.txt"
 need_download=true
 if [[ -f "$cached_file" ]]; then
     echo "📦 发现已存在的 Node.js 归档文件 ($cached_file)，正在验证校验和..." >&2
-    if _verify_checksum "$cached_file" "$shasums_url"; then
+    if _verify_checksum "$cached_file" "$shasums_url" >&2; then
         echo "✅ 校验和验证成功，跳过下载。" >&2
         need_download=false
     else
@@ -58,7 +58,7 @@ if [[ "$need_download" == "true" ]]; then
     }
 
     echo "🔐 正在验证下载的文件..." >&2
-    if ! _verify_checksum "$cached_file" "$shasums_url"; then
+    if ! _verify_checksum "$cached_file" "$shasums_url" >&2; then
         echo "❌ 下载的文件校验失败" >&2; exit 1;
     fi
 fi

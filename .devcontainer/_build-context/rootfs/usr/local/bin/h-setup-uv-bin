@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# 资料:
+#   https://docs.astral.sh/uv/getting-started/installation/
+#   https://github.com/astral-sh/uv/releases
+#   https://docs.astral.sh/uv/configuration/environment/
+
+# 确定架构
+arch="$(dpkg --print-architecture)"
+case "${arch##*-}" in
+    amd64) build="x86_64-unknown-linux-gnu";;
+    arm64) build="aarch64-unknown-linux-gnu";;
+    *) echo "❌ 错误: 不支持的架构: $arch" >&2; exit 1 ;;
+esac
+
+asset_name="uv-${build}.tar.gz"
+
+# 统一的下载缓存目录
+sudo mkdir -p /vscode/downloads || true
+sudo chown -R $(whoami):$(whoami) /vscode/downloads || true
+
+# 获取版本信息
+if [[ -z "${UV_VERSION:-}" || "${UV_VERSION:-}" == "latest" ]]; then
+    release_api_uri="https://api.github.com/repos/astral-sh/uv/releases/latest"
+else
+    release_api_uri="https://api.github.com/repos/astral-sh/uv/releases/tags/${UV_VERSION}"
+fi
+
+echo "🔍 正在获取 uv 版本信息..." >&2
+release_info=$(_curl-fsSL--compressed "$release_api_uri")
+version=$(echo "$release_info" | jq -r ".tag_name")
+uv_uri=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
+shasums_uri=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"uv-${build}.tar.gz.sha256\") | .browser_download_url")
+
+if [[ -z "$version" || "$version" == "null" || -z "$uv_uri" || "$uv_uri" == "null" || -z "$shasums_uri" || "$shasums_uri" == "null" ]]; then
+    echo "❌ 错误: 无法从 GitHub API 获取 uv 的发布信息。" >&2
+    echo "API URI: $release_api_uri" >&2
+    exit 1
+fi
+
+echo "📦 找到 uv ${version} ($build)" >&2
+
+# 缓存路径（包含版本号）
+cached_tarball="/vscode/downloads/${asset_name%.tar.gz}-${version}.tar.gz"
+
+# 检查是否存在且校验通过
+need_download=true
+if [[ -f "$cached_tarball" ]]; then
+    echo "📦 发现已存在的 uv 归档文件 ($cached_tarball)，正在验证校验和..." >&2
+
+    # 下载 sha256 文件获取期望的校验和
+    expected_checksum=$(_curl-fsSL--compressed "$shasums_uri" | awk '{print $1}')
+    if _verify_checksum "$cached_tarball" "$expected_checksum" >&2; then
+        echo "✅ 校验和验证成功，跳过下载。" >&2
+        need_download=false
+    else
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。" >&2
+    fi
+fi
+
+if [[ "$need_download" == "true" ]]; then
+    echo "⬇️  正在下载 uv ${version} ($build)..." >&2
+    _curl-fsSL--compressed -o "$cached_tarball" "$uv_uri" || {
+        echo "❌ 下载失败: $uv_uri" >&2; exit 1;
+    }
+
+    echo "🔐 正在验证下载的文件..." >&2
+    expected_checksum=$(_curl-fsSL--compressed "$shasums_uri" | awk '{print $1}')
+    if ! _verify_checksum "$cached_tarball" "$expected_checksum" >&2; then
+        echo "❌ 下载的文件校验失败" >&2; exit 1;
+    fi
+    echo "✅ 校验和验证成功。" >&2
+fi
+
+# 安装
+echo "📥 正在安装 uv 到 /usr/local/bin..." >&2
+
+# 解压到临时目录
+tmp_dir="$(mktemp -d)" || { echo "❌ 创建临时目录失败" >&2; exit 1; }
+trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
+
+tar -xzf "$cached_tarball" -C "$tmp_dir" --strip-components=1
+
+# 复制二进制文件
+sudo cp "$tmp_dir/uv" /usr/local/bin/uv
+sudo cp "$tmp_dir/uvx" /usr/local/bin/uvx
+sudo chmod +x /usr/local/bin/uv /usr/local/bin/uvx
+
+# 配置 uv 缓存目录（可选，使用持久化目录）
+if [[ -d "/vscode" ]]; then
+    mkdir -p /vscode/uv-cache || true
+    export UV_CACHE_DIR="/vscode/uv-cache"
+fi
+
+# 安装 shell 补全
+cmd_uv="/usr/local/bin/uv"
+completion_file="$HOME/completion-for-uv.zsh"
+$cmd_uv generate-shell-completion zsh > "$completion_file" || true
+
+if [[ -f "$completion_file" && -s "$completion_file" ]]; then
+    if ! grep -q 'source ~/completion-for-uv.zsh' ~/.zshrc 2>/dev/null; then
+        echo 'source ~/completion-for-uv.zsh' >> ~/.zshrc
+        echo "☑️  已添加 uv 自动补全到 ~/.zshrc" >&2
+    else
+        echo "⏭️  uv 自动补全已存在于 ~/.zshrc 中" >&2
+    fi
+fi
+
+# 配置 UV_CACHE_DIR 环境变量
+if [[ -d "/vscode" ]]; then
+    if ! grep -q 'export UV_CACHE_DIR=' ~/.zshrc 2>/dev/null; then
+        echo 'export UV_CACHE_DIR="/vscode/uv-cache"' >> ~/.zshrc
+        echo "☑️  已配置 UV_CACHE_DIR 到 /vscode/uv-cache" >&2
+    fi
+fi
+
+# 验证安装
+echo "✅ uv 安装成功：$($cmd_uv --version) (/usr/local/bin/uv)" >&2

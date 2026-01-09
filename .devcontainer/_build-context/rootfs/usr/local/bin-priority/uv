@@ -1,0 +1,25 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# uv shim: 自动检测并安装 uv，然后执行
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+uv_bin="$(_get-real-bin uv || true)"
+
+if [ -z "$uv_bin" ]; then
+    echo "⚠️  uv 未安装，正在自动安装..." >&2
+    # 重定向到 stderr，避免安装输出污染 stdout（其他工具可能捕获 uv 的 stdout 来获取版本信息）
+    h-setup-uv-bin >&2
+    uv_bin="$(_get-real-bin uv || true)"
+    if [ -z "$uv_bin" ]; then
+        echo "❌ uv 安装失败" >&2
+        exit 1
+    fi
+fi
+
+echo -e "\e[90m→ exec $uv_bin\e[0m" >&2
+exec "$uv_bin" "$@"

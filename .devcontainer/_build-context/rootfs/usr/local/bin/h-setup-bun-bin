@@ -30,7 +30,7 @@ need_download=true
 if [[ -f "$zip" ]]; then
     echo "📦 发现已存在的 Bun 归档文件，正在验证校验和..." >&2
 
-    if _verify_checksum "$zip" "$shasums_uri" 2>/dev/null; then
+    if _verify_checksum "$zip" "$shasums_uri" >&2; then
         echo "✅ 校验和验证成功，跳过下载。" >&2
         need_download=false
     else
@@ -45,7 +45,7 @@ if [[ "$need_download" == "true" ]]; then
     }
 
     echo "🔐 正在验证下载的文件..." >&2
-    if ! _verify_checksum "$zip" "$shasums_uri"; then
+    if ! _verify_checksum "$zip" "$shasums_uri" >&2; then
         echo "❌ 下载的文件校验失败" >&2; exit 1;
     fi
     echo "✅ 校验和验证成功。" >&2
@@ -66,7 +66,7 @@ unzip -oqjd "$bin_dir" "$zip" "bun-linux-$build/bun" || {
 }
 
 # 安装 shell 补全（失败不影响）
-IS_BUN_AUTO_UPDATE=true SHELL=zsh bun completions &>/dev/null || :
+IS_BUN_AUTO_UPDATE=true SHELL=zsh $HOME/.bun/bin/bun completions >&2 || :
 
 # 验证安装
 echo "✅ Bun 安装成功：" >&2
