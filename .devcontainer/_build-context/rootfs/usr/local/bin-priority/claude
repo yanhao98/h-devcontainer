@@ -29,19 +29,6 @@ set -o pipefail   # 对应 -o pipefail
 # "apiKeyHelper": "/bin/generate_temp_api_key.sh",
 #-------------------------------------------------------------------------------------------------------------
 
-# 解析命令行参数，检查是否有 --skip-settings
-CLAUDE_ARGS=()
-SKIP_SETTINGS_MSG=""
-for arg in "$@"; do
-  if [[ "$arg" == "--skip-settings" ]]; then
-    export CLAUDE_SKIP_SETTINGS=1
-    SKIP_SETTINGS_MSG=" | ⏭️ --skip-settings"
-  else
-    CLAUDE_ARGS+=("$arg")
-  fi
-done
-set -- "${CLAUDE_ARGS[@]}"
-
 echo "🚀 正在运行 Claude Code 包装器 ($0)" >&2
 source /devcontainer/shim-utils.sh
 _print_caller_info
@@ -97,23 +84,15 @@ init_claude_config() {
   fi
 }
 
-# 选择 settings 文件
-# 设置环境变量 CLAUDE_SKIP_SETTINGS=1 可跳过选择
-# 或使用命令行参数 --skip-settings
-select_settings_file() {
-  if [[ "${CLAUDE_SKIP_SETTINGS:-}" == "1" ]]; then
-    echo "⏭️  已跳过选择 settings 文件 (CLAUDE_SKIP_SETTINGS=1)" >&2
-    return
-  fi
-
-  # 调用独立的 claude-switch-settings 脚本
-  # 使用 source 以便获取 SELECTED_SETTINGS_FILE 环境变量
-  local switch_script
-  switch_script="$(get_switch_settings_path)"
-  if [[ -n "$switch_script" ]]; then
-    source "$switch_script"
+# 获取 claude-statusline 脚本的路径
+get_statusline_path() {
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  if [[ -x "$script_dir/claude-statusline" ]]; then
+    echo "$script_dir/claude-statusline"
+  elif command -v claude-statusline &>/dev/null; then
+    command -v claude-statusline
   else
-    echo "⚠️  警告: 未找到 claude-switch-settings 脚本" >&2
+    echo "claude-statusline"
   fi
 }
 
@@ -124,18 +103,6 @@ get_switch_settings_path() {
     echo "$script_dir/claude-switch-settings"
   elif command -v claude-switch-settings &>/dev/null; then
     command -v claude-switch-settings
-  fi
-}
-
-# 获取 claude-statusline 脚本的路径
-get_statusline_path() {
-  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  if [[ -x "$script_dir/claude-statusline" ]]; then
-    echo "$script_dir/claude-statusline"
-  elif command -v claude-statusline &>/dev/null; then
-    command -v claude-statusline
-  else
-    echo "claude-statusline"
   fi
 }
 
@@ -226,18 +193,20 @@ setup_managed_settings() {
 }
 
 init_claude_config
-# select_settings_file
 setup_managed_settings
 
 
-BUN_ARGS=("--bun")
-BUN_ARGS+=("run")
-# /vscode/bun-priority-bin/node_modules/@anthropic-ai/claude-code/cli.js
-BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/claude")
+# BUN_ARGS=("--bun")
+# BUN_ARGS+=("run")
+# BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/claude")
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/claude"
 
 CLI_ARGS=("--dangerously-skip-permissions")
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run claude --version
 
-exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+export CLAUDE_CONFIG_DIR=/vscode/claude-config
+# exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
+exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
