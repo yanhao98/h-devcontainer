@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# 资料:
+#   https://github.com/astral-sh/uv
+#   https://docs.astral.sh/uv/getting-started/installation/
+
+# 确定架构
+arch="$(dpkg --print-architecture)"
+case "${arch##*-}" in \
+	amd64) build="x86_64-unknown-linux-gnu";; \
+	arm64) build="aarch64-unknown-linux-gnu";; \
+	*) echo "❌ 错误: 不支持的架构: $arch" >&2; exit 1 ;; \
+esac
+
+# 统一的下载缓存目录
+sudo mkdir -p /vscode/downloads || true
+sudo chown -R $(whoami):$(whoami) /vscode/downloads || true
+
+# 获取版本信息
+if [[ -z "${UV_VERSION:-}" || "${UV_VERSION:-}" == "latest" ]]; then
+    release_api_uri="https://api.github.com/repos/astral-sh/uv/releases/latest"
+    echo "🔍 正在获取 uv 版本信息..." >&2
+    release_info=$(_curl-fsSL--compressed "$release_api_uri")
+    version=$(echo "$release_info" | jq -r ".tag_name")
+else
+    version="${UV_VERSION}"
+fi
+
+if [[ -z "$version" ]]; then
+    echo "❌ 错误: 无法获取 uv 版本信息。" >&2
+    exit 1
+fi
+
+asset_name="uv-${build}.tar.gz"
+uv_uri="https://github.com/astral-sh/uv/releases/download/${version}/${asset_name}"
+shasums_uri="${uv_uri}.sha256"
+
+# 缓存路径（包含版本号）
+cached_uv_path="/vscode/downloads/uv-${version}-${build}.tar.gz"
+
+# 检查是否存在且校验通过
+need_download=true
+if [[ -f "$cached_uv_path" ]]; then
+    echo "📦 发现已存在的 uv 文件 ($cached_uv_path)，正在验证校验和..." >&2
+
+    if _verify_checksum "$cached_uv_path" "$shasums_uri"; then
+        echo "✅ 校验和验证成功，跳过下载。" >&2
+        need_download=false
+    else
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。" >&2
+    fi
+fi
+
+if [[ "$need_download" == "true" ]]; then
+    echo "⬇️ 正在下载 uv ${version} ($build)..." >&2
+    _curl-fsSL--compressed -o "$cached_uv_path" "$uv_uri" || {
+        echo "❌ 下载失败: $uv_uri" >&2; exit 1;
+    }
+
+    echo "🔐 正在验证下载的文件..." >&2
+    if ! _verify_checksum "$cached_uv_path" "$shasums_uri"; then
+        echo "❌ 下载的文件校验失败" >&2; exit 1;
+    fi
+    echo "✅ 校验和验证成功。" >&2
+fi
+
+# 安装
+echo "📥 正在安装 uv 到 /usr/local/bin..." >&2
+
+# 解压并安装
+tmp_dir="$(mktemp -d)" || { echo "❌ 创建临时目录失败" >&2; exit 1; }
+trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
+
+tar -xzf "$cached_uv_path" -C "$tmp_dir"
+
+# uv 的 tarball 结构通常是 uv-x86_64-unknown-linux-gnu/uv
+# 我们需要找到 uv 和 uvx 二进制文件
+find "$tmp_dir" -name "uv" -type f -exec sudo cp {} /usr/local/bin/ \;
+find "$tmp_dir" -name "uvx" -type f -exec sudo cp {} /usr/local/bin/ \;
+
+sudo chmod +x /usr/local/bin/uv
+if [[ -f /usr/local/bin/uvx ]]; then
+    sudo chmod +x /usr/local/bin/uvx
+fi
+
+# 安装 shell 补全
+# uv generate-shell-completion <shell>
+if command -v uv &> /dev/null; then
+    if [[ -w "$HOME/.zshrc" ]]; then
+         # 生成 zsh 补全文件
+        echo "⚙️  正在生成 zsh 补全..." >&2
+        uv generate-shell-completion zsh > "$HOME/.uv-completion.zsh"
+        if ! grep -q 'source $HOME/.uv-completion.zsh' "$HOME/.zshrc"; then
+            echo 'source $HOME/.uv-completion.zsh' >> "$HOME/.zshrc"
+        fi
+    fi
+
+    if [[ -w "$HOME/.bashrc" ]]; then
+         # 生成 bash 补全文件
+        echo "⚙️  正在生成 bash 补全..." >&2
+        uv generate-shell-completion bash > "$HOME/.uv-completion.bash"
+        if ! grep -q 'source $HOME/.uv-completion.bash' "$HOME/.bashrc"; then
+             echo 'source $HOME/.uv-completion.bash' >> "$HOME/.bashrc"
+        fi
+    fi
+fi
+
+# 验证安装
+echo "✅ uv 安装成功：" >&2
+echo "   uv: $(/usr/local/bin/uv --version)" >&2
+if [[ -f /usr/local/bin/uvx ]]; then
+    echo "   uvx: $(/usr/local/bin/uvx --version)" >&2
+fi
