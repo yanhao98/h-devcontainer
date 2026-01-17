@@ -1,6 +1,6 @@
 # Dev Container Environment
 
-This dev container includes a lightweight Fluxbox-based desktop that can be accessed using a VNC viewer or the web.
+This dev container includes a lightweight Fluxbox-based desktop.
 
 ## GUI Access
 
