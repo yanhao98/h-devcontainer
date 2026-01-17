@@ -208,5 +208,5 @@ echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
 export CLAUDE_CONFIG_DIR=/vscode/claude-config
-# exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
+export CLAUDE_CODE_TMPDIR=/vscode/claude-tmp
 exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
