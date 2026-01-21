@@ -15,10 +15,7 @@ set -o pipefail   # 对应 -o pipefail
 
 add-bun-priority-bin-pkg @google/gemini-cli@latest
 
-BUN_ARGS=("--bun")
-BUN_ARGS+=("--env-file=/vscode/bun-priority-bin/.env.local")
-BUN_ARGS+=("run")
-BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/gemini")
+
 
 CLI_ARGS=("--yolo")
 # CLI_ARGS+=("--model=gemini-1.5-flash")
@@ -47,9 +44,19 @@ ensure_gemini_settings() {
 
 ensure_gemini_settings
 
+# BUN_ARGS=("--bun")
+# BUN_ARGS+=("--env-file=/vscode/bun-priority-bin/.env.local")
+# BUN_ARGS+=("run")
+# BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/gemini")
+source /vscode/bun-priority-bin/.env.local
+export GOOGLE_GEMINI_BASE_URL="$GOOGLE_GEMINI_BASE_URL"
+export GEMINI_API_KEY="$GEMINI_API_KEY"
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/gemini"
+
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run gemini --version
 
 export SANDBOX=h-devctr
 export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json
-exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
+# exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
+exec "$TARGET_BIN" "${CLI_ARGS[@]}" "$@"
