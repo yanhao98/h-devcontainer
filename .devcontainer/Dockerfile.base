@@ -10,7 +10,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
     eatmydata \
     # 开发工具
-    less git procps sudo fzf zsh man-db unzip gnupg2 xz-utils \
+    less git procps sudo fzf zsh man-db unzip gnupg2 xz-utils openssh-client \
     # 编辑器和实用工具
     jq nano vim \
     # 网络工具
