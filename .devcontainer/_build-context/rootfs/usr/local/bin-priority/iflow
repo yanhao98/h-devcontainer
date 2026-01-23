@@ -9,9 +9,24 @@ BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/iflow")
 
+# 检测是否运行不支持默认标志的子命令
+IS_SUBCOMMAND=0
+for arg in "$@"; do
+    if [[ "$arg" == "mcp" ]] || [[ "$arg" == "commands" ]] || [[ "$arg" == "agent" ]] || [[ "$arg" == "workflow" ]] || [[ "$arg" == "skill" ]]; then
+        IS_SUBCOMMAND=1
+        break
+    fi
+    # 如果遇到非标志参数且不是子命令，则视为查询
+    if [[ "$arg" != -* ]]; then
+        break
+    fi
+done
+
 CLI_ARGS=()
-CLI_ARGS+=("--yolo")
-CLI_ARGS+=("--show-memory-usage")
+if [ "$IS_SUBCOMMAND" -eq 0 ]; then
+    CLI_ARGS+=("--yolo")
+    CLI_ARGS+=("--show-memory-usage")
+fi
 
 mkdir -p /vscode/iflow-home
 # 检查软链接是否已正确建立，如果是则跳过
