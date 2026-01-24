@@ -36,7 +36,8 @@ ensure_gemini_settings() {
   local content='{
   "security": { "auth": { "selectedType": "gemini-api-key" } },
   "ide": { "enabled": true },
-  "general": { "previewFeatures": true }
+  "general": { "previewFeatures": true },
+  "context": { "fileName": ["AGENTS.md", "CONTEXT.md", "GEMINI.md"] }
 }'
   local target_file="/vscode/gemini-system-settings.json"
   echo "$content" | _update-file-if-changed "$target_file" 666 "Gemini CLI 配置"
