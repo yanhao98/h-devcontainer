@@ -8,7 +8,17 @@ add-bun-priority-bin-pkg opencode-ai
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
 CLI_ARGS=()
 
-
+mkdir -p /vscode/opencode-config-home
+# 检查软链接是否已正确建立，如果是则跳过
+if [ -L "$HOME/.config/opencode" ] && [ "$(readlink "$HOME/.config/opencode")" = "/vscode/opencode-config-home" ]; then
+    : # 软链接已正确建立，跳过
+else
+    mkdir -p "$HOME/.config"
+    if [ -d "$HOME/.config/opencode" ]; then
+        rm -rf "$HOME/.config/opencode"
+    fi
+    ln -sfn /vscode/opencode-config-home ~/.config/opencode
+fi
 
 # 初始化 Opencode 配置文件
 init_opencode_config() {
