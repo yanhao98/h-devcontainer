@@ -1,0 +1,14 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+add-bun-priority-bin-pkg typescript-language-server@latest
+
+BUN_ARGS=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/typescript-language-server")
+
+echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
+
+exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
