@@ -8,21 +8,21 @@ add-bun-priority-bin-pkg opencode-ai
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
 CLI_ARGS=()
 
-mkdir -p /vscode/opencode-config-home
+mkdir -p /vscode/opencode-config-link
 # 检查软链接是否已正确建立，如果是则跳过
-if [ -L "$HOME/.config/opencode" ] && [ "$(readlink "$HOME/.config/opencode")" = "/vscode/opencode-config-home" ]; then
+if [ -L "$HOME/.config/opencode" ] && [ "$(readlink "$HOME/.config/opencode")" = "/vscode/opencode-config-link" ]; then
     : # 软链接已正确建立，跳过
 else
     mkdir -p "$HOME/.config"
     if [ -d "$HOME/.config/opencode" ]; then
         rm -rf "$HOME/.config/opencode"
     fi
-    ln -sfn /vscode/opencode-config-home ~/.config/opencode
+    ln -sfn /vscode/opencode-config-link ~/.config/opencode
 fi
 
 # 初始化 Opencode 配置文件
 init_opencode_config() {
-  local config_file="/vscode/opencode-config/opencode.jsonc"
+  local config_file="$HOME/.config/opencode/opencode.jsonc"
   
   if [[ ! -f "$config_file" ]]; then
     mkdir -p "$(dirname "$config_file")"
@@ -37,7 +37,7 @@ EOF
 
 init_opencode_config
 
-export OPENCODE_CONFIG_DIR=/vscode/opencode-config
+# export OPENCODE_CONFIG_DIR=/vscode/opencode-config
 
 echo -e "\e[90m→ exec ${TARGET_BIN} ${CLI_ARGS[*]} $*\e[0m" >&2
 
