@@ -26,6 +26,4 @@ if ! dpkg --status gh &>/dev/null; then
   _apt-install-cached gh
 fi
 
-# 跳过自身，找到真实的 gh 可执行文件
-real_gh=$(which -a gh | grep -v '/usr/local/bin-priority/' | head -n1)
-exec "$real_gh" "$@"
+exec "$(_get-real-bin gh)" "$@"

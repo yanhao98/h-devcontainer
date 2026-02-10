@@ -14,6 +14,4 @@ if ! dpkg --status file &>/dev/null; then
   _apt-install-cached file
 fi
 
-# 跳过自身，找到真实的 file 可执行文件
-real_file=$(which -a file | grep -v '/usr/local/bin-priority/' | head -n1)
-exec "$real_file" "$@"
+exec "$(_get-real-bin file)" "$@"

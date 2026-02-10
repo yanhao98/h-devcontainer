@@ -24,6 +24,4 @@ if ! dpkg --status hyperfine &>/dev/null; then
   _apt-install-cached hyperfine
 fi
 
-# 跳过自身，找到真实的 hyperfine 可执行文件
-real_hyperfine=$(which -a hyperfine | grep -v '/usr/local/bin-priority/' | head -n1)
-exec "$real_hyperfine" "$@"
+exec "$(_get-real-bin hyperfine)" "$@"
