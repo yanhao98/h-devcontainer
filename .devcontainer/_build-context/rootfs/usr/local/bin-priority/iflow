@@ -28,16 +28,7 @@ if [ "$IS_SUBCOMMAND" -eq 0 ]; then
     CLI_ARGS+=("--show-memory-usage")
 fi
 
-mkdir -p /vscode/iflow-home
-# 检查软链接是否已正确建立，如果是则跳过
-if [ -L "$HOME/.iflow" ] && [ "$(readlink "$HOME/.iflow")" = "/vscode/iflow-home" ]; then
-    : # 软链接已正确建立，跳过
-else
-    if [ -d "$HOME/.iflow" ]; then
-        rm -rf "$HOME/.iflow"
-    fi
-    ln -sfn /vscode/iflow-home ~/.iflow
-fi
+_ensure-vscode-symlink /vscode/iflow-home ~/.iflow
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run iflow --version

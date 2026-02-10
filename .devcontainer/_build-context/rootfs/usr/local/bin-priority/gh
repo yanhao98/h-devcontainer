@@ -20,16 +20,7 @@ gh auth login
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-mkdir -p /vscode/gh-home
-# 检查软链接是否已正确建立，如果是则跳过
-if [ -L "$HOME/.gh" ] && [ "$(readlink "$HOME/.gh")" = "/vscode/gh-home" ]; then
-    : # 软链接已正确建立，跳过
-else
-    if [ -d "$HOME/.gh" ]; then
-        rm -rf "$HOME/.gh"
-    fi
-    ln -sfn /vscode/gh-home ~/.gh
-fi
+_ensure-vscode-symlink /vscode/gh-home ~/.gh
 
 if ! dpkg --status gh &>/dev/null; then
   # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）

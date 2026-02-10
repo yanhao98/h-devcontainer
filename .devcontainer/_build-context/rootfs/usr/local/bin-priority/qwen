@@ -13,16 +13,7 @@ CLI_ARGS+=("--yolo")
 # CLI_ARGS+=("--show-memory-usage")
 CLI_ARGS+=("--experimental-skills")
 
-mkdir -p /vscode/qwen-home
-# 检查软链接是否已正确建立，如果是则跳过
-if [ -L "$HOME/.qwen" ] && [ "$(readlink "$HOME/.qwen")" = "/vscode/qwen-home" ]; then
-    : # 软链接已正确建立，跳过
-else
-    if [ -d "$HOME/.qwen" ]; then
-        rm -rf "$HOME/.qwen"
-    fi
-    ln -sfn /vscode/qwen-home ~/.qwen
-fi
+_ensure-vscode-symlink /vscode/qwen-home ~/.qwen
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run iflow --version
