@@ -40,10 +40,23 @@ COST_DISPLAY=$(echo "$input" | jq -r '
 TOTAL_DURATION_MS=$(echo "$input" | jq -r '.cost.total_duration_ms // 0')
 TOTAL_API_DURATION_MS=$(echo "$input" | jq -r '.cost.total_api_duration_ms // 0')
 
-# 转换为秒，保留1位小数
-TOTAL_DURATION_S=$(awk "BEGIN {printf \"%.1f\", $TOTAL_DURATION_MS / 1000}")
-API_DURATION_S=$(awk "BEGIN {printf \"%.1f\", $TOTAL_API_DURATION_MS / 1000}")
-DURATION_DISPLAY=" ⏱️ ${TOTAL_DURATION_S}s (API:${API_DURATION_S}s)"
+# 格式化耗时: <1s 显示 ms, 1-60s 显示秒, >=60s 显示 XmYs
+format_duration() {
+    local ms=${1%.*}  # 取整数部分
+    ms=${ms:-0}
+    if [ "$ms" -lt 1000 ]; then
+        echo "${ms}ms"
+    elif [ "$ms" -lt 60000 ]; then
+        awk "BEGIN {printf \"%.1fs\", $ms / 1000}"
+    else
+        local total_s=$((ms / 1000))
+        local m=$((total_s / 60))
+        local s=$((total_s % 60))
+        echo "${m}m${s}s"
+    fi
+}
+
+DURATION_DISPLAY=" ⏱️ $(format_duration "$TOTAL_DURATION_MS") (API:$(format_duration "$TOTAL_API_DURATION_MS"))"
 
 # 5. 获取 Git 分支信息
 GIT_BRANCH=""
