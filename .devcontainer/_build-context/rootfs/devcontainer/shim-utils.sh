@@ -31,6 +31,7 @@ _print_caller_info() {
         ((depth++))
     done
 
+    echo -e "\e[90m────────────────────────────────────────────────────────────\e[0m" >&2
     echo -e "\e[90m← $chain\e[0m" >&2
 
     # 恢复之前的 errexit 状态
