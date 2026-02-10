@@ -1,0 +1,3 @@
+#!/bin/bash
+# pip -> pip3 shim
+exec pip3 "$@"

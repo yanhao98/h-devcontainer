@@ -32,7 +32,7 @@ if [ -x "/usr/bin/rsync" ] || [ -x "/bin/rsync" ]; then
     sudo rsync -avh --no-owner --no-group "$SOURCE_DIR/" "$TARGET_DIR/"
 else
     echo "⚠️  未找到系统 rsync，回退到 cp 命令..."
-    sudo cp -R "$SOURCE_DIR/"* "$TARGET_DIR/"
+    sudo cp -R --preserve=mode "$SOURCE_DIR/"* "$TARGET_DIR/"
 fi
 
 echo "✅ 复制完成！"

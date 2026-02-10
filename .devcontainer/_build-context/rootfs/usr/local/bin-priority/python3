@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+if ! dpkg --status python3 &>/dev/null; then
+  _apt-install-cached python3 python3-venv
+fi
+
+exec "$(_get-real-bin python3)" "$@"
