@@ -1,0 +1,24 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# npx shim: 先确保 node 已安装（安装 node 后系统自然有 npx），然后执行真实的 npx
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+npx_bin="$(_get-real-bin npx || true)"
+
+if [ -z "$npx_bin" ]; then
+    echo "⚠️  npx 未找到，正在自动安装 Node.js..." >&2
+    h-setup-node-bin >&2
+    npx_bin="$(_get-real-bin npx || true)"
+    if [ -z "$npx_bin" ]; then
+        echo "❌ npx 安装失败（Node.js 安装后未找到 npx）" >&2
+        exit 1
+    fi
+fi
+
+echo -e "\e[90m→ exec $npx_bin\e[0m" >&2
+exec "$npx_bin" "$@"
