@@ -14,7 +14,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 编辑器和实用工具
     jq nano vim imagemagick \
     # 网络工具
-    lsof netcat-openbsd iproute2 net-tools && \
+    lsof netcat-openbsd iproute2 net-tools iputils-ping bind9-dnsutils && \
     # 清理缓存
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
