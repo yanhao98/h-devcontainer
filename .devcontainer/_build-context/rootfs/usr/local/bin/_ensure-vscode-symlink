@@ -12,11 +12,14 @@ HOME_TARGET="${2:?错误: 未指定 HOME 目标路径}"
 mkdir -p "$VSCODE_PATH"
 
 if [ -L "$HOME_TARGET" ] && [ "$(readlink "$HOME_TARGET")" = "$VSCODE_PATH" ]; then
-    :
+    echo "✅ 软链接已就绪，跳过: $HOME_TARGET → $VSCODE_PATH" >&2
 else
     mkdir -p "$(dirname "$HOME_TARGET")"
     if [ -d "$HOME_TARGET" ]; then
-        mv "$HOME_TARGET" "$HOME_TARGET.bak.$(date +%Y%m%d%H%M%S)"
+        BACKUP_PATH="$HOME_TARGET.bak.$(date +%Y%m%d%H%M%S)"
+        echo "📦 备份现有目录: $HOME_TARGET → $BACKUP_PATH" >&2
+        mv "$HOME_TARGET" "$BACKUP_PATH"
     fi
     ln -sfn "$VSCODE_PATH" "$HOME_TARGET"
+    echo "🔗 已创建软链接: $HOME_TARGET → $VSCODE_PATH" >&2
 fi
