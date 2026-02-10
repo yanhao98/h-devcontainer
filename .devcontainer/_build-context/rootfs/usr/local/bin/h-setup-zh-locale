@@ -15,8 +15,7 @@ sudoIf() {
 }
 
 if ! dpkg --status locales >/dev/null 2>&1; then
-  sudo _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
-    locales
+  _apt-install-cached locales
 fi
 
 # 确保 locale 配置存在于 /etc/locale.gen

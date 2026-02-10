@@ -4,8 +4,7 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 if ! dpkg --status chromium &>/dev/null; then
-  sudo -E _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
-    chromium chromium-l10n ffmpeg
+  _apt-install-cached chromium chromium-l10n ffmpeg
 fi
 
 export DISPLAY=:1

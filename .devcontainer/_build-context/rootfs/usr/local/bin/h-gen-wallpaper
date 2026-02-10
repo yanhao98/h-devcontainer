@@ -28,7 +28,7 @@ done
 if [ -n "$MISSING_DEPS" ]; then
     echo "正在安装依赖: $MISSING_DEPS..." >&2
     # shellcheck disable=SC2086
-    sudo _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh $MISSING_DEPS
+    _apt-install-cached $MISSING_DEPS
 fi
 
 # 配置 (支持环境变量覆盖)

@@ -21,16 +21,7 @@ hyperfine --warmup 20 --min-runs 100 \
 fi
 
 if ! dpkg --status hyperfine &>/dev/null; then
-  # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
-  APT_WAIT_CONF=$(mktemp)
-  echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
-  export APT_CONFIG="$APT_WAIT_CONF"
-  
-  # -E 选项：保留（preserve）当前的环境变量
-  sudo -E _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
-    hyperfine
-  
-  rm -f "$APT_WAIT_CONF"
+  _apt-install-cached hyperfine
 fi
 
 # 跳过自身，找到真实的 hyperfine 可执行文件

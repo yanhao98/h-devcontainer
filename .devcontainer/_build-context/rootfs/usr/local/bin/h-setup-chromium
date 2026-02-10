@@ -3,5 +3,4 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-sudo _execute-remote-script https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh \
-  chromium chromium-l10n ffmpeg
+_apt-install-cached chromium chromium-l10n ffmpeg
