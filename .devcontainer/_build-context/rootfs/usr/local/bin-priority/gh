@@ -8,6 +8,15 @@ if false; then
 # 示例：
 gh auth status
 gh auth login
+
+# ~/.config/gh/hosts.yml
+# github.com:
+#     users:
+#         yanhao98:
+#             oauth_token: gho_***
+#     git_protocol: https
+#     oauth_token: gho_***
+#     user: yanhao98
 #-------------------------------------------------------------------------------------------------------------
 fi
 
