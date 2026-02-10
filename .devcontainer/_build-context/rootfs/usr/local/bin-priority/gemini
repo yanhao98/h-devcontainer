@@ -45,7 +45,7 @@ export GOOGLE_GEMINI_BASE_URL="$GOOGLE_GEMINI_BASE_URL"
 export GEMINI_API_KEY="$GEMINI_API_KEY"
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/gemini"
 
-echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
+echo -e "\e[90m→ exec $TARGET_BIN ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run gemini --version
 
 export SANDBOX=h-devctr
