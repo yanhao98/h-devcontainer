@@ -49,6 +49,14 @@ teardown() {
 echo "$MOCK_DIR/real-node"
 EOF
     chmod +x "$MOCK_DIR/_get-real-bin"
+
+    # Mock _exec-real-bin
+    cat <<'EXECEOF' > "$MOCK_DIR/_exec-real-bin"
+#!/bin/bash
+real_bin="$(_get-real-bin "$1")"
+exec "$real_bin" "${@:2}"
+EXECEOF
+    chmod +x "$MOCK_DIR/_exec-real-bin"
     
     # Mock real node
     cat <<EOF > "$MOCK_DIR/real-node"
