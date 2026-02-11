@@ -1,0 +1,25 @@
+#!/bin/bash
+# 查找并执行真实的二进制文件（找不到时报错退出）
+# 用法: _exec-real-bin <命令名> [参数...]
+# 示例: exec _exec-real-bin node "$@"
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 仅顶层 shim（非嵌套）需要处理分组边框
+if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]]; then
+    source /devcontainer/shim-utils.sh
+    # 设置 EXIT trap 用于异常退出时自动关闭边框
+    trap '_print_group_end' EXIT
+fi
+
+real_bin="$(_get-real-bin "$1")"
+
+# 在 exec 前手动关闭边框（exec 不触发 EXIT trap）
+# _GROUP_ENDED 标志防止与 EXIT trap 重复打印
+if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]]; then
+    _print_group_end
+fi
+
+exec "$real_bin" "${@:2}"

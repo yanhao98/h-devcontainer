@@ -7,11 +7,4 @@ if ! dpkg --status rsync &>/dev/null; then
   _apt-install-cached rsync
 fi
 
-real_rsync="$(_get-real-bin rsync || true)"
-
-if [ -z "$real_rsync" ]; then
-    echo "❌ Error: Failed to find real rsync executable" >&2
-    exit 1
-fi
-
-exec "$real_rsync" "$@"
+exec _exec-real-bin rsync "$@"

@@ -26,7 +26,11 @@ setup() {
     chmod +x "$TEST_SCRIPT"
     
     # 创建一个假的 shim-utils.sh
-    echo '_print_caller_info() { echo "mock caller info" >&2; }' > "$BATS_TMPDIR/shim-utils.sh"
+    cat > "$BATS_TMPDIR/shim-utils.sh" <<'SHIMEOF'
+_GROUP_ENDED=false
+_print_group_end() { :; }
+_print_caller_info() { echo "mock caller info" >&2; }
+SHIMEOF
     
     # 修改测试脚本中的 source 路径
     sed -i "s|source /devcontainer/shim-utils.sh|source $BATS_TMPDIR/shim-utils.sh|g" "$TEST_SCRIPT"
@@ -66,7 +70,7 @@ EOF
     run cat "$STDOUT_FILE"
     [ "$output" = "v1.0.0" ]
     
-    # 验证 stderr 包含调试信息
+    # 验证 stderr 包含调试信息（来自 _print_caller_info）
     run cat "$STDERR_FILE"
-    [[ "$output" == *"exec"* ]]
+    [[ "$output" == *"caller"* ]]
 }

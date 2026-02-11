@@ -8,19 +8,13 @@ set -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
-uvx_bin="$(_get-real-bin uvx || true)"
+uvx_bin="$(_get-real-bin --silent uvx)"
 
 if [ -z "$uvx_bin" ]; then
     echo "⚠️  uvx 未安装，正在自动安装 uv..." >&2
     # 重定向到 stderr，避免安装输出污染 stdout（其他工具可能捕获 uvx 的 stdout 来获取版本信息）
     h-setup-uv-bin >&2
-    uvx_bin="$(_get-real-bin uvx || true)"
-    if [ -z "$uvx_bin" ]; then
-        echo "❌ uvx 安装失败" >&2
-        exit 1
-    fi
 fi
 
 export UV_CACHE_DIR="/vscode/uv-cache"
-echo -e "\e[90m→ exec $uvx_bin\e[0m" >&2
-exec "$uvx_bin" "$@"
+exec _exec-real-bin uvx "$@"

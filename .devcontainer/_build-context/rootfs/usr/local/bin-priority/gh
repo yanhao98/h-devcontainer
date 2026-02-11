@@ -26,4 +26,4 @@ if ! dpkg --status gh &>/dev/null; then
   _apt-install-cached gh
 fi
 
-exec "$(_get-real-bin gh)" "$@"
+exec _exec-real-bin gh "$@"

@@ -8,18 +8,12 @@ set -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
-bun_bin="$(_get-real-bin bun || true)"
+bun_bin="$(_get-real-bin --silent bun)"
 
 if [ -z "$bun_bin" ]; then
     echo "⚠️  Bun 未安装，正在自动安装..." >&2
     # 重定向到 stderr，避免安装输出污染 stdout（其他工具可能捕获 bun 的 stdout 来获取版本信息）
     h-setup-bun-bin >&2
-    bun_bin="$(_get-real-bin bun || true)"
-    if [ -z "$bun_bin" ]; then
-        echo "❌ Bun 安装失败" >&2
-        exit 1
-    fi
 fi
 
-echo -e "\e[90m→ exec $bun_bin\e[0m" >&2
-exec "$bun_bin" "$@"
+exec _exec-real-bin bun "$@"

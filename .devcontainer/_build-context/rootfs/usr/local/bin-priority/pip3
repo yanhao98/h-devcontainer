@@ -10,4 +10,4 @@ if ! dpkg --status python3-pip-whl &>/dev/null; then
   _apt-install-cached python3-pip
 fi
 
-exec "$(_get-real-bin pip3)" "$@"
+exec _exec-real-bin pip3 "$@"

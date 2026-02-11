@@ -14,12 +14,4 @@ if ! dpkg --status bats &>/dev/null; then
   _apt-install-cached bats
 fi
 
-# 跳过自身，找到真实的 bats 可执行文件
-real_bats="$(_get-real-bin bats || true)"
-
-if [ -z "$real_bats" ]; then
-    echo "❌ Error: Failed to find real bats executable" >&2
-    exit 1
-fi
-
-exec "$real_bats" "$@"
+exec _exec-real-bin bats "$@"

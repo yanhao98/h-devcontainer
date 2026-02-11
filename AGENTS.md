@@ -40,7 +40,7 @@
 
 1. **纯 shim 垫片**：只做安装 + 转发
    - 示例：`bun`、`pnpm`、`node`、`uv`、`uvx`
-   - 使用 `_get-real-bin` 查找真实二进制文件
+   - 使用 `_exec-real-bin` 查找并执行真实二进制文件
    - 使用 `h-setup-*-bin` 脚本安装
 
 2. **包装器/启动器**：安装 npm 包 + 额外配置/参数处理 + 执行
@@ -48,6 +48,15 @@
    - 使用 `add-bun-priority-bin-pkg` 安装 npm 包到 `/vscode/bun-priority-bin/`
    - 使用 `bun --bun run` 执行
    - 可能包含配置初始化、环境变量设置等额外逻辑
+
+### 分组边框机制
+
+`_print_caller_info` 会打印顶部边框 `╭──╮`，`_print_group_end` 打印底部边框 `╰──╯`，使每次 shim 调用的输出形成一个视觉整体。
+
+- **纯 shim 垫片**：`_exec-real-bin` 会自动调用 `_print_group_end`，无需手动处理
+- **包装器/启动器**：如果使用了 `_print_caller_info` 但不通过 `_exec-real-bin` 执行，需在 `exec` 前手动调用 `_print_group_end`
+- **异常退出**：`_print_caller_info` 设置了 EXIT trap，脚本错误退出时会自动关闭边框
+- **嵌套调用**：当 shim 在另一个 shim 内部被触发时，自动使用 `┄┄┄` 虚线分隔（而非新开盒子），子 shim 的输出合并在父级盒子内
 
 ### 编写新的 shim 脚本
 
@@ -63,18 +72,12 @@ set -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
-tool_bin="$(_get-real-bin <tool> || true)"
+tool_bin="$(_get-real-bin --silent <tool>)"
 
 if [ -z "$tool_bin" ]; then
     echo "⚠️  <tool> 未安装，正在自动安装..." >&2
     h-setup-<tool>-bin >&2
-    tool_bin="$(_get-real-bin <tool> || true)"
-    if [ -z "$tool_bin" ]; then
-        echo "❌ <tool> 安装失败" >&2
-        exit 1
-    fi
 fi
 
-echo -e "\e[90m→ exec $tool_bin\e[0m" >&2
-exec "$tool_bin" "$@"
+exec _exec-real-bin <tool> "$@"
 ```

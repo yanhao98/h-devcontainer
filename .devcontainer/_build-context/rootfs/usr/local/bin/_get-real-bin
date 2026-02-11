@@ -1,14 +1,21 @@
 #!/bin/bash
 # 通用函数：查找非 bin-priority 目录下的第一个指定可执行文件
-# 用法: _get-real-bin <命令名>
+# 用法: _get-real-bin [--silent] <命令名>
 # 示例: _get-real-bin node
+#       _get-real-bin --silent node   # 静默模式，不输出诊断信息
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
+quiet=false
+if [[ "${1:-}" == "--silent" ]]; then
+    quiet=true
+    shift
+fi
+
 if [[ $# -lt 1 ]]; then
-    echo "用法: _get-real-bin <命令名>" >&2
+    echo "用法: _get-real-bin [--silent] <命令名>" >&2
     exit 1
 fi
 
@@ -17,11 +24,11 @@ cmd="$1"
 while IFS= read -r p; do
     # 跳过所有 bin-priority 目录下的可执行文件
     if [[ "$p" != */bin-priority/* ]]; then
-        echo -e "\e[90m🔍 找到真实二进制文件: $p\e[0m" >&2
+        $quiet || echo -e "\e[90m🔍 找到真实二进制文件: $p\e[0m" >&2
         echo "$p"
         exit 0
     fi
 done < <(which -a "$cmd" 2>/dev/null)
 
-echo "⚠️  未找到 $cmd 的真实二进制文件" >&2
-exit 1
+$quiet || echo "❌ 未找到 $cmd 的真实二进制文件" >&2
+$quiet || exit 1

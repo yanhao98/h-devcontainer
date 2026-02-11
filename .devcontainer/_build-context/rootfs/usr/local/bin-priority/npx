@@ -8,17 +8,11 @@ set -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
-npx_bin="$(_get-real-bin npx || true)"
+npx_bin="$(_get-real-bin --silent npx)"
 
 if [ -z "$npx_bin" ]; then
     echo "⚠️  npx 未找到，正在自动安装 Node.js..." >&2
     h-setup-node-bin >&2
-    npx_bin="$(_get-real-bin npx || true)"
-    if [ -z "$npx_bin" ]; then
-        echo "❌ npx 安装失败（Node.js 安装后未找到 npx）" >&2
-        exit 1
-    fi
 fi
 
-echo -e "\e[90m→ exec $npx_bin\e[0m" >&2
-exec "$npx_bin" "$@"
+exec _exec-real-bin npx "$@"

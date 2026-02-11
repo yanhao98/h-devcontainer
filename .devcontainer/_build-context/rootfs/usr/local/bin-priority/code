@@ -4,7 +4,7 @@
 # code shim, it fallbacks to code-insiders if code is not available
 
 # 容许找不到 code，fallback 到 code-insiders
-code="$(_get-real-bin code 2>/dev/null)" || true
+code="$(_get-real-bin --silent code)"
 
 if [ -n "$code" ]; then
     exec "$code" "$@"

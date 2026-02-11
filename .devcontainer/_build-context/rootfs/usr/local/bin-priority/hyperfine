@@ -24,4 +24,4 @@ if ! dpkg --status hyperfine &>/dev/null; then
   _apt-install-cached hyperfine
 fi
 
-exec "$(_get-real-bin hyperfine)" "$@"
+exec _exec-real-bin hyperfine "$@"

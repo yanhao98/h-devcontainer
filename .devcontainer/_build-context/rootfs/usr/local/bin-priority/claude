@@ -29,9 +29,9 @@ set -o pipefail   # 对应 -o pipefail
 # "apiKeyHelper": "/bin/generate_temp_api_key.sh",
 #-------------------------------------------------------------------------------------------------------------
 
-echo "🚀 正在运行 Claude Code 包装器 ($0)" >&2
 source /devcontainer/shim-utils.sh
 _print_caller_info
+echo "🚀 正在运行 Claude Code 包装器 ($0)" >&2
 
 add-bun-priority-bin-pkg @anthropic-ai/claude-code@latest
 
@@ -206,6 +206,7 @@ CLI_ARGS=("--dangerously-skip-permissions")
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 # bun --bun --cwd=/vscode/bun-priority-bin/ run claude --version
 
+_print_group_end
 
 export CLAUDE_CODE_ATTRIBUTION_HEADER=0 # https://linux.do/t/topic/1508040/13
 

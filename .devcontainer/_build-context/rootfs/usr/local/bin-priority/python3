@@ -10,4 +10,4 @@ if ! dpkg --status python3 &>/dev/null; then
   _apt-install-cached python3 python3-venv
 fi
 
-exec "$(_get-real-bin python3)" "$@"
+exec _exec-real-bin python3 "$@"

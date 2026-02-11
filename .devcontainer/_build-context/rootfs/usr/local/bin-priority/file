@@ -14,4 +14,4 @@ if ! dpkg --status file &>/dev/null; then
   _apt-install-cached file
 fi
 
-exec "$(_get-real-bin file)" "$@"
+exec _exec-real-bin file "$@"
