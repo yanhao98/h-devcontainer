@@ -4,14 +4,14 @@
 
 ### 输出重定向规则
 
-1. **不要丢弃子脚本或命令的输出**：应该将输出重定向到 stderr (`>&2`)，而不是丢弃到 `/dev/null`。
+1. **不要丢弃子脚本或命令的输出**：保留输出可见性，同时不污染 stdout——将输出重定向到 stderr (`>&2`)，而不是丢弃到 `/dev/null`。
 
    ```bash
-   # ❌ 错误：丢弃输出
+   # ❌ 错误：丢弃输出（调试信息完全丢失）
    _verify_checksum "$file" "$checksum" 2>/dev/null
    some_command &>/dev/null
 
-   # ✅ 正确：重定向到 stderr
+   # ✅ 正确：重定向到 stderr（保持 stdout 干净，同时输出仍可见）
    _verify_checksum "$file" "$checksum" >&2
    some_command >&2
    ```
@@ -72,9 +72,9 @@ set -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
-tool_bin="$(_get-real-bin --silent <tool>)"
+<tool>_bin="$(_get-real-bin --silent <tool>)"
 
-if [ -z "$tool_bin" ]; then
+if [ -z "$<tool>_bin" ]; then
     echo "⚠️  <tool> 未安装，正在自动安装..." >&2
     h-setup-<tool>-bin >&2
 fi

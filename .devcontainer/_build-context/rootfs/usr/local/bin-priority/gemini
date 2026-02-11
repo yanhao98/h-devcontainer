@@ -13,6 +13,9 @@ set -o pipefail   # 对应 -o pipefail
 # 环境变量文档: https://bun.com/docs/runtime/environment-variables#setting-environment-variables
 # <<<<< Gemini CLI
 
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
 add-bun-priority-bin-pkg @google/gemini-cli@latest
 
 
@@ -46,7 +49,8 @@ export GEMINI_API_KEY="$GEMINI_API_KEY"
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/gemini"
 
 echo -e "\e[90m→ exec $TARGET_BIN ${CLI_ARGS[*]} $*\e[0m" >&2
-# bun --bun --cwd=/vscode/bun-priority-bin/ run gemini --version
+
+_print_group_end
 
 export SANDBOX=h-devctr
 export GEMINI_CLI_SYSTEM_SETTINGS_PATH=/vscode/gemini-system-settings.json

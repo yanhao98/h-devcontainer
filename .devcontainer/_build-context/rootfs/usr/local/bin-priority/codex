@@ -3,6 +3,9 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
 # 确保默认配置文件存在
 ensure_default_config() {
     # Dockerfile: CODEX_HOME=/vscode/codex-home
@@ -31,7 +34,7 @@ EOF
     fi
 }
 
-bun --no-progress --cwd=/vscode/bun-priority-bin/ add @openai/codex@latest
+add-bun-priority-bin-pkg @openai/codex@latest
 
 # 调用函数确保配置文件存在
 ensure_default_config
@@ -43,6 +46,7 @@ CLI_ARGS=()
 CLI_ARGS+=("--sandbox=danger-full-access")
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
-# bun --bun --cwd=/vscode/bun-priority-bin/ run codex --version
+
+_print_group_end
 
 exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
