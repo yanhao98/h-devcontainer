@@ -6,6 +6,14 @@ set -o pipefail   # 对应 -o pipefail
 # Usage: _apt-install-cached package1 [package2...]
 # Example: _apt-install-cached chromium chromium-l10n ffmpeg
 
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# 一些资料：
+# 查看该软件包安装的所有文件
+dpkg -L tigervnc-standalone-server | grep bin
+#-------------------------------------------------------------------------------------------------------------
+fi
+
 REMOTE_URL="https://Git.1-H.CC/Scripts/Linux/raw/branch/2026/devcontainer/apt-install-with-cache.sh"
 
 if [[ $# -eq 0 ]]; then
