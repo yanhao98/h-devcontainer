@@ -11,13 +11,20 @@ fi
 
 add-bun-priority-bin-pkg chrome-devtools-mcp@latest
 
-BUN_ARGS=()
-BUN_ARGS+=("--bun")
-BUN_ARGS+=("run")
-BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/chrome-devtools-mcp")
+BUN_ARGS=(
+  "--bun"                                                          # 使用 bun 原生运行时（而非 Node.js 兼容模式）
+  "run"                                                            # bun run 子命令
+  "/vscode/bun-priority-bin/node_modules/.bin/chrome-devtools-mcp" # MCP server 入口脚本
+)
 
-BIN_ARGS=()
-BIN_ARGS+=("--isolated")
-BIN_ARGS+=("--executablePath=/usr/local/bin-priority/chromium")
+BIN_ARGS=(
+  "--isolated"                                          # 隔离模式，不复用已有 Chrome 实例
+  "--executablePath=/usr/local/bin-priority/chromium"    # 指定 chromium 路径（走 bin-priority shim）
+  # 以下选项移除 puppeteer 的默认启动参数，参见：
+  # https://github.com/puppeteer/puppeteer/blob/main/packages/puppeteer-core/src/node/ChromeLauncher.ts
+  # [feat: Allow opting out of default Chrome launch arguments](https://github.com/ChromeDevTools/chrome-devtools-mcp/pull/729)
+  "--ignore-default-chrome-arg=--enable-automation"     # 去掉 "Chrome is being controlled by automated software" 横幅
+  "--ignore-default-chrome-arg=--disable-extensions"    # 允许加载 Chrome 扩展
+)
 
 exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}" "$@"
