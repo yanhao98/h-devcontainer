@@ -20,7 +20,7 @@ gh auth login
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-_ensure-vscode-symlink /vscode/gh-home ~/.gh
+_ensure-vscode-symlink /vscode/gh-home ~/gh
 
 if ! dpkg --status gh &>/dev/null; then
   _apt-install-cached gh
