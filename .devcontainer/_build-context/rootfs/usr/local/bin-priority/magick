@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# magick: ImageMagick 图像处理工具
+# 示例：
+magick input.png output.jpg               # 转换图片格式
+magick input.png -resize 50% output.png   # 缩放图片
+magick input.png -quality 80 output.jpg   # 调整压缩质量
+magick identify input.png                 # 查看图片信息
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status imagemagick &>/dev/null; then
+  _apt-install-cached imagemagick
+fi
+
+exec _exec-real-bin magick "$@"

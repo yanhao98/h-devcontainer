@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# jq: 轻量级命令行 JSON 处理器
+# 示例：
+jq '.' file.json                    # 格式化输出 JSON
+jq '.name' file.json                # 提取字段
+jq '.items[] | .id' file.json       # 遍历数组提取字段
+curl -s api.example.com | jq '.'    # 格式化 API 响应
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status jq &>/dev/null; then
+  _apt-install-cached jq
+fi
+
+exec _exec-real-bin jq "$@"

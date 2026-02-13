@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# ping: 测试网络连通性
+# 示例：
+ping google.com           # 持续 ping 目标主机
+ping -c 4 google.com      # 发送 4 个包后停止
+ping -W 2 192.168.1.1     # 设置超时 2 秒
+ping -i 0.5 google.com    # 每 0.5 秒发送一次
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status iputils-ping &>/dev/null; then
+  _apt-install-cached iputils-ping
+fi
+
+exec _exec-real-bin ping "$@"

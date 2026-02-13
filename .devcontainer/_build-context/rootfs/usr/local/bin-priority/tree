@@ -1,0 +1,22 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# tree: 以树形结构递归显示目录内容
+# 示例：
+tree                      # 显示当前目录的树形结构
+tree -L 2                 # 只显示 2 层深度
+tree -a                   # 显示隐藏文件
+tree -d                   # 只显示目录
+tree -I 'node_modules|.git'  # 排除指定目录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status tree &>/dev/null; then
+  _apt-install-cached tree
+fi
+
+exec _exec-real-bin tree "$@"

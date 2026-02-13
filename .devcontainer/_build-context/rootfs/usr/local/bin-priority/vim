@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# vim: 强大的终端文本编辑器
+# 示例：
+vim file.txt              # 编辑文件
+vim +42 file.txt          # 打开文件并跳转到第 42 行
+vim -d file1 file2        # diff 模式比较两个文件
+vim -R file.txt           # 只读模式打开
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status vim &>/dev/null; then
+  _apt-install-cached vim
+fi
+
+exec _exec-real-bin vim "$@"

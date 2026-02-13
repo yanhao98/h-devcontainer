@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# less: 分页查看文件内容，支持前后滚动
+# 示例：
+less file.txt             # 分页查看文件
+less -N file.txt          # 显示行号
+less +F file.txt          # 类似 tail -f，实时跟踪文件末尾
+cat large.log | less      # 管道分页查看
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status less &>/dev/null; then
+  _apt-install-cached less
+fi
+
+exec _exec-real-bin less "$@"

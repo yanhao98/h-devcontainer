@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# unzip: 解压 ZIP 压缩文件
+# 示例：
+unzip archive.zip             # 解压到当前目录
+unzip archive.zip -d /tmp     # 解压到指定目录
+unzip -l archive.zip          # 列出压缩包内容（不解压）
+unzip -o archive.zip          # 覆盖已存在的文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status unzip &>/dev/null; then
+  _apt-install-cached unzip
+fi
+
+exec _exec-real-bin unzip "$@"

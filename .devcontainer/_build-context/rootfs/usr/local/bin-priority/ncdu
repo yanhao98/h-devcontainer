@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# ncdu: NCurses Disk Usage，交互式磁盘用量分析工具，du 的增强替代品
+# 示例：
+ncdu /                    # 分析根目录磁盘用量
+ncdu .                    # 分析当前目录
+ncdu -x /                 # 不跨越文件系统边界
+ncdu -e /var              # 启用扩展信息（显示权限、用户等）
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status ncdu &>/dev/null; then
+  _apt-install-cached ncdu
+fi
+
+exec _exec-real-bin ncdu "$@"

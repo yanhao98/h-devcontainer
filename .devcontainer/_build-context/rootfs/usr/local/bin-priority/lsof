@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# lsof: 列出打开的文件和网络连接
+# 示例：
+lsof -i :8080             # 查看占用 8080 端口的进程
+lsof -i tcp               # 列出所有 TCP 连接
+lsof -p 1234              # 查看指定进程打开的文件
+lsof +D /var/log          # 查看目录下被打开的文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status lsof &>/dev/null; then
+  _apt-install-cached lsof
+fi
+
+exec _exec-real-bin lsof "$@"

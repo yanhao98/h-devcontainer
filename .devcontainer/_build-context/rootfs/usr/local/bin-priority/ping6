@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# ping6: 强制使用 IPv6 的 ping
+# 示例：
+ping6 google.com          # 通过 IPv6 ping 目标主机
+ping6 -c 4 google.com     # 发送 4 个包后停止
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status iputils-ping &>/dev/null; then
+  _apt-install-cached iputils-ping
+fi
+
+exec _exec-real-bin ping6 "$@"

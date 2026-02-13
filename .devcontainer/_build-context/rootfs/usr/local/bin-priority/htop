@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# htop: 交互式进程查看器，top 的增强替代品
+# 示例：
+htop                      # 启动交互式进程查看器
+htop -u root              # 只显示指定用户的进程
+htop -p 1234,5678         # 只显示指定 PID 的进程
+htop -t                   # 树形视图显示进程
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status htop &>/dev/null; then
+  _apt-install-cached htop
+fi
+
+exec _exec-real-bin htop "$@"

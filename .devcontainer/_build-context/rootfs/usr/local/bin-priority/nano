@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# nano: 轻量级终端文本编辑器
+# 示例：
+nano file.txt             # 编辑文件
+nano +10 file.txt         # 打开文件并跳转到第 10 行
+nano -l file.txt          # 显示行号
+nano -B file.txt          # 保存时自动备份原文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status nano &>/dev/null; then
+  _apt-install-cached nano
+fi
+
+exec _exec-real-bin nano "$@"
