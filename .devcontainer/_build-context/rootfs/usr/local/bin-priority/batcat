@@ -1,0 +1,22 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# batcat: 带语法高亮的 cat 替代品 (sharkdp/bat)
+# Debian 中二进制名为 batcat 而非 bat，因为 Debian 已有一个管理笔记本电池的旧包先占用了 bat 这个包名
+# 示例：
+batcat README.md            # 带语法高亮查看文件
+batcat -l json data.json    # 指定语言高亮
+batcat -n file.txt          # 只显示行号，不显示其他装饰
+batcat --diff file.txt      # 显示 git diff 变更
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status bat &>/dev/null; then
+  _apt-install-cached bat
+fi
+
+exec _exec-real-bin batcat "$@"

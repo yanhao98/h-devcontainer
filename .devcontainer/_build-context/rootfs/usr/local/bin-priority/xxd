@@ -1,0 +1,20 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# 示例：
+xxd file.bin              # 查看文件十六进制内容
+xxd -p file.bin           # 纯十六进制输出
+echo "48656c6c6f" | xxd -r -p  # 十六进制转回二进制
+xxd -i image.png          # 生成 C 语言头文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status xxd &>/dev/null; then
+  _apt-install-cached xxd
+fi
+
+exec _exec-real-bin xxd "$@"
