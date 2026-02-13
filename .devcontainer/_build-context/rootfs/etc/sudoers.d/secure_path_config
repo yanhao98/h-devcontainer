@@ -1,1 +1,4 @@
+# sudo 默认会忽略用户的 $PATH，使用自己的 secure_path 查找可执行文件。
+# 这里将 /usr/local/bin-priority 加入 secure_path 最前面，
+# 确保通过 sudo 执行命令时也能触发 bin-priority 中的自动安装 shim 脚本。
 Defaults secure_path="/usr/local/bin-priority:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
