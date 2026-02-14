@@ -4,7 +4,7 @@ set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
 # Usage: _ensure-vscode-symlink <vscode_path> <home_target>
-# Example: _ensure-vscode-symlink /vscode/gh-home ~/.gh
+# Example: _ensure-vscode-symlink /vscode/gh-home ~/gh
 
 VSCODE_PATH="${1:?错误: 未指定 /vscode 源路径}"
 HOME_TARGET="${2:?错误: 未指定 HOME 目标路径}"

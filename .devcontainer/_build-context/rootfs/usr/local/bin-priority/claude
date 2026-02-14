@@ -35,6 +35,9 @@ echo "🚀 正在运行 Claude Code 包装器 ($0)" >&2
 
 add-bun-priority-bin-pkg @anthropic-ai/claude-code@latest
 
+_ensure-vscode-symlink /vscode/claude-config/ ~/.claude
+ln -sfn  ~/.claude/.claude.json ~/.claude.json
+
 
 # 初始化 Claude Code 配置文件
 init_claude_config() {
@@ -211,6 +214,6 @@ _print_group_end
 export CLAUDE_CODE_ATTRIBUTION_HEADER=0 # https://linux.do/t/topic/1508040/13
 
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
-export CLAUDE_CONFIG_DIR=/vscode/claude-config
+# export CLAUDE_CONFIG_DIR=/vscode/claude-config
 export CLAUDE_CODE_TMPDIR=/vscode/claude-tmp
 exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
