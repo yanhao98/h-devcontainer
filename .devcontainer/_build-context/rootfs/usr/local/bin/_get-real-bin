@@ -9,9 +9,9 @@ set -o nounset
 set -o pipefail
 
 quiet=false
-if [[ "${1:-}" == "--silent" ]]; then
+if [[ "${1:-}" == "--silent" ]] || [[ "${_SHIM_QUIET:-}" == "1" ]]; then
     quiet=true
-    shift
+    [[ "${1:-}" == "--silent" ]] && shift
 fi
 
 if [[ $# -lt 1 ]]; then

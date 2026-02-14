@@ -30,8 +30,10 @@ for script in "$BIN_DIR"/*; do
     continue
   fi
 
-  # 执行验证命令，超时 30 秒
-  if output="$(timeout 30 bash -c "$verify_cmd" 2>/dev/null)"; then
+  # 执行验证命令，超时 30 秒；抑制 shim 诊断输出；优先取 stdout，为空时回退取 stderr
+  stderr_file="$(mktemp)"
+  if output="$(timeout 30 env _SHIM_QUIET=1 bash -c "$verify_cmd" 2>"$stderr_file")"; then
+    [ -z "$output" ] && output="$(<"$stderr_file")"
     first_line="${output%%$'\n'*}"
     printf "  %-20s ✅ %s\n" "$name" "$first_line" >&2
     passed=$((passed + 1))
@@ -39,6 +41,7 @@ for script in "$BIN_DIR"/*; do
     printf "  %-20s ❌ 失败 (exit $?)\n" "$name" >&2
     fail_list+=("$name")
   fi
+  rm -f "$stderr_file"
 done
 
 echo "" >&2
