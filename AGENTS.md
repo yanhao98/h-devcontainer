@@ -42,25 +42,15 @@
 
 #### 1. APT 自动安装 shim
 
-大多数使用 `_apt-shim-exec` 一行封装（`dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发）。是数量最多的类型。
-
-- 使用 `_apt-shim-exec` 的（22 个）：`batcat`、`bats`、`ffmpeg`、`ffprobe`、`file`、`gpg2`、`htop`、`hyperfine`、`jq`、`less`、`lsof`、`magick`、`nano`、`ncdu`、`ping`、`ping4`、`ping6`、`rsync`、`tree`、`unzip`、`vim`、`xxd`
-- 有额外逻辑，不使用 `_apt-shim-exec` 的（5 个）：`pip3`（边框 + 检测包名≠安装包名）、`python3`（边框 + 多包安装）、`tmux`（配置文件初始化）、`gh`（符号链接）、`chromium`（多包 + 启动参数 + 环境变量）
+使用 `_apt-shim-exec` 一行封装（`dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发）。是数量最多的类型。少数有额外逻辑的（如多包安装、边框、符号链接）不使用 `_apt-shim-exec`，直接组合 `dpkg` + `_apt-install-cached` + `_exec-real-bin`。
 
 #### 2. h-setup 纯 shim 垫片
 
 `_get-real-bin --silent` 检测 + `h-setup-*-bin` 安装 + `_exec-real-bin` 转发。使用 `_print_caller_info` 分组边框。
 
-- 成员：`bun`、`node`、`npx`、`pnpm`、`uv`、`uvx`
-- 部分脚本设置环境变量（如 `uv`/`uvx` 设置 `UV_CACHE_DIR`）
-
 #### 3. npm 包装器/启动器
 
-`add-bun-priority-bin-pkg` 安装 npm 包到 `/vscode/bun-priority-bin/`，使用 `bun --bun run` 或直接执行二进制。
-
-- 示例：`claude`、`gemini`、`codex`、`qwen`、`iflow`、`opencode`、`typescript-language-server`、`claude-code-logger`
-- 通常包含：配置初始化、环境变量设置、`_ensure-vscode-symlink` 符号链接、CLI 参数注入等额外逻辑
-- 部分脚本使用 `_print_caller_info` 边框（`claude`、`gemini`、`codex`），需手动调用 `_print_group_end`
+`add-bun-priority-bin-pkg` 安装 npm 包到 `/vscode/bun-priority-bin/`，使用 `bun --bun run` 或直接执行二进制。通常包含配置初始化、环境变量设置、`_ensure-vscode-symlink` 符号链接、CLI 参数注入等额外逻辑。部分脚本使用 `_print_caller_info` 边框，需手动调用 `_print_group_end`。
 
 #### 4. 其他（无安装/特殊逻辑）
 
