@@ -38,38 +38,44 @@
 
 ### 脚本类型
 
-1. **APT 自动安装 shim**：通过 `dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发
-   - 示例：`jq`、`ffmpeg`、`ffprobe`、`vim`、`htop`、`tree`、`less`、`unzip`、`gh`、`magick`、`ncdu`、`hyperfine` 等
-   - 最简洁的类型，无 `_print_caller_info`
-   - 少数有额外配置（如 `tmux` 会创建默认 `~/.tmux.conf`）
+按**安装方式**分为三大类，加上少量无需安装的其他脚本：
 
-2. **h-setup 纯 shim 垫片**：通过 `_get-real-bin --silent` 检测 + `h-setup-*-bin` 安装 + `_exec-real-bin` 转发
-   - 示例：`bun`、`node`、`npx`、`pnpm`、`uv`、`uvx`、`pip3`
-   - 使用 `_print_caller_info` 分组边框
-   - 部分脚本设置环境变量（如 `uv`/`uvx` 设置 `UV_CACHE_DIR`）
+#### 1. APT 自动安装 shim
 
-3. **包装器/启动器**：通过 `add-bun-priority-bin-pkg` 安装 npm 包 + 额外配置/参数处理 + 执行
-   - 示例：`claude`、`gemini`、`codex`、`qwen`、`iflow`、`opencode`、`typescript-language-server`
-   - 安装到 `/vscode/bun-priority-bin/`，使用 `bun --bun run` 或直接执行二进制
-   - 包含配置初始化、环境变量设置、`_ensure-vscode-symlink` 符号链接、CLI 参数注入等额外逻辑
-   - 使用 `_print_caller_info`，需手动调用 `_print_group_end`
+`dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发。
 
-4. **简单重定向**：直接 `exec` 转发到另一个命令，无安装检测
-   - `pip` → `pip3`、`python` → `python3`
-   - `systemctl` → 检测 systemd 可用性，回退到 `service`
+- 示例：`jq`、`ffmpeg`、`ffprobe`、`vim`、`htop`、`tree`、`less`、`unzip`、`gh`、`magick`、`ncdu`、`hyperfine`、`pip3`、`python3`、`chromium`、`tmux` 等
+- 大多数脚本非常简洁，是数量最多的类型
+- 部分脚本有额外逻辑：`_print_caller_info` 边框（`pip3`、`python3`、`tmux`）、符号链接（`gh`）、配置初始化（`tmux`）、启动参数（`chromium`）
 
-5. **特殊工具脚本**：独立逻辑，不遵循统一模板
-   - `code` — 查找 `code`/`code-insiders` 二进制的回退逻辑
-   - `claude-statusline` — 解析 JSON 格式化 Claude Code 状态行
-   - `claude-switch-settings` — 交互式菜单切换 Claude 配置文件
+#### 2. h-setup 纯 shim 垫片
 
-### 分组边框机制
+`_get-real-bin --silent` 检测 + `h-setup-*-bin` 安装 + `_exec-real-bin` 转发。使用 `_print_caller_info` 分组边框。
 
-`_print_caller_info` 会打印顶部边框 `╭──╮`，`_print_group_end` 打印底部边框 `╰──╯`，使每次 shim 调用的输出形成一个视觉整体。
+- 成员：`bun`、`node`、`npx`、`pnpm`、`uv`、`uvx`
+- 部分脚本设置环境变量（如 `uv`/`uvx` 设置 `UV_CACHE_DIR`）
 
-- **h-setup 纯 shim 垫片**：`_exec-real-bin` 会自动调用 `_print_group_end`，无需手动处理
-- **APT 自动安装 shim**：不使用 `_print_caller_info`，无需处理边框
-- **包装器/启动器**：如果使用了 `_print_caller_info` 但不通过 `_exec-real-bin` 执行，需在 `exec` 前手动调用 `_print_group_end`
+#### 3. npm 包装器/启动器
+
+`add-bun-priority-bin-pkg` 安装 npm 包到 `/vscode/bun-priority-bin/`，使用 `bun --bun run` 或直接执行二进制。
+
+- 示例：`claude`、`gemini`、`codex`、`qwen`、`iflow`、`opencode`、`typescript-language-server`、`claude-code-logger`
+- 通常包含：配置初始化、环境变量设置、`_ensure-vscode-symlink` 符号链接、CLI 参数注入等额外逻辑
+- 使用 `_print_caller_info`，需手动调用 `_print_group_end`
+
+#### 4. 其他（无安装/特殊逻辑）
+
+无统一模板，按需编写：
+
+- **简单重定向**：`pip` → `pip3`、`python` → `python3`、`systemctl` → 检测 systemd 回退到 `service`
+- **特殊工具**：`code`（查找 code/code-insiders 的回退逻辑）、`claude-statusline`（状态行格式化）、`claude-switch-settings`（交互式配置切换）
+
+### `_print_caller_info` 分组边框
+
+`_print_caller_info` 会打印顶部边框 `╭──╮`，`_print_group_end` 打印底部边框 `╰──╯`，使每次 shim 调用的输出形成一个视觉整体。`_print_caller_info` 的使用与脚本类型正交——安装较慢的工具通常使用它提供视觉反馈。
+
+- **通过 `_exec-real-bin` 执行的脚本**：`_exec-real-bin` 会自动调用 `_print_group_end`，无需手动处理
+- **不通过 `_exec-real-bin` 执行的脚本**：需在 `exec` 前手动调用 `_print_group_end`
 - **异常退出**：`_print_caller_info` 设置了 EXIT trap，脚本错误退出时会自动关闭边框
 - **嵌套调用**：当 shim 在另一个 shim 内部被触发时，自动使用 `┄┄┄` 虚线分隔（而非新开盒子），子 shim 的输出合并在父级盒子内
 
@@ -87,7 +93,8 @@ scripts/cp-bins
 
 ### 编写新的 shim 脚本
 
-参考模板（仅适用于 **h-setup 纯 shim 垫片**，不适用于包装器/启动器）：
+#### h-setup 纯 shim 垫片模板
+
 ```bash
 #!/bin/bash
 set -o errexit
@@ -109,9 +116,9 @@ fi
 exec _exec-real-bin <tool> "$@"
 ```
 
-### 使用 apt 包的 shim 模板
+### APT 自动安装 shim 模板
 
-对于通过 apt 安装的工具（如 `jq`、`ffmpeg`、`htop` 等），使用更简洁的模板：
+对于通过 apt 安装的工具（如 `jq`、`ffmpeg`、`htop` 等），使用更简洁的模板。这是数量最多的类型：
 ```bash
 #!/bin/bash
 set -o errexit
