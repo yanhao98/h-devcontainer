@@ -25,6 +25,7 @@ claude                        # 2. 在 tmux 内启动 claude（自动检测 tmux
 # Ctrl+B 然后方向键              切换窗格
 # Ctrl+B 然后 d                  断开 tmux（会话保留）
 # tmux attach                    重新连接会话
+# 组件一个团队，2 个队员，我只是测试一下 team 能正常使用。
 #-------------------------------------------------------------------------------------------------------------
 fi
 
@@ -32,6 +33,12 @@ fi
 if ! dpkg --status tmux &>/dev/null; then
   echo "⚠️  tmux 未安装，正在自动安装..." >&2
   _apt-install-cached tmux >&2
+fi
+
+if [ ! -f ~/.tmux.conf ]; then
+  cat > ~/.tmux.conf <<'EOF'
+set -g mouse on
+EOF
 fi
 
 exec _exec-real-bin tmux "$@"
