@@ -196,9 +196,26 @@ teardown() {
     [ "$line_count" -eq 2 ]
 }
 
-@test "端到端: 字段缺失时使用默认值不崩溃" {
-    result=$(echo '{}' | bash "$SCRIPT_PATH" | strip_ansi)
+@test "端到端: 字段缺失时不崩溃且无输出（数据量过小被过滤）" {
+    result=$(echo '{}' | bash "$SCRIPT_PATH" 2>/dev/null | strip_ansi)
     [ $? -eq 0 ]
-    [[ "$result" == *"[Claude]"* ]]
-    [[ "$result" == *"0ms (API:0ms)"* ]]
+    [ -z "$result" ]
+}
+
+@test "端到端: TOTAL_API_DURATION_MS < 10 时无输出" {
+    result=$(make_input 1000 9 0 0 0 5000 2000 | bash "$SCRIPT_PATH" | strip_ansi)
+    [ $? -eq 0 ]
+    [ -z "$result" ]
+}
+
+@test "端到端: TOTAL_INPUT_TOKENS < 100 时无输出" {
+    result=$(make_input 1000 500 0 0 0 99 2000 | bash "$SCRIPT_PATH" | strip_ansi)
+    [ $? -eq 0 ]
+    [ -z "$result" ]
+}
+
+@test "端到端: TOTAL_OUTPUT_TOKENS < 100 时无输出" {
+    result=$(make_input 1000 500 0 0 0 5000 99 | bash "$SCRIPT_PATH" | strip_ansi)
+    [ $? -eq 0 ]
+    [ -z "$result" ]
 }
