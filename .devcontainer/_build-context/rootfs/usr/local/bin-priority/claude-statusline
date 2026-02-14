@@ -97,5 +97,10 @@ fi
 # 添加缓存显示 (始终显示)
 TOKEN_DISPLAY="${TOKEN_DISPLAY} 💾read:${CACHE_READ}"
 
+# 数据量过小时不输出（避免无意义的状态行）
+if [ "$TOTAL_API_DURATION_MS" -lt 10 ] || [ "$TOTAL_INPUT_TOKENS" -lt 100 ] || [ "$TOTAL_OUTPUT_TOKENS" -lt 100 ]; then
+    exit 0
+fi
+
 # 输出格式化后的状态行
 echo -e "${BLUE}[$MODEL_DISPLAY]${NC} 📁 ${DIR_DISPLAY}${YELLOW}${GIT_BRANCH}\n${NC}${GREEN}${COST_DISPLAY}${NC}${DURATION_DISPLAY}${LINES_CHANGE_DISPLAY}${TOKEN_DISPLAY}"

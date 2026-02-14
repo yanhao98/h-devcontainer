@@ -1,0 +1,37 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# tmux shim: 自动检测并安装 tmux，然后执行
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# tmux: 终端复用器，支持多窗口、分屏和会话管理
+# 示例：
+tmux                          # 启动新会话
+tmux new -s mysession         # 创建命名会话
+tmux attach -t mysession      # 连接到已有会话
+tmux ls                       # 列出所有会话
+tmux kill-session -t session  # 结束会话
+tmux split-window -h          # 水平分屏
+tmux split-window -v          # 垂直分屏
+#
+# Claude Code agent teams 分割窗格模式：
+# VS Code 集成终端不直接支持分割窗格，但可以在 tmux 内运行 claude：
+tmux                          # 1. 先启动 tmux
+claude                        # 2. 在 tmux 内启动 claude（自动检测 tmux，启用分割窗格）
+# 基本操作：
+# Ctrl+B 然后方向键              切换窗格
+# Ctrl+B 然后 d                  断开 tmux（会话保留）
+# tmux attach                    重新连接会话
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+
+if ! dpkg --status tmux &>/dev/null; then
+  echo "⚠️  tmux 未安装，正在自动安装..." >&2
+  _apt-install-cached tmux >&2
+fi
+
+exec _exec-real-bin tmux "$@"
