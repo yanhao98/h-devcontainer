@@ -30,15 +30,10 @@ claude                        # 2. 在 tmux 内启动 claude（自动检测 tmux
 fi
 
 
-if ! dpkg --status tmux &>/dev/null; then
-  echo "⚠️  tmux 未安装，正在自动安装..." >&2
-  _apt-install-cached tmux >&2
-fi
-
 if [ ! -f ~/.tmux.conf ]; then
   cat > ~/.tmux.conf <<'EOF'
 set -g mouse on
 EOF
 fi
 
-exec _exec-real-bin tmux "$@"
+exec _apt-shim-exec tmux tmux "$@"
