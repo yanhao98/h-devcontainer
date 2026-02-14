@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# ffprobe: 多媒体流分析工具（ffmpeg 套件）
+# 示例：
+ffprobe -i video.mp4                  # 显示媒体信息
+ffprobe -v quiet -show_format file.mp4  # 显示格式信息
+ffprobe -show_streams video.mp4       # 显示所有流信息
+ffprobe -v error -select_streams v:0 -show_entries stream=width,height video.mp4  # 提取视频尺寸
+#-------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status ffmpeg &>/dev/null; then
+  _apt-install-cached ffmpeg >&2
+fi
+
+exec _exec-real-bin ffprobe "$@"
