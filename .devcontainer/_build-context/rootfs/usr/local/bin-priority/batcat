@@ -15,4 +15,5 @@ batcat --diff file.txt      # 显示 git diff 变更
 #-------------------------------------------------------------------------------------------------------------
 fi
 
+# @verify: batcat --version
 exec _apt-shim-exec bat batcat "$@"

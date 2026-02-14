@@ -4,6 +4,7 @@ set -o nounset
 set -o pipefail
 
 # npx shim: 先确保 node 已安装（安装 node 后系统自然有 npx），然后执行真实的 npx
+# @verify: npx --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info

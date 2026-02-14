@@ -14,4 +14,5 @@ ffprobe -v error -select_streams v:0 -show_entries stream=width,height video.mp4
 #-------------------------------------------------------------------------------
 fi
 
+# @verify: ffprobe -version
 exec _apt-shim-exec ffmpeg ffprobe "$@"

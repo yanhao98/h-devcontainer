@@ -1,0 +1,50 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+#-------------------------------------------------------------------------------------------------------------
+# scripts/verify-shims
+# 扫描 bin-priority 下所有 shim 脚本的 # @verify: 元信息，逐个执行验证命令
+#-------------------------------------------------------------------------------------------------------------
+
+BIN_DIR="/usr/local/bin-priority"
+
+passed=0
+skipped=0
+fail_list=()
+
+for script in "$BIN_DIR"/*; do
+  [ -f "$script" ] || continue
+  name="$(basename "$script")"
+
+  # 跳过以 _ 开头的辅助脚本
+  [[ "$name" == _* ]] && continue
+
+  # 提取 # @verify: 行
+  verify_cmd="$(grep -m1 '^# @verify: ' "$script" 2>/dev/null | sed 's/^# @verify: //' || true)"
+
+  if [ -z "$verify_cmd" ]; then
+    printf "  %-20s ⏭️  无 @verify\n" "$name" >&2
+    skipped=$((skipped + 1))
+    continue
+  fi
+
+  # 执行验证命令，超时 30 秒
+  if output="$(timeout 30 bash -c "$verify_cmd" 2>/dev/null)"; then
+    first_line="${output%%$'\n'*}"
+    printf "  %-20s ✅ %s\n" "$name" "$first_line" >&2
+    passed=$((passed + 1))
+  else
+    printf "  %-20s ❌ 失败 (exit $?)\n" "$name" >&2
+    fail_list+=("$name")
+  fi
+done
+
+echo "" >&2
+echo "结果: ✅ $passed 通过, ❌ ${#fail_list[@]} 失败, ⏭️  $skipped 跳过" >&2
+
+if [ ${#fail_list[@]} -gt 0 ]; then
+  echo "失败列表: ${fail_list[*]}" >&2
+  exit 1
+fi

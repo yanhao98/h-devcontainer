@@ -4,6 +4,7 @@ set -o nounset
 set -o pipefail
 
 # bun shim: 自动检测并安装 Bun，然后执行
+# @verify: bun --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info

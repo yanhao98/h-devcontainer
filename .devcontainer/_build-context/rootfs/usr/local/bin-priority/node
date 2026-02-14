@@ -4,6 +4,7 @@ set -o nounset
 set -o pipefail
 
 # node shim: 自动检测并安装 Node.js，然后执行
+# @verify: node --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info

@@ -14,4 +14,5 @@ ffmpeg -i input.mp4 -ss 00:01:00 -t 10 clip.mp4   # 截取片段
 #-------------------------------------------------------------------------------
 fi
 
+# @verify: ffmpeg -version
 exec _apt-shim-exec ffmpeg ffmpeg "$@"

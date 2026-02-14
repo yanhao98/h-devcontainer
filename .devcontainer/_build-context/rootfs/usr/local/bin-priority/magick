@@ -14,4 +14,5 @@ magick identify input.png                 # 查看图片信息
 #-------------------------------------------------------------------------------------------------------------
 fi
 
+# @verify: magick --version
 exec _apt-shim-exec imagemagick magick "$@"

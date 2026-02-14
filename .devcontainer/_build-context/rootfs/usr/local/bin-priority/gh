@@ -3,6 +3,8 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
+# @verify: gh --version
+
 if false; then
 #-------------------------------------------------------------------------------------------------------------
 # 示例：

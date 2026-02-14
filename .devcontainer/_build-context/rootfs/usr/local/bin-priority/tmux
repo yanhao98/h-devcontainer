@@ -36,4 +36,5 @@ set -g mouse on
 EOF
 fi
 
+# @verify: tmux -V
 exec _apt-shim-exec tmux tmux "$@"

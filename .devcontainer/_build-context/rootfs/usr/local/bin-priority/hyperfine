@@ -20,4 +20,5 @@ hyperfine --warmup 20 --min-runs 100 \
 #-------------------------------------------------------------------------------------------------------------
 fi
 
+# @verify: hyperfine --version
 exec _apt-shim-exec hyperfine hyperfine "$@"

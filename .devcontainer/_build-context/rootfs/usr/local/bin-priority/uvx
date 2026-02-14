@@ -4,6 +4,7 @@ set -o nounset
 set -o pipefail
 
 # uvx shim: 自动检测并安装 uv（包含 uvx），然后执行
+# @verify: uvx --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info

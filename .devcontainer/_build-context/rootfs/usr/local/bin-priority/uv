@@ -4,6 +4,7 @@ set -o nounset
 set -o pipefail
 
 # uv shim: 自动检测并安装 uv，然后执行
+# @verify: uv --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info
