@@ -42,11 +42,10 @@
 
 #### 1. APT 自动安装 shim
 
-`dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发。
+大多数使用 `_apt-shim-exec` 一行封装（`dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发）。是数量最多的类型。
 
-- 示例：`jq`、`ffmpeg`、`ffprobe`、`vim`、`htop`、`tree`、`less`、`unzip`、`gh`、`magick`、`ncdu`、`hyperfine`、`pip3`、`python3`、`chromium`、`tmux` 等
-- 大多数脚本非常简洁，是数量最多的类型
-- 部分脚本有额外逻辑：`_print_caller_info` 边框（`pip3`、`python3`、`tmux`）、符号链接（`gh`）、配置初始化（`tmux`）、启动参数（`chromium`）
+- 使用 `_apt-shim-exec` 的（22 个）：`batcat`、`bats`、`ffmpeg`、`ffprobe`、`file`、`gpg2`、`htop`、`hyperfine`、`jq`、`less`、`lsof`、`magick`、`nano`、`ncdu`、`ping`、`ping4`、`ping6`、`rsync`、`tree`、`unzip`、`vim`、`xxd`
+- 有额外逻辑，不使用 `_apt-shim-exec` 的（5 个）：`pip3`（边框 + 检测包名≠安装包名）、`python3`（边框 + 多包安装）、`tmux`（配置文件初始化）、`gh`（符号链接）、`chromium`（多包 + 启动参数 + 环境变量）
 
 #### 2. h-setup 纯 shim 垫片
 
@@ -61,7 +60,7 @@
 
 - 示例：`claude`、`gemini`、`codex`、`qwen`、`iflow`、`opencode`、`typescript-language-server`、`claude-code-logger`
 - 通常包含：配置初始化、环境变量设置、`_ensure-vscode-symlink` 符号链接、CLI 参数注入等额外逻辑
-- 使用 `_print_caller_info`，需手动调用 `_print_group_end`
+- 部分脚本使用 `_print_caller_info` 边框（`claude`、`gemini`、`codex`），需手动调用 `_print_group_end`
 
 #### 4. 其他（无安装/特殊逻辑）
 
@@ -84,11 +83,14 @@
 **重要**：所有 shim 脚本必须先添加到项目源码目录，再通过脚本复制到系统目录。
 
 1. **源码目录**：`.devcontainer/_build-context/rootfs/usr/local/bin-priority/`
-2. **复制脚本**：运行 `scripts/cp-bins` 将源码目录同步到 `/usr/local/bin-priority/`
+2. **同步到系统**：运行 `scripts/cp-bins`
+3. **验证**：卸载对应包后运行命令，确认自动安装 + 执行正常
 
 ```bash
-# 添加新 shim 后，运行复制脚本
+# 添加/修改 shim 后的验证流程
 scripts/cp-bins
+sudo dpkg --remove --force-depends <package>
+<tool> --version
 ```
 
 ### 编写新的 shim 脚本
@@ -134,11 +136,10 @@ if false; then
 #-------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status <package> &>/dev/null; then
-  _apt-install-cached <package> >&2
-fi
-
-exec _exec-real-bin <tool> "$@"
+exec _apt-shim-exec <package> <tool> "$@"
 ```
 
-**注意**：`if false` 块中的注释不会被检查器报错，同时保留了使用文档。
+**注意**：
+- `if false` 块中的注释不会被检查器报错，同时保留了使用文档
+- `_apt-shim-exec` 封装了 `dpkg --status` 检测 + `_apt-install-cached` 安装 + `_exec-real-bin` 转发
+- 当包名与二进制名不同时需要两个参数（如 `_apt-shim-exec iputils-ping ping`、`_apt-shim-exec bat batcat`）

@@ -1,0 +1,17 @@
+#!/bin/bash
+# APT shim 辅助：检测包是否安装，未安装则自动安装，然后转发执行真实二进制
+# 用法: exec _apt-shim-exec <package> <binary> "$@"
+# 示例: exec _apt-shim-exec ffmpeg ffprobe "$@"
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+package="$1"; shift
+binary="$1"; shift
+
+if ! dpkg --status "$package" &>/dev/null; then
+  _apt-install-cached "$package" >&2
+fi
+
+exec _exec-real-bin "$binary" "$@"

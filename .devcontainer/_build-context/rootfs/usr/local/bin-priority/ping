@@ -14,8 +14,4 @@ ping -i 0.5 google.com    # 每 0.5 秒发送一次
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status iputils-ping &>/dev/null; then
-  _apt-install-cached iputils-ping
-fi
-
-exec _exec-real-bin ping "$@"
+exec _apt-shim-exec iputils-ping ping "$@"

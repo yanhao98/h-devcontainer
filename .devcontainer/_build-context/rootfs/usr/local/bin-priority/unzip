@@ -14,8 +14,4 @@ unzip -o archive.zip          # 覆盖已存在的文件
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status unzip &>/dev/null; then
-  _apt-install-cached unzip
-fi
-
-exec _exec-real-bin unzip "$@"
+exec _apt-shim-exec unzip unzip "$@"

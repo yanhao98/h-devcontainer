@@ -14,8 +14,4 @@ htop -t                   # 树形视图显示进程
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status htop &>/dev/null; then
-  _apt-install-cached htop
-fi
-
-exec _exec-real-bin htop "$@"
+exec _apt-shim-exec htop htop "$@"

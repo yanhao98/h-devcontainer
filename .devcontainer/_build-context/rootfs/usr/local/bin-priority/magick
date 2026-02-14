@@ -14,8 +14,4 @@ magick identify input.png                 # 查看图片信息
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status imagemagick &>/dev/null; then
-  _apt-install-cached imagemagick
-fi
-
-exec _exec-real-bin magick "$@"
+exec _apt-shim-exec imagemagick magick "$@"

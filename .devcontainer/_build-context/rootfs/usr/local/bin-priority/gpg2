@@ -14,8 +14,4 @@ gpg2 --import key.asc                # 导入密钥
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status gnupg2 &>/dev/null; then
-  _apt-install-cached gnupg2
-fi
-
-exec _exec-real-bin gpg2 "$@"
+exec _apt-shim-exec gnupg2 gpg2 "$@"

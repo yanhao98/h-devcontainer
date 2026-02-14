@@ -10,8 +10,4 @@ echo "可以在这里写示例，现在没有噢。"
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status file &>/dev/null; then
-  _apt-install-cached file
-fi
-
-exec _exec-real-bin file "$@"
+exec _apt-shim-exec file file "$@"

@@ -14,8 +14,4 @@ cat large.log | less      # 管道分页查看
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status less &>/dev/null; then
-  _apt-install-cached less
-fi
-
-exec _exec-real-bin less "$@"
+exec _apt-shim-exec less less "$@"

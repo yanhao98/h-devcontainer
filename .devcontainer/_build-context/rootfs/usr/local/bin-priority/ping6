@@ -12,8 +12,4 @@ ping6 -c 4 google.com     # 发送 4 个包后停止
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status iputils-ping &>/dev/null; then
-  _apt-install-cached iputils-ping
-fi
-
-exec _exec-real-bin ping6 "$@"
+exec _apt-shim-exec iputils-ping ping6 "$@"

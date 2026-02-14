@@ -14,8 +14,4 @@ ncdu -e /var              # 启用扩展信息（显示权限、用户等）
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status ncdu &>/dev/null; then
-  _apt-install-cached ncdu
-fi
-
-exec _exec-real-bin ncdu "$@"
+exec _apt-shim-exec ncdu ncdu "$@"

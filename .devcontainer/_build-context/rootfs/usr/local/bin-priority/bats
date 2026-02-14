@@ -10,8 +10,4 @@ bats tests/
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status bats &>/dev/null; then
-  _apt-install-cached bats
-fi
-
-exec _exec-real-bin bats "$@"
+exec _apt-shim-exec bats bats "$@"

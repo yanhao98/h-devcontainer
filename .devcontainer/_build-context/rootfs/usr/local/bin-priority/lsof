@@ -14,8 +14,4 @@ lsof +D /var/log          # 查看目录下被打开的文件
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status lsof &>/dev/null; then
-  _apt-install-cached lsof
-fi
-
-exec _exec-real-bin lsof "$@"
+exec _apt-shim-exec lsof lsof "$@"

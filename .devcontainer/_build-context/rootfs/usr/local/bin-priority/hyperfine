@@ -20,8 +20,4 @@ hyperfine --warmup 20 --min-runs 100 \
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status hyperfine &>/dev/null; then
-  _apt-install-cached hyperfine
-fi
-
-exec _exec-real-bin hyperfine "$@"
+exec _apt-shim-exec hyperfine hyperfine "$@"

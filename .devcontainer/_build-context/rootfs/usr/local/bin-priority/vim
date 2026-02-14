@@ -14,8 +14,4 @@ vim -R file.txt           # 只读模式打开
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status vim &>/dev/null; then
-  _apt-install-cached vim
-fi
-
-exec _exec-real-bin vim "$@"
+exec _apt-shim-exec vim vim "$@"

@@ -14,8 +14,4 @@ curl -s api.example.com | jq '.'    # 格式化 API 响应
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status jq &>/dev/null; then
-  _apt-install-cached jq >&2
-fi
-
-exec _exec-real-bin jq "$@"
+exec _apt-shim-exec jq jq "$@"

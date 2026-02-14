@@ -13,8 +13,4 @@ xxd -i image.png          # 生成 C 语言头文件
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status xxd &>/dev/null; then
-  _apt-install-cached xxd
-fi
-
-exec _exec-real-bin xxd "$@"
+exec _apt-shim-exec xxd xxd "$@"

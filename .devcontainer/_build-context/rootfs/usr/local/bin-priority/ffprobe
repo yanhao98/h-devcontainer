@@ -14,8 +14,4 @@ ffprobe -v error -select_streams v:0 -show_entries stream=width,height video.mp4
 #-------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status ffmpeg &>/dev/null; then
-  _apt-install-cached ffmpeg >&2
-fi
-
-exec _exec-real-bin ffprobe "$@"
+exec _apt-shim-exec ffmpeg ffprobe "$@"

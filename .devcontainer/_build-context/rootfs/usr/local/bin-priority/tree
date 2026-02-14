@@ -15,8 +15,4 @@ tree -I 'node_modules|.git'  # 排除指定目录
 #-------------------------------------------------------------------------------------------------------------
 fi
 
-if ! dpkg --status tree &>/dev/null; then
-  _apt-install-cached tree
-fi
-
-exec _exec-real-bin tree "$@"
+exec _apt-shim-exec tree tree "$@"
