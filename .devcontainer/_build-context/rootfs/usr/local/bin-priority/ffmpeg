@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# ffmpeg: 多媒体框架，用于录制、转换和流式传输音视频
+# 示例：
+ffmpeg -i input.mp4 output.avi                    # 转换视频格式
+ffmpeg -i input.mp4 -vn -acodec copy audio.aac    # 提取音频
+ffmpeg -f x11grab -i :0.0 output.mp4              # 录制屏幕
+ffmpeg -i input.mp4 -ss 00:01:00 -t 10 clip.mp4   # 截取片段
+#-------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status ffmpeg &>/dev/null; then
+  _apt-install-cached ffmpeg >&2
+fi
+
+exec _exec-real-bin ffmpeg "$@"

@@ -58,6 +58,18 @@
 - **异常退出**：`_print_caller_info` 设置了 EXIT trap，脚本错误退出时会自动关闭边框
 - **嵌套调用**：当 shim 在另一个 shim 内部被触发时，自动使用 `┄┄┄` 虚线分隔（而非新开盒子），子 shim 的输出合并在父级盒子内
 
+### 开发流程
+
+**重要**：所有 shim 脚本必须先添加到项目源码目录，再通过脚本复制到系统目录。
+
+1. **源码目录**：`.devcontainer/_build-context/rootfs/usr/local/bin-priority/`
+2. **复制脚本**：运行 `scripts/cp-bins` 将源码目录同步到 `/usr/local/bin-priority/`
+
+```bash
+# 添加新 shim 后，运行复制脚本
+scripts/cp-bins
+```
+
 ### 编写新的 shim 脚本
 
 参考模板（仅适用于**纯 shim 垫片**，不适用于包装器/启动器）：
@@ -81,3 +93,30 @@ fi
 
 exec _exec-real-bin <tool> "$@"
 ```
+
+### 使用 apt 包的 shim 模板
+
+对于通过 apt 安装的工具（如 `jq`、`ffmpeg`、`htop` 等），使用更简洁的模板：
+```bash
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# <tool>: <简短描述>
+# 示例：
+<tool> <示例命令1>
+<tool> <示例命令2>
+#-------------------------------------------------------------------------------
+fi
+
+if ! dpkg --status <package> &>/dev/null; then
+  _apt-install-cached <package> >&2
+fi
+
+exec _exec-real-bin <tool> "$@"
+```
+
+**注意**：`if false` 块中的注释不会被检查器报错，同时保留了使用文档。
