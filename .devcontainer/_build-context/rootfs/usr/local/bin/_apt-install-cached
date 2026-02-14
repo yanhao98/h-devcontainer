@@ -36,4 +36,5 @@ echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
 export APT_CONFIG="$APT_WAIT_CONF"
 
 # -E 选项：保留（preserve）当前的环境变量
-sudo -E _execute-remote-script "$REMOTE_URL" "$@"
+# 安装日志统一走 stderr，避免污染调用方 stdout（例如命令替换或重定向到配置文件）
+sudo -E _execute-remote-script "$REMOTE_URL" "$@" >&2
