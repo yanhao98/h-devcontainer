@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# @verify: hg version
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# hg: Mercurial 分布式版本控制系统
+# 示例：
+hg init                   # 初始化新仓库
+hg clone URL              # 克隆远程仓库
+hg status                 # 查看工作目录状态
+hg log -l 5               # 查看最近 5 条提交记录
+hg diff                   # 查看未提交的更改
+#-------------------------------------------------------------------------------------------------------------
+fi
+exec _apt-shim-exec mercurial hg "$@"

@@ -94,6 +94,7 @@ set -o nounset
 set -o pipefail
 
 # <tool> shim: 自动检测并安装 <tool>，然后执行
+# @verify: <tool> --version
 
 source /devcontainer/shim-utils.sh
 _print_caller_info
@@ -126,6 +127,7 @@ if false; then
 #-------------------------------------------------------------------------------
 fi
 
+# @verify: <tool> --version
 exec _apt-shim-exec <package> <tool> "$@"
 ```
 
