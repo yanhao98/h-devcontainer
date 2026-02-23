@@ -3,13 +3,13 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-# @verify: typescript-language-server --version
+# @verify: yaml-language-server --version
 
-add-bun-priority-bin-pkg typescript-language-server@latest
+add-bun-priority-bin-pkg yaml-language-server@latest
 
 BUN_ARGS=("--bun")
 BUN_ARGS+=("run")
-BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/typescript-language-server")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/yaml-language-server")
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} $*\e[0m" >&2
 
