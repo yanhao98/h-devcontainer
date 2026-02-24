@@ -1,0 +1,20 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# @verify: rg --version
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# rg (ripgrep): 递归搜索工具，grep 的高速替代品
+# 示例：
+rg 'pattern' .                        # 递归搜索当前目录
+rg -i 'pattern' src/                  # 忽略大小写搜索
+rg -t py 'import'                     # 只搜索 Python 文件
+rg -l 'TODO'                          # 只列出包含匹配的文件名
+rg --count 'error' logs/              # 统计每个文件的匹配数
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+exec _apt-shim-exec ripgrep rg "$@"
