@@ -65,6 +65,9 @@ unzip -oqjd "$bin_dir" "$zip" "bun-linux-$build/bun" || {
     echo "❌ 解压 bun 失败" >&2; exit 1;
 }
 
+# 创建 bunx 符号链接（bun 根据调用名称自动切换为 bunx 模式）
+ln -sf bun "$bin_dir/bunx"
+
 # 安装 shell 补全（失败不影响）
 IS_BUN_AUTO_UPDATE=true SHELL=zsh $HOME/.bun/bin/bun completions >&2 || :
 
