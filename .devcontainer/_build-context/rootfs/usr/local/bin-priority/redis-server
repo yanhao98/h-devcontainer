@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# redis-server: Redis 服务器
+# 示例：
+redis-server                            # 使用默认配置启动
+redis-server --port 6380                # 指定端口启动
+redis-server /etc/redis/redis.conf      # 使用配置文件启动
+redis-server --daemonize yes            # 后台运行
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: redis-server --version
+exec _apt-shim-exec redis-server redis-server "$@"

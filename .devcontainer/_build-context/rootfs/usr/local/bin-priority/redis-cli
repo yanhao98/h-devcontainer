@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# redis-cli: Redis 命令行客户端
+# 示例：
+redis-cli ping                          # 测试连接
+redis-cli -h host -p 6379               # 连接远程 Redis
+redis-cli get mykey                     # 获取键值
+redis-cli --stat                        # 实时统计信息
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: redis-cli --version
+exec _apt-shim-exec redis-tools redis-cli "$@"

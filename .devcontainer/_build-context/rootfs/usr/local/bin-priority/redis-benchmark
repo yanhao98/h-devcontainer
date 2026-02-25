@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# redis-benchmark: Redis 性能基准测试工具
+# 示例：
+redis-benchmark -q                      # 快速基准测试
+redis-benchmark -t set,get -n 100000    # 测试指定命令
+redis-benchmark -h host -p 6379        # 测试远程 Redis
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: redis-benchmark --version
+exec _apt-shim-exec redis-tools redis-benchmark "$@"
