@@ -16,9 +16,9 @@ if [ -L "$HOME_TARGET" ] && [ "$(readlink "$HOME_TARGET")" = "$VSCODE_PATH" ]; t
 else
     mkdir -p "$(dirname "$HOME_TARGET")"
     if [ -d "$HOME_TARGET" ]; then
-        BACKUP_PATH="$HOME_TARGET.bak.$(date +%Y%m%d%H%M%S)"
-        echo "📦 备份现有目录: $HOME_TARGET → $BACKUP_PATH" >&2
-        mv "$HOME_TARGET" "$BACKUP_PATH"
+        echo "📦 合并现有目录到持久化存储: $HOME_TARGET → $VSCODE_PATH" >&2
+        cp -rn "$HOME_TARGET"/. "$VSCODE_PATH"/
+        rm -rf "$HOME_TARGET"
     fi
     ln -sfn "$VSCODE_PATH" "$HOME_TARGET"
     echo "🔗 已创建软链接: $HOME_TARGET → $VSCODE_PATH" >&2
