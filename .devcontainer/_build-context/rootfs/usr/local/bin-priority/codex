@@ -44,6 +44,7 @@ BUN_ARGS+=("run")
 BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
 CLI_ARGS=()
 CLI_ARGS+=("--sandbox=danger-full-access")
+CLI_ARGS+=("--dangerously-bypass-approvals-and-sandbox")
 
 echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
 
