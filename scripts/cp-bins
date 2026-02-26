@@ -35,4 +35,7 @@ else
     sudo cp -R --preserve=mode "$SOURCE_DIR/"* "$TARGET_DIR/"
 fi
 
+# 让普通用户也可以编辑 bin-priority 中的脚本
+sudo chmod a+w "$TARGET_DIR/bin-priority" "$TARGET_DIR/bin-priority/"*
+
 echo "✅ 复制完成！"
