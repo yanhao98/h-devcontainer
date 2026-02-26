@@ -25,6 +25,7 @@ BIN_ARGS=(
   # [feat: Allow opting out of default Chrome launch arguments](https://github.com/ChromeDevTools/chrome-devtools-mcp/pull/729)
   "--ignore-default-chrome-arg=--enable-automation"     # 去掉 "Chrome is being controlled by automated software" 横幅
   "--ignore-default-chrome-arg=--disable-extensions"    # 允许加载 Chrome 扩展
+  "--experimentalScreencast"                             # 启用实验性屏幕录制工具（需要 ffmpeg）
 )
 
 exec bun "${BUN_ARGS[@]}" "${BIN_ARGS[@]}" "$@"
