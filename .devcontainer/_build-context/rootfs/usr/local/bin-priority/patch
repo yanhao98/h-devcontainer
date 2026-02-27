@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# patch: 对文件应用 diff 补丁
+# 示例：
+patch < fix.patch
+patch -p1 < changes.diff
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: patch --version
+exec _apt-shim-exec patch patch "$@"
