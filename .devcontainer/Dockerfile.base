@@ -171,7 +171,7 @@ ENV PATH="/usr/local/bin-mcp-stdio:${PATH}"
 # 优先级脚本，确保在 PATH 最前面
 ENV PATH="/usr/local/bin-priority:${PATH}"
 # 让普通用户也可以编辑 bin-priority 中的脚本
-RUN chmod a+w /usr/local/bin-priority /usr/local/bin-priority/*
+RUN sudo chmod a+w /usr/local/bin-priority /usr/local/bin-priority/*
 
 # 配置 sudo 的 secure_path，确保 sudo 能找到 bin-priority 中的脚本
 # 验证: sudo -l | grep -q 'bin-priority'
