@@ -1,0 +1,26 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# biome: 高性能的 Web 项目工具链（格式化、lint、导入排序等）
+# 示例：
+biome check .
+biome format --write .
+biome lint .
+biome lsp-proxy
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: biome --version
+# @verify: biome lsp-proxy --help
+
+add-bun-priority-bin-pkg @biomejs/biome@latest
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/biome"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+
+exec "$TARGET_BIN" "$@"
