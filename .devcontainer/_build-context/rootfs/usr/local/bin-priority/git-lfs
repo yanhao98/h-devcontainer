@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# git-lfs: Git Large File Storage，管理大文件的 Git 扩展
+# 示例：
+git-lfs install                     # 初始化 Git LFS
+git-lfs track "*.psd"               # 跟踪大文件类型
+git-lfs ls-files                    # 列出 LFS 跟踪的文件
+git-lfs pull                        # 拉取 LFS 文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: git-lfs --version
+exec _apt-shim-exec git-lfs git-lfs "$@"
