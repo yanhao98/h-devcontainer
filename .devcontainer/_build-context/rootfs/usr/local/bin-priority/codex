@@ -11,14 +11,23 @@ ensure_default_config() {
     # Dockerfile: CODEX_HOME=/vscode/codex-home
     local config_dir="/vscode/codex-home"
     local config_file="$config_dir/config.toml"
-    
+    local schema_line='#:schema https://developers.openai.com/codex/config-schema.json'
+
     mkdir -p "$config_dir"
-    
+
     if [ -f "$config_file" ]; then
         echo "📝 配置文件已存在: $config_file" >&2
+        # 确保第一行是 schema 声明
+        local first_line
+        first_line="$(head -n 1 "$config_file")"
+        if [ "$first_line" != "$schema_line" ]; then
+            echo "📝 插入 schema 声明到配置文件首行" >&2
+            sed -i "1i\\$schema_line" "$config_file"
+        fi
     else
         echo "📝 创建默认配置文件: $config_file" >&2
-        cat > "$config_file" << 'EOF'
+        cat > "$config_file" << EOF
+$schema_line
 model = "gemini-3-pro-preview"
 model_provider = "NewAPI"
 preferred_auth_method = "apikey"
