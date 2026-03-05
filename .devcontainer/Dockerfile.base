@@ -183,4 +183,4 @@ ENTRYPOINT ["/bin/sh"]
 
 # 设置默认执行的命令
 # 注意：这里使用了 -c 来执行字符串脚本，"-" 是为了给 $@ 占位
-CMD ["-c", "echo Container started\ntrap \"exit 0\" 15\n\nexec \"$@\"\nwhile sleep 1 & wait $!; do :; done", "-"]
+CMD ["-c", "echo Container started\ntrap \"exit 0\" 15\n\n(h-sync-bin-priority --daemon) &\n\nexec \"$@\"\nwhile sleep 1 & wait $!; do :; done", "-"]
