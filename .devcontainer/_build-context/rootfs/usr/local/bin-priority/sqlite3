@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# sqlite3: 轻量级 SQL 数据库引擎的命令行工具
+# 示例：
+sqlite3 test.db                          # 打开/创建数据库
+sqlite3 test.db '.tables'                # 列出所有表
+sqlite3 test.db 'SELECT * FROM users;'   # 执行 SQL 查询
+sqlite3 :memory: 'SELECT 1+1;'           # 内存数据库中执行计算
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: sqlite3 --version
+exec _apt-shim-exec sqlite3 sqlite3 "$@"
