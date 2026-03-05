@@ -43,7 +43,8 @@
   "mounts": [
     // "source=vscode,target=/vscode,type=volume",
     // 不挂载还可能会遇到：`Cannot run macOS (Mach-O) executable in Docker: Exec format error`
-    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,readonly"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
   // "initializeCommand": "docker pull ghcr.io/yanhao98/h-devcontainer:main;",

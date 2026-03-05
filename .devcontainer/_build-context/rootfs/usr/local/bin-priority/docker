@@ -1,0 +1,46 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# docker: 容器引擎 CLI（通过挂载的 docker.sock 连接主机 Docker）
+# 示例：
+docker ps                               # 列出运行中的容器
+docker images                           # 列出本地镜像
+docker run --rm alpine echo hello       # 运行一次性容器
+docker compose up -d                    # 启动 compose 服务
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: docker --version
+
+source /devcontainer/shim-utils.sh
+
+docker_bin="$(_get-real-bin --silent docker)"
+
+if [ -z "$docker_bin" ]; then
+    _print_caller_info
+    echo "⚠️  docker CLI 未安装，正在自动下载..." >&2
+
+    arch="$(uname -m)"
+    case "$arch" in
+        x86_64)  arch="x86_64" ;;
+        aarch64) arch="aarch64" ;;
+        *) echo "❌ 不支持的架构: $arch" >&2; exit 1 ;;
+    esac
+
+    DOCKER_VERSION="$(curl -fsSL https://api.github.com/repos/moby/moby/releases/latest | grep -oP '"tag_name":\s*"docker-v\K[^"]+')"
+    echo "📦 下载 Docker CLI v${DOCKER_VERSION} (${arch})..." >&2
+
+    tmp="$(mktemp -d)"
+    curl -fsSL "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz" -o "$tmp/docker.tgz"
+    tar -xzf "$tmp/docker.tgz" -C "$tmp" docker/docker
+    sudo install -m 755 "$tmp/docker/docker" /usr/local/bin/docker
+    rm -rf "$tmp"
+
+    echo "✅ Docker CLI 安装完成" >&2
+fi
+
+exec _exec-real-bin docker "$@"
