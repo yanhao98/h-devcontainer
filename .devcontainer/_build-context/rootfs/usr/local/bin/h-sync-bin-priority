@@ -1,0 +1,52 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 默认同步的时间间隔（秒），如果不需要可以通过环境变量覆盖
+INTERVAL=${SYNC_BIN_PRIORITY_INTERVAL:-3600}
+REPO_URL="https://github.com/yanhao98/h-devcontainer.git"
+TARGET_DIR="/usr/local/bin-priority"
+TMP_DIR="/tmp/h-devcontainer-sync"
+
+sync_bin_priority() {
+    echo "🔄 开始同步 bin-priority 脚本..." >&2
+
+    # 如果临时目录已存在，先清理
+    rm -rf "$TMP_DIR"
+    mkdir -p "$TMP_DIR"
+
+    # 使用 sparse-checkout 只拉取目标目录
+    git clone --depth 1 --filter=blob:none --sparse "$REPO_URL" "$TMP_DIR" >/dev/null 2>&1
+    cd "$TMP_DIR"
+    git sparse-checkout set .devcontainer/_build-context/rootfs/usr/local/bin-priority >/dev/null 2>&1
+
+    # 复制文件到目标目录
+    if [ -d ".devcontainer/_build-context/rootfs/usr/local/bin-priority" ]; then
+        # 确保可以通过 sudo 修改，并且先清理旧文件避免残留
+        sudo rm -rf "$TARGET_DIR"/*
+        sudo cp -r .devcontainer/_build-context/rootfs/usr/local/bin-priority/* "$TARGET_DIR/"
+        sudo chmod a+rx "$TARGET_DIR"/*
+        echo "✅ 同步成功！" >&2
+    else
+        echo "⚠️  未能找到目标目录 .devcontainer/_build-context/rootfs/usr/local/bin-priority" >&2
+        return 1
+    fi
+
+    cd /
+    rm -rf "$TMP_DIR"
+}
+
+# 检查是否作为守护进程运行
+if [ "${1:-}" == "--daemon" ]; then
+    echo "🚀 启动后台同步任务，间隔: ${INTERVAL}s" >&2
+    while true; do
+        # 禁用 errexit 避免失败导致退出循环
+        set +e
+        sync_bin_priority || echo "⚠️  同步失败，将在下个周期重试" >&2
+        set -e
+        sleep "$INTERVAL"
+    done
+else
+    sync_bin_priority
+fi
