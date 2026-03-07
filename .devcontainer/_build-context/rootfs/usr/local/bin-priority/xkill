@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xkill: 点击窗口强制关闭
+# 示例：
+xkill                         # 鼠标点击即杀
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xkill -version 2>&1 | head -1
+exec _apt-shim-exec x11-utils xkill "$@"

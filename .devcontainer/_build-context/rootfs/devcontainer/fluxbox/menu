@@ -1,0 +1,24 @@
+# Fluxbox 右键桌面菜单
+# 格式: [exec] (显示名称) { 执行的命令 } <图标路径>
+
+[begin] (  Application Menu  )
+    [exec] (File Manager) { nautilus ~ } <>
+    [exec] (Text Editor) { mousepad } <>
+    # 用当前 shell 打开终端 (通过 /proc/$$/exe 自动检测 bash/zsh)
+    [exec] (Terminal) { tilix -w ~ -e $(readlink -f /proc/$$/exe) -il } <>
+    [exec] (Web Browser) { x-www-browser --disable-dev-shm-usage } <>
+    [submenu] (System) {}
+        [exec] (Set Resolution) { tilix -t "Set Resolution" -e bash /usr/local/bin/set-resolution } <>
+        [exec] (Edit Application Menu) { mousepad ~/.fluxbox/menu } <>
+        [exec] (Passwords and Keys) { seahorse } <>
+        [exec] (Top Processes) { tilix -t "Top" -e htop } <>
+        [exec] (Disk Utilization) { tilix -t "Disk Utilization" -e ncdu / } <>
+        [exec] (Editres) {editres} <>
+        [exec] (Xfontsel) {xfontsel} <>
+        [exec] (Xkill) {xkill} <>
+        [exec] (Xrefresh) {xrefresh} <>
+    [end]
+    # 内置子菜单：Fluxbox 外观/行为设置、工作区切换
+    [config] (Configuration)
+    [workspaces] (Workspaces)
+[end]

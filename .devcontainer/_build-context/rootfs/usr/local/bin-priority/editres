@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# editres: X11 资源编辑器
+# 示例：
+editres                        # 启动图形界面
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: which editres
+exec _apt-shim-exec x11-utils editres "$@"

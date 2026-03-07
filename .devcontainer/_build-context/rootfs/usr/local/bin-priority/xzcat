@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xzcat: 解压 .xz 文件到标准输出（等同于 xz -dc）
+# 示例：
+xzcat file.tar.xz | tar -xf - # 解压 .tar.xz 文件
+xzcat file.xz                 # 查看压缩文件内容
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xzcat --version
+exec _apt-shim-exec xz-utils xzcat "$@"

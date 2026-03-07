@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# nslookup: DNS 查询工具（交互式/非交互式）
+# 示例：
+nslookup example.com          # 查询域名
+nslookup example.com 8.8.8.8  # 使用指定 DNS 服务器查询
+nslookup -type=MX example.com # 查询 MX 记录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: nslookup -version 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils nslookup "$@"

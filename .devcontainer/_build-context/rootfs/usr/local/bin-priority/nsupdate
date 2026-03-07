@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# nsupdate: 动态 DNS 更新工具
+# 示例：
+nsupdate -l                      # 使用本地连接更新
+nsupdate update.txt               # 从文件读取更新命令
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: nsupdate -V 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils nsupdate "$@"

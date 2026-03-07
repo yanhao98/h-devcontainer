@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# seahorse: GNOME 密码和密钥管理器
+# 示例：
+seahorse                      # 打开密钥管理界面
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: seahorse --version
+exec _apt-shim-exec seahorse seahorse "$@"

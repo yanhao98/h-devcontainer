@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# slattach: 将串口附加到网络接口
+# 示例：
+slattach -p slip /dev/ttyS0      # 通过 SLIP 协议附加串口
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: slattach --version 2>&1 | head -1
+exec _apt-shim-exec net-tools slattach "$@"

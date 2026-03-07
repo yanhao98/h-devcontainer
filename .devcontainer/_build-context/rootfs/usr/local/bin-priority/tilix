@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# tilix: 平铺式终端模拟器
+# 示例：
+tilix                         # 打开终端
+tilix -w ~                    # 在主目录打开
+tilix -e "htop"               # 运行指定命令
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: tilix --version
+exec _apt-shim-exec tilix tilix "$@"

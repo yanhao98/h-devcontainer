@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# netstat: 查看网络连接和端口状态（传统工具，推荐用 ss）
+# 示例：
+netstat -tlnp                 # 查看所有监听的 TCP 端口
+netstat -anp                  # 查看所有连接
+netstat -rn                   # 查看路由表
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: netstat --version 2>&1 | head -1
+exec _apt-shim-exec net-tools netstat "$@"

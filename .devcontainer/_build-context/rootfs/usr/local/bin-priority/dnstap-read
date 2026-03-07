@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# dnstap-read: 读取 dnstap 格式的 DNS 日志
+# 示例：
+dnstap-read /var/log/dns.tap     # 读取 dnstap 日志文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: dnstap-read -h 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils dnstap-read "$@"

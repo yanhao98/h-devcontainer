@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# ifconfig: 查看和配置网络接口（传统工具，推荐用 ip addr）
+# 示例：
+ifconfig                      # 查看所有活跃网络接口
+ifconfig -a                   # 查看所有网络接口（包括未激活的）
+ifconfig eth0                 # 查看指定接口信息
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: ifconfig --version 2>&1 | head -1
+exec _apt-shim-exec net-tools ifconfig "$@"

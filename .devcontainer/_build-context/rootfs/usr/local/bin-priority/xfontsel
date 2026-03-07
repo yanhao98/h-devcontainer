@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xfontsel: X11 字体选择器
+# 示例：
+xfontsel                       # 启动图形界面
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: which xfontsel
+exec _apt-shim-exec x11-utils xfontsel "$@"

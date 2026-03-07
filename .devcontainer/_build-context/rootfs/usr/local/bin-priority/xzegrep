@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xzegrep: 在压缩文件中使用扩展正则搜索
+# 示例：
+xzegrep 'err|warn' file.xz      # 搜索多个模式
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xzegrep --help 2>&1 | head -1
+exec _apt-shim-exec xz-utils xzegrep "$@"

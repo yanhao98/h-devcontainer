@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# whatis: 显示命令的简短描述
+# 示例：
+whatis ls                     # 显示 ls 的简短描述
+whatis printf                 # 显示 printf 的简短描述
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: whatis --version
+exec _apt-shim-exec man-db whatis "$@"

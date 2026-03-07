@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# tipc: TIPC 协议配置
+# 示例：
+tipc node list                   # 列出 TIPC 节点
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: tipc -V 2>&1 | head -1
+exec _apt-shim-exec iproute2 tipc "$@"

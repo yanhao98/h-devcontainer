@@ -1,0 +1,16 @@
+# Fluxbox 全局设置 (X resource 格式: key: value)
+
+session.configVersion:	13
+session.menuFile:	~/.fluxbox/menu
+session.keyFile: ~/.fluxbox/keys
+session.styleFile: /usr/share/fluxbox/styles/qnx-photon
+
+# 只用 1 个工作区，禁止鼠标滑到边缘时切换工作区
+session.screen0.workspaces: 1
+session.screen0.workspacewarping: false
+
+# 底部任务栏：宽度 100%，显示时钟 + 窗口列表 + 系统托盘
+session.screen0.toolbar.widthPercent: 100
+session.screen0.strftimeFormat: %a %l:%M %p
+session.screen0.toolbar.tools: RootMenu, clock, iconbar, systemtray
+session.screen0.workspaceNames: One,

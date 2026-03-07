@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xzdiff: 比较两个压缩文件的差异
+# 示例：
+xzdiff a.xz b.xz               # 比较两个 .xz 文件
+xzdiff a.lzma b.lzma            # 比较两个 .lzma 文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xzdiff --help 2>&1 | head -1
+exec _apt-shim-exec xz-utils xzdiff "$@"

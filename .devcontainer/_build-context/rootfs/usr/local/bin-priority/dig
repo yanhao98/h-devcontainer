@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# dig: DNS 查询工具
+# 示例：
+dig example.com               # 查询 A 记录
+dig example.com MX            # 查询 MX 记录
+dig @8.8.8.8 example.com      # 使用指定 DNS 服务器查询
+dig +short example.com        # 只显示简短结果
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: dig -v 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils dig "$@"

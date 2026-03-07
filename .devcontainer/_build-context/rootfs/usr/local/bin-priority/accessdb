@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# accessdb: 输出 man-db 数据库内容（纯文本）
+# 示例：
+accessdb /var/cache/man/index.db  # 输出数据库内容
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: accessdb --version 2>&1 | head -1
+exec _apt-shim-exec man-db accessdb "$@"

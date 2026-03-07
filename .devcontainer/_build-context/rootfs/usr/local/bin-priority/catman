@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# catman: 创建或更新预格式化手册页
+# 示例：
+catman                           # 更新所有预格式化手册页
+catman -M /usr/share/man          # 指定手册页目录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: catman --version 2>&1 | head -1
+exec _apt-shim-exec man-db catman "$@"

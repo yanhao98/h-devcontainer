@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# apropos: 按关键字搜索手册页
+# 示例：
+apropos network               # 搜索与 network 相关的手册页
+apropos compress              # 搜索与 compress 相关的手册页
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: apropos --version
+exec _apt-shim-exec man-db apropos "$@"

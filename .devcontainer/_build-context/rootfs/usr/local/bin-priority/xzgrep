@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xzgrep: 在压缩文件中搜索文本
+# 示例：
+xzgrep 'pattern' file.xz       # 在 .xz 文件中搜索
+xzgrep -i 'error' logs.xz       # 忽略大小写搜索
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xzgrep --help 2>&1 | head -1
+exec _apt-shim-exec xz-utils xzgrep "$@"

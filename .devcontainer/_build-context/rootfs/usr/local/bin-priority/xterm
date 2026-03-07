@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xterm: X11 终端模拟器
+# 示例：
+xterm                         # 打开终端
+xterm -fs 14                  # 指定字体大小
+xterm -e htop                 # 在 xterm 中运行命令
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xterm -version 2>&1 | head -1
+exec _apt-shim-exec xterm xterm "$@"

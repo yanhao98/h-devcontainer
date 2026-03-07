@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# iptunnel: 管理 IP 隧道
+# 示例：
+iptunnel show                    # 显示 IP 隧道
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: iptunnel 2>&1 | head -1
+exec _apt-shim-exec net-tools iptunnel "$@"

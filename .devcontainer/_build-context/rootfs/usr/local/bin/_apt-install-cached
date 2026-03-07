@@ -29,6 +29,11 @@ fi
 
 echo "📦 apt 安装: $*" >&2
 
+# 桌面通知 (fluxbox 菜单触发安装时提供视觉反馈)
+if command -v notify-send > /dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    notify-send -t 10000 "📦 正在安装..." "$*" 2>/dev/null || true
+fi
+
 # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
 APT_WAIT_CONF=$(mktemp)
 trap 'rm -f "$APT_WAIT_CONF"' EXIT

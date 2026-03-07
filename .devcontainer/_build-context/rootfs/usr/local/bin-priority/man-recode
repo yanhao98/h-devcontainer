@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# man-recode: 重新编码手册页字符集
+# 示例：
+man-recode -t UTF-8 /usr/share/man   # 转换为 UTF-8 编码
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: man-recode --version 2>&1 | head -1
+exec _apt-shim-exec man-db man-recode "$@"

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# unxz: 解压 .xz 文件（等同于 xz -d）
+# 示例：
+unxz file.tar.xz              # 解压文件
+unxz -k file.tar.xz           # 解压并保留原文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: unxz --version
+exec _apt-shim-exec xz-utils unxz "$@"

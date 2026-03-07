@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xrefresh: 刷新 X11 屏幕
+# 示例：
+xrefresh                       # 强制刷新整个屏幕
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: which xrefresh
+exec _apt-shim-exec x11-xserver-utils xrefresh "$@"

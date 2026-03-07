@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xrandr: 显示分辨率/屏幕管理
+# 示例：
+xrandr                         # 显示当前分辨率
+xrandr --fb 1920x1080          # 设置分辨率
+xrandr --dpi 96                # 设置 DPI
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xrandr --version
+exec _apt-shim-exec x11-xserver-utils xrandr "$@"

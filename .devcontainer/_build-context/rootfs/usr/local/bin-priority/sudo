@@ -1,0 +1,6 @@
+#!/bin/bash
+# sudo 是 setuid 二进制，动态链接器会拒绝 LD_PRELOAD 并打印警告。
+# 在 exec 前清除 LD_PRELOAD 以消除 "cannot be preloaded" 噪音。
+# sudo 本身就会为子进程剥离 LD_PRELOAD（安全机制），所以这不改变任何实际行为。
+unset LD_PRELOAD
+exec /usr/bin/sudo "$@"

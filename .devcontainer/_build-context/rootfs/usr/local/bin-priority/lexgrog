@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# lexgrog: 解析手册页的 NAME 段
+# 示例：
+lexgrog /usr/share/man/man1/ls.1.gz  # 解析手册页名称段
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: lexgrog --version 2>&1 | head -1
+exec _apt-shim-exec man-db lexgrog "$@"

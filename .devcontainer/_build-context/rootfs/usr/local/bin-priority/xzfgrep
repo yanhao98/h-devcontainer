@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xzfgrep: 在压缩文件中搜索固定字符串
+# 示例：
+xzfgrep 'exact string' file.xz  # 搜索固定字符串
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xzfgrep --help 2>&1 | head -1
+exec _apt-shim-exec xz-utils xzfgrep "$@"

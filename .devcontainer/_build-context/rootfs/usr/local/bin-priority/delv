@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# delv: DNS 验证查询工具（带 DNSSEC 验证）
+# 示例：
+delv example.com                 # 查询并验证 DNSSEC
+delv @8.8.8.8 example.com        # 使用指定 DNS 服务器
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: delv -v 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils delv "$@"

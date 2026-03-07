@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# devlink: 设备链接管理
+# 示例：
+devlink dev show                 # 显示设备链接
+devlink port show                 # 显示端口信息
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: devlink -V 2>&1 | head -1
+exec _apt-shim-exec iproute2 devlink "$@"

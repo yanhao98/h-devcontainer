@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# mousepad: 轻量级文本编辑器 (Xfce)
+# 示例：
+mousepad file.txt             # 编辑文件
+mousepad                      # 打开空编辑器
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: mousepad --version
+exec _apt-shim-exec mousepad mousepad "$@"

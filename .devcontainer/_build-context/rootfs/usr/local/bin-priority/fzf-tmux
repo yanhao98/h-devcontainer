@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# fzf-tmux: 在 tmux 弹出窗口中运行 fzf
+# 示例：
+fzf-tmux -p                      # 在 tmux 弹出窗口中打开 fzf
+ls | fzf-tmux -d 20               # 在 20 行高的面板中选择
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: fzf-tmux --version 2>&1 | head -1
+exec _apt-shim-exec fzf fzf-tmux "$@"

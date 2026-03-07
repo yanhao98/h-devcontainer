@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# lzmainfo: 显示 .lzma 文件头信息
+# 示例：
+lzmainfo file.lzma             # 查看压缩文件头信息
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: lzmainfo --help 2>&1 | head -1
+exec _apt-shim-exec xz-utils lzmainfo "$@"

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# bridge: 网桥管理
+# 示例：
+bridge link                      # 显示网桥链接
+bridge fdb show                   # 显示转发数据库
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: bridge -V 2>&1 | head -1
+exec _apt-shim-exec iproute2 bridge "$@"

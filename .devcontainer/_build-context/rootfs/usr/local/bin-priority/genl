@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# genl: 通用 Netlink 工具
+# 示例：
+genl ctrl list                   # 列出 Netlink 控制器
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: genl -V 2>&1 | head -1
+exec _apt-shim-exec iproute2 genl "$@"

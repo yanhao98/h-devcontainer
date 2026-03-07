@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# plipconfig: 配置 PLIP 并行口网络
+# 示例：
+plipconfig eth0                  # 查看 PLIP 配置
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: plipconfig --version 2>&1 | head -1
+exec _apt-shim-exec net-tools plipconfig "$@"

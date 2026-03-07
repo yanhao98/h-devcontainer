@@ -12,6 +12,19 @@ binary="$1"; shift
 
 if ! dpkg --status "$package" &>/dev/null; then
   _apt-install-cached "$package" >&2
+
+  # 检查该包所有附带的二进制命令是否都有对应的 bin-priority shim
+  missing=()
+  while IFS= read -r bin_path; do
+    bin_name="$(basename "$bin_path")"
+    [ -f "/usr/local/bin-priority/$bin_name" ] || missing+=("$bin_name")
+  done < <(dpkg -L "$package" 2>/dev/null | grep -E '^/usr/(s?bin|local/bin)/.+')
+
+  if [ ${#missing[@]} -gt 0 ]; then
+    echo "⚠️  包 $package 有以下命令未创建 bin-priority shim:" >&2
+    printf '   - %s\n' "${missing[@]}" >&2
+    echo "   📁 请在 .devcontainer/_build-context/rootfs/usr/local/bin-priority/ 中补充" >&2
+  fi
 fi
 
 exec _exec-real-bin "$binary" "$@"

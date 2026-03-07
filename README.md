@@ -68,6 +68,23 @@
 - https://stackoverflow.com/questions/75708866/vscode-dev-container-fails-to-load-ms-vscode-js-debug-extension-correctly
 - https://davidwesst.com/blog/missing-bootloader-in-vscode-devcontainer/
 
+## macOS 主机配置
+
+### synthetic.conf 创建合成固定链接
+
+macOS 不允许直接在根目录 `/` 下创建文件夹，`/etc/synthetic.conf` 可以绕过这个限制，在 `/` 下创建指向实际目录的链接。这样容器内的路径（如 `/vscode`、`/workspaces`）在 Mac 主机上也能直接使用：
+
+```shell
+printf "vscode\tUsers/y25/OrbStack/docker/volumes/vscode\nworkspaces\t/Users/y25/Workspaces\n" | \
+sudo tee -a /etc/synthetic.conf > /dev/null
+```
+
+- `-a`：追加模式，不覆盖已有内容
+- 修改后需重启 macOS 生效
+- 效果：
+  - `/vscode` → `Users/y25/OrbStack/docker/volumes/vscode`
+  - `/workspaces` → `/Users/y25/Workspaces`
+
 ## 一些资料
 
 - https://github.com/agent-infra/sandbox

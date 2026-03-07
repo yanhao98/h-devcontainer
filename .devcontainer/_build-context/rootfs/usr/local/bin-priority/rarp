@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# rarp: 管理 RARP 表
+# 示例：
+rarp -a                          # 显示 RARP 表
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: rarp --version 2>&1 | head -1
+exec _apt-shim-exec net-tools rarp "$@"

@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# man: 查看命令手册页
+# 示例：
+man ls                        # 查看 ls 命令的手册
+man 5 crontab                 # 查看 crontab 文件格式的手册（第 5 节）
+man -k network                # 搜索包含 network 的手册页
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: man --version
+exec _apt-shim-exec man-db man "$@"

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# rdma: RDMA 设备管理
+# 示例：
+rdma dev                         # 列出 RDMA 设备
+rdma link                         # 显示 RDMA 链接
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: rdma -V 2>&1 | head -1
+exec _apt-shim-exec iproute2 rdma "$@"

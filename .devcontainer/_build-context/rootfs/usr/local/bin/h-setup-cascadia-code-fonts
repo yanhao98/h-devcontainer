@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+#-------------------------------------------------------------------------------------------------------------
+# 安装 Cascadia Code 字体 (Microsoft 等宽编程字体)
+# https://github.com/microsoft/cascadia-code
+#-------------------------------------------------------------------------------------------------------------
+
+FONT_DIR="/usr/share/fonts/truetype/cascadia"
+
+if [ -d "$FONT_DIR" ]; then
+    echo "⏭️  Cascadia Code 字体已安装" >&2
+    exit 0
+fi
+
+cached_zip="/vscode/downloads/CascadiaCode-2008.25.zip"
+expected_checksum="4602a0b8b986b18a1c3f460fd959ec1ce522aedcf11ab4c0d41a5fc5ed839be0"
+mkdir -p /vscode/downloads
+
+need_download=true
+if [ -f "$cached_zip" ]; then
+    if _verify_checksum "$cached_zip" "$expected_checksum" >&2; then
+        echo "📦 使用缓存的 Cascadia Code 字体" >&2
+        need_download=false
+    else
+        echo "⚠️  缓存文件校验失败，将重新下载" >&2
+    fi
+fi
+
+if [ "$need_download" = "true" ]; then
+    echo "⬇️ 正在下载 Cascadia Code 字体..." >&2
+    _curl-fsSL--compressed -o "$cached_zip" https://github.com/microsoft/cascadia-code/releases/download/v2008.25/CascadiaCode-2008.25.zip
+    if ! _verify_checksum "$cached_zip" "$expected_checksum" >&2; then
+        echo "❌ 下载的文件校验失败" >&2; exit 1
+    fi
+fi
+
+tmp_dir="$(mktemp -d)"
+trap "rm -rf '$tmp_dir'" EXIT
+
+unzip -q "$cached_zip" -d "$tmp_dir" >&2
+sudo mkdir -p "$FONT_DIR"
+sudo mv "$tmp_dir/ttf/"* "$FONT_DIR/"
+echo "✅ Cascadia Code 字体安装完成" >&2

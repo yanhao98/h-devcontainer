@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xz: 高压缩率数据压缩工具
+# 示例：
+xz file.tar                   # 压缩文件为 file.tar.xz
+xz -d file.tar.xz             # 解压文件
+xz -l file.tar.xz             # 查看压缩文件信息
+xz -9 file.tar                # 使用最高压缩率
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xz --version
+exec _apt-shim-exec xz-utils xz "$@"

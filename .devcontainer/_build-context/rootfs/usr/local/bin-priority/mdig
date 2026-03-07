@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# mdig: 多查询版 dig
+# 示例：
+mdig example.com example.org     # 同时查询多个域名
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: mdig -v 2>&1 | head -1
+exec _apt-shim-exec bind9-dnsutils mdig "$@"

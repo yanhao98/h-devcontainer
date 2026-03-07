@@ -3,39 +3,59 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 #-------------------------------------------------------------------------------------------------------------
+# desktop-lite: 本地化安装 VNC 桌面环境 (不再依赖远程脚本)
 # https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
 
+# VNC 服务器 + 窗口管理器 (桌面启动最小依赖，仅 6 个包)
+# 桌面应用和 X11 工具已有 bin-priority shim，首次使用时自动安装:
+#   nautilus, mousepad, seahorse, xterm, tilix, htop, ncdu
+#   xkill, editres, xfontsel, xrandr, xrefresh, xdg-open
+# base image 已含: curl, ca-certificates, locales
+#
+# 以下非启动必需，不安装，但提升桌面可用性 (按需手动安装):
+#   fbautostart         — fluxbox XDG 自动启动
+#   at-spi2-core        — 无障碍框架，抑制 GTK 警告
+#   gnome-keyring       — 凭据存储，VS Code 使用
+#   xfonts-base xfonts-terminus — X11 字体
+#   fonts-noto fonts-droid-fallback fonts-noto-color-emoji — 多语言/emoji 字体
 _apt-install-cached \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
-    fluxbox dbus-x11 x11-utils x11-xserver-utils xdg-utils fbautostart \
-    at-spi2-core xterm nautilus mousepad seahorse \
-    gnome-icon-theme gnome-keyring \
-    libx11-dev libxkbfile-dev libsecret-1-dev libgbm-dev libnotify4 \
-    libnss3 libxss1 libasound2-dev \
-    xfonts-base xfonts-terminus fonts-noto fonts-wqy-microhei fonts-droid-fallback fonts-noto-color-emoji \
-    htop ncdu curl ca-certificates unzip nano locales \
-    python3-minimal python3-numpy \
-    tilix
+    fluxbox dbus dbus-x11 \
+    fonts-wqy-microhei `# 中文字体 (~5MB)` \
+    dunst libnotify-bin `# 桌面通知 (守护进程 + notify-send)` \
+    gnome-icon-theme `# GTK 应用图标 (~15MB)`
 
-echo "正在从 GitHub 获取并执行 desktop-lite 安装脚本..." >&2
+# 创建必要目录
+sudo mkdir -p /var/run/dbus /usr/local/etc/vscode-dev-containers/
 
-# 使用 curl 下载并执行远程脚本，同时移除清理 apt 缓存的命令
-_curl-fsSL--compressed https://raw.githubusercontent.com/devcontainers/features/main/src/desktop-lite/install.sh | \
-  sed '\#rm -rf /var/lib/apt/lists/\*#d' | \
-  sed 's#unzip /tmp#unzip -q /tmp#g' | \
-  sudo env INSTALL_NOVNC="${INSTALL_NOVNC:-false}" VNC_RESOLUTION="${VNC_RESOLUTION:-1680x1050x16}" bash
+# 设置 fluxbox 配置 (从 /devcontainer/fluxbox/ 拷贝默认配置)
+mkdir -p ~/.fluxbox
+touch ~/.Xmodmap
+for f in apps init menu; do
+    [ -e ~/.fluxbox/"$f" ] || cp /devcontainer/fluxbox/"$f" ~/.fluxbox/"$f"
+done
 
-# TigerVNC 出于安全考虑，拒绝在没有密码保护的情况下允许外部连接（非 localhost）。
-# 允许非本地连接 VNC，并添加不安全连接确认标志
-sudo sed -i 's/ -localhost / -localhost no --I-KNOW-THIS-IS-INSECURE /g' /usr/local/share/desktop-init.sh
+# # 确保 en_US.UTF-8 locale 存在
+# if ! grep -q -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen 2>/dev/null; then
+#     echo "en_US.UTF-8 UTF-8" | sudo tee -a /etc/locale.gen >&2
+#     sudo locale-gen >&2
+# fi
 
-# 将名为 VNC-0 的虚拟显示器的分辨率设置为 1920x1200
-# xrandr --output VNC-0 --mode 1920x1200
+# 安装 Cascadia Code 字体
+# h-setup-cascadia-code-fonts >&2
 
-# 启动桌面进程
+# 设置 VNC 密码
+VNC_PASSWORD="${PASSWORD:-vscode}"
+if [ "${VNC_PASSWORD}" != "noPassword" ]; then
+    echo "${VNC_PASSWORD}" | vncpasswd -f | sudo tee /usr/local/etc/vscode-dev-containers/vnc-passwd > /dev/null
+fi
+
+# 设置文件权限
+sudo chmod +x /usr/local/share/desktop-init.sh /usr/local/bin/set-resolution
+
+# 启动桌面守护进程
 nohup setsid /usr/local/share/desktop-init.sh >/dev/null 2>&1 &
 # postStartCommand 完成后，VS Code 会终止其所有子进程（包括后台启动的 VNC 服务器）。
 # - nohup: 忽略 SIGHUP 信号
 # - setsid: 创建新的 session，进程成为 session leader，完全脱离原终端/进程组
-# 另外，keepRunningInBackground() 函数内部的 ( ... & ...) 也可能需要类似处理，但先试试改外层脚本，看是否足够。

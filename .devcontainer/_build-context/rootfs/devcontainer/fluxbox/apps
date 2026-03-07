@@ -1,0 +1,8 @@
+# Fluxbox 窗口规则：针对特定窗口类型设置默认大小和位置
+# [transient] 匹配临时弹出窗口，(role=...) 按 WM_WINDOW_ROLE 过滤
+# 这里让 GTK 文件选择对话框以 70% 屏幕大小居中显示
+
+[transient] (role=GtkFileChooserDialog)
+  [Dimensions]	{70% 70%}
+  [Position]	(CENTER)	{0 0}
+[end]

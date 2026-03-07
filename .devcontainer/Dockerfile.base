@@ -8,11 +8,10 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
     # 基础工具
     ca-certificates wget curl locales \
     # 在执行大量小文件写入的操作（如安装成百上千个 deb/rpm 包、运行自动化测试、编译大型项目）时，性能提升非常显著，有时能快好几倍。
-    eatmydata \
+    # apt-eatmydata 让 apt 通过包装脚本调用 dpkg，自动注入 LD_PRELOAD，绕过 sudo 的安全剥离。
+    eatmydata apt-eatmydata \
     # 开发工具
-    git procps sudo fzf zsh man-db xz-utils openssh-client \
-    # 网络工具
-    netcat-openbsd iproute2 net-tools bind9-dnsutils && \
+    git procps sudo zsh openssh-client && \
     # 清理缓存
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -46,17 +45,6 @@ RUN set -eux; \
 # >>>>>>>>>>>>>>>>>>>> zsh 配置
 # /etc/zsh/zshenv 对所有 zsh 实例生效（交互式 + 非交互式）
 RUN echo 'builtin source /etc/zsh/devcontainer-init.zsh' | sudo tee -a /etc/zsh/zshenv > /dev/null
-
-RUN cat <<'EOF' >> /home/usr_vscode/.zshrc
-
-# >>>>> VS Code Shell Integration
-[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-# <<<<< VS Code Shell Integration
-
-# >>>>> 自定义别名
-alias clean-node-modules='setopt rm_star_silent; rm -rf node_modules/.*; rm -rf node_modules/*; unsetopt rm_star_silent'
-# <<<<< 自定义别名
-EOF
 # <<<<<<<<<<<<<<<<<<<< zsh 配置
 
 ENV BUN_INSTALL_CACHE_DIR="/vscode/bun/install-cache"
@@ -84,7 +72,9 @@ ENV CODEX_HOME=/vscode/codex-home
 # bash 非交互式 shell 也加载 command_not_found_handle
 ENV BASH_ENV=/devcontainer/bash-env.sh
 
-ENV DISPLAY=:1
+ENV DISPLAY=:1 \
+    # 全局拦截 fsync/fdatasync，跳过落盘等待。dev container 是一次性环境，不需要持久化保证。
+    LD_PRELOAD=libeatmydata.so
 
 # Set the default editor and visual
 ENV EDITOR="code --wait"

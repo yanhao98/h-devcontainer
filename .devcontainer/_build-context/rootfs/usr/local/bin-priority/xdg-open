@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xdg-open: 用默认程序打开文件/URL
+# 示例：
+xdg-open https://example.com   # 用默认浏览器打开
+xdg-open document.pdf          # 用默认 PDF 阅读器打开
+xdg-open .                     # 用文件管理器打开当前目录
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xdg-open --version
+exec _apt-shim-exec xdg-utils xdg-open "$@"
