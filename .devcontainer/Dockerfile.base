@@ -107,9 +107,5 @@ RUN sudo chmod a+w /usr/local/bin-priority /usr/local/bin-priority/*
 # 验证: echo $PATH && sudo env | grep PATH
 RUN sudo chmod 0440 /etc/sudoers.d/secure_path_config
 
-# 设置入口点为 /bin/sh
-ENTRYPOINT ["/bin/sh"]
-
-# 设置默认执行的命令
-# 注意：这里使用了 -c 来执行字符串脚本，"-" 是为了给 $@ 占位
-CMD ["-c", "echo Container started\ntrap \"exit 0\" 15\n\nexec \"$@\"\nwhile sleep 1 & wait $!; do :; done", "-"]
+# 设置入口点
+ENTRYPOINT ["/devcontainer/ENTRYPOINT.sh"]

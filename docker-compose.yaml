@@ -11,11 +11,11 @@ services:
     build:
       context: .devcontainer
       dockerfile: Dockerfile.base
-    container_name: h-devcontainer
+    # container_name: h-devcontainer
     hostname: h-devcontainer
     user: usr_vscode
     environment:
-      - NODE_OPTIONS=--max-old-space-size=4096
+      # - NODE_OPTIONS=--max-old-space-size=4096
       - TZ=Asia/Shanghai
     volumes:
       - .:/workspaces:delegated
@@ -30,34 +30,35 @@ services:
     networks:
       - app-network
 
-  postgres-18-alpine: # docker compose up postgres-18-alpine
-    # docker exec -it postgres-18-alpine psql -U pgusr_18_admin_usr_4_dev_container -d postgres
-    # CREATE USER xxx_app_dev_usr WITH PASSWORD 'xxx_app_dev_pwd';
-    # CREATE DATABASE xxx_app_dev_db OWNER xxx_app_dev_usr;
-    # GRANT ALL PRIVILEGES ON DATABASE xxx_app_dev_db TO xxx_app_dev_usr;
 
-    restart: unless-stopped
-    # ports:
-    #   - 15432:5432
-    container_name: postgres-18-alpine
-    volumes:
-      - postgres-18-alpine-data-no-backup:/var/lib/postgresql/data
-    environment:
-      - TZ=Asia/Shanghai
-      - POSTGRES_USER=pgusr_18_admin_usr_4_dev_container
-      - POSTGRES_PASSWORD=pg_adminpswd
-      - POSTGRES_DB=pg_18_default_db
-    networks:
-      - app-network
-    image: postgres:18-alpine
+  # postgres-18-alpine: # docker compose up postgres-18-alpine
+  #   # docker exec -it postgres-18-alpine psql -U pgusr_18_admin_usr_4_dev_container -d postgres
+  #   # CREATE USER xxx_app_dev_usr WITH PASSWORD 'xxx_app_dev_pwd';
+  #   # CREATE DATABASE xxx_app_dev_db OWNER xxx_app_dev_usr;
+  #   # GRANT ALL PRIVILEGES ON DATABASE xxx_app_dev_db TO xxx_app_dev_usr;
+
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - 15432:5432
+  #   container_name: postgres-18-alpine
+  #   volumes:
+  #     - postgres-18-alpine-data-no-backup:/var/lib/postgresql/data
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #     - POSTGRES_USER=pgusr_18_admin_usr_4_dev_container
+  #     - POSTGRES_PASSWORD=pg_adminpswd
+  #     - POSTGRES_DB=pg_18_default_db
+  #   networks:
+  #     - app-network
+  #   image: postgres:18-alpine
 
 networks:
   app-network:
     driver: bridge
-    # 定义子网，以便分配静态 IP
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
+    # # 定义子网，以便分配静态 IP
+    # ipam:
+    #   config:
+    #     - subnet: 172.20.0.0/24
 
 volumes:
   vscode:
