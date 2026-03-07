@@ -7,6 +7,10 @@ set -o pipefail   # 对应 -o pipefail
 #   https://github.com/nodejs/docker-node/blob/main/24/trixie-slim/Dockerfile
 #   https://nodejs.org/dist/
 
+# RUN curl -fsSL --compressed https://deb.nodesource.com/setup_24.x | sudo -E bash - && \
+#     eatmydata apt-get install -qq -y nodejs && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
+
 if [[ -z "${NODE_VERSION:-}" || "${NODE_VERSION:-}" == "latest" ]]; then
     NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)][0].version' | tr -d 'v')
     # NODE_VERSION=$(_curl-fsSL--compressed https://nodejs.org/dist/index.tab | sed -n '2p' | awk '{print $1}' | tr -d 'v')
