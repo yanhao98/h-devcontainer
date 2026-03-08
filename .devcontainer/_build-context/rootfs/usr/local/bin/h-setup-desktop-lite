@@ -36,11 +36,11 @@ for f in apps init menu; do
     [ -e ~/.fluxbox/"$f" ] || cp /devcontainer/fluxbox/"$f" ~/.fluxbox/"$f"
 done
 
-# # 确保 en_US.UTF-8 locale 存在
-# if ! grep -q -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen 2>/dev/null; then
-#     echo "en_US.UTF-8 UTF-8" | sudo tee -a /etc/locale.gen >&2
-#     sudo locale-gen >&2
-# fi
+# 确保 en_US.UTF-8 locale 存在
+if ! grep -q -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen 2>/dev/null; then
+    echo "en_US.UTF-8 UTF-8" | sudo tee -a /etc/locale.gen >&2
+    sudo locale-gen --keep-existing >&2
+fi
 
 # 安装 Cascadia Code 字体
 # h-setup-cascadia-code-fonts >&2
