@@ -18,13 +18,15 @@ set -o pipefail   # 对应 -o pipefail
 #   at-spi2-core        — 无障碍框架，抑制 GTK 警告
 #   gnome-keyring       — 凭据存储，VS Code 使用
 #   xfonts-base xfonts-terminus — X11 字体
-#   fonts-noto fonts-droid-fallback fonts-noto-color-emoji — 多语言/emoji 字体
+#   fonts-noto fonts-droid-fallback — 多语言字体
 _apt-install-cached \
     tigervnc-standalone-server tigervnc-common tigervnc-tools \
     fluxbox dbus dbus-x11 \
+    `# --- 以下非启动必需，但提升桌面可用性 ---` \
     fonts-wqy-microhei `# 中文字体 (~5MB)` \
     dunst libnotify-bin `# 桌面通知 (守护进程 + notify-send)` \
-    gnome-icon-theme `# GTK 应用图标 (~15MB)`
+    gnome-icon-theme `# GTK 应用图标 (~15MB)` \
+    fonts-noto-color-emoji `# 彩色 emoji 字体 (~10MB)`
 
 # 创建必要目录
 sudo mkdir -p /var/run/dbus /usr/local/etc/vscode-dev-containers/

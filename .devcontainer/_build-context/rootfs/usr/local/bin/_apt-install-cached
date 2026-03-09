@@ -29,14 +29,25 @@ fi
 
 echo "📦 apt 安装: $*" >&2
 
-# 桌面通知 (fluxbox 菜单触发安装时提供视觉反馈)
+# 桌面通知 (安装完成后自动关闭)
+_NOTIFY_ID=""
 if command -v notify-send > /dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
-    notify-send -t 10000 "📦 正在安装..." "$*" 2>/dev/null || true
+    _NOTIFY_ID=$(notify-send --print-id -t 0 "📦 正在安装..." "$*" 2>/dev/null) || true
 fi
 
 # 创建临时 apt 配置，启用锁等待（-1 表示无限等待）
 APT_WAIT_CONF=$(mktemp)
-trap 'rm -f "$APT_WAIT_CONF"' EXIT
+_cleanup() {
+    rm -f "$APT_WAIT_CONF"
+    if [ -n "${_NOTIFY_ID:-}" ]; then
+        dbus-send --session --type=method_call \
+            --dest=org.freedesktop.Notifications \
+            /org/freedesktop/Notifications \
+            org.freedesktop.Notifications.CloseNotification \
+            "uint32:${_NOTIFY_ID}" 2>/dev/null || true
+    fi
+}
+trap _cleanup EXIT
 echo 'DPkg::Lock::Timeout "-1";' > "$APT_WAIT_CONF"
 export APT_CONFIG="$APT_WAIT_CONF"
 
@@ -45,3 +56,9 @@ export APT_CONFIG="$APT_WAIT_CONF"
 # sudo -E _execute-remote-script "$REMOTE_URL" "$@" >&2
 
 sudo APT_CONFIG="$APT_WAIT_CONF" _execute-remote-script "$REMOTE_URL" "$@" >&2
+
+# 关闭"正在安装"通知，显示安装完成
+if [ -n "$_NOTIFY_ID" ]; then
+    notify-send --replace-id="$_NOTIFY_ID" -t 5000 "✅ 安装完成" "$*" 2>/dev/null || true
+    _NOTIFY_ID=""
+fi

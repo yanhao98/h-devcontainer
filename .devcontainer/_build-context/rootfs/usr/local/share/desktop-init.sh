@@ -90,8 +90,8 @@ sudoIf rm -rf /tmp/.X11-unix /tmp/.X*-lock
 mkdir -p /tmp/.X11-unix
 sudoIf chmod 1777 /tmp/.X11-unix
 sudoIf chown root:${group_name} /tmp/.X11-unix
-# VNC_RESOLUTION 格式: WxH 或 WxHxD，补全缺省色深为 16 位
-if [ "$(echo "${VNC_RESOLUTION}" | tr -cd 'x' | wc -c)" = "1" ]; then VNC_RESOLUTION=${VNC_RESOLUTION}x16; fi
+# VNC_RESOLUTION 格式: WxH 或 WxHxD，补全缺省色深为 24 位 (彩色 emoji 需要 24-bit)
+if [ "$(echo "${VNC_RESOLUTION}" | tr -cd 'x' | wc -c)" = "1" ]; then VNC_RESOLUTION=${VNC_RESOLUTION}x24; fi
 screen_geometry="${VNC_RESOLUTION%*x*}"
 screen_depth="${VNC_RESOLUTION##*x}"
 
