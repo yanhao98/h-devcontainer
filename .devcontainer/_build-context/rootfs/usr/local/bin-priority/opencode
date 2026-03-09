@@ -8,9 +8,9 @@ add-bun-priority-bin-pkg opencode-ai
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
 CLI_ARGS=()
 
-_ensure-vscode-symlink /vscode/opencode-config-link ~/.config/opencode
-_ensure-vscode-symlink /vscode/opencode-cache-link ~/.cache/opencode
-_ensure-vscode-symlink /vscode/opencode-omo-link ~/.cache/oh-my-opencode
+_ensure-vscode-symlink /vscode/opencode--home_.config_opencode ~/.config/opencode
+_ensure-vscode-symlink /vscode/opencode--home_.cache_opencode ~/.cache/opencode
+_ensure-vscode-symlink /vscode/opencode--home_.cache_oh_my_opencode ~/.cache/oh-my-opencode
 
 # 初始化 Opencode 配置文件
 init_opencode_config() {
