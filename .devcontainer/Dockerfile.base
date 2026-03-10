@@ -69,6 +69,7 @@ ENV DEVCONTAINER=true \
     IS_SANDBOX=true
 
 ENV CODEX_HOME=/vscode/codex-home
+ENV PLAYWRIGHT_BROWSERS_PATH=/vscode/playwright-browsers
 
 # bash 非交互式 shell 也加载 command_not_found_handle
 ENV BASH_ENV=/devcontainer/bash-env.sh

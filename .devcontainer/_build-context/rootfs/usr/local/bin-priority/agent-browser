@@ -1,0 +1,35 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# agent-browser: AI 代理浏览器自动化 CLI 工具 (Vercel Labs)
+# https://github.com/vercel-labs/agent-browser
+# https://agent-browser.dev/skills
+# 示例：
+agent-browser install                              # 下载浏览器
+agent-browser open https://example.com             # 打开网页
+agent-browser open --headed https://example.com    # 有头模式打开网页
+agent-browser snapshot -i                          # 获取交互元素快照
+agent-browser click @e1                            # 点击元素
+agent-browser screenshot                           # 截图
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: agent-browser --version
+
+add-bun-priority-bin-pkg agent-browser@latest
+
+# 确保 Playwright Chromium 浏览器已安装
+if [ ! -d "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}/chromium-"* ] 2>/dev/null; then
+    echo "📦 正在安装 Playwright Chromium 浏览器..." >&2
+    npx playwright install chromium >&2
+fi
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/agent-browser"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+
+exec "$TARGET_BIN" "$@"
