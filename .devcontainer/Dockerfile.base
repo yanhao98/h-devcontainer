@@ -55,6 +55,7 @@ ENV BUN_INSTALL_BIN="${HOME}/.bun/bin"
 ENV XDG_DATA_HOME="/vscode/xdg-data" \
     XDG_STATE_HOME="/vscode/xdg-state"
 
+ENV NPM_CONFIG_PREFIX="/vscode/npm-global"
 ENV PNPM_HOME="${HOME}/.pnpm"
 
 ENV INSTALL_NOVNC=false \
@@ -62,7 +63,7 @@ ENV INSTALL_NOVNC=false \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
 
-RUN mkdir -p /vscode/claude-config
+RUN mkdir -p /vscode/claude-config /vscode/npm-global
 ENV DEVCONTAINER=true \
     DISABLE_TELEMETRY=1 \
     IS_SANDBOX=true
@@ -88,6 +89,7 @@ ENV GIT_EDITOR="code --wait"
 # >>>>> 复制内置脚本
 COPY _build-context/rootfs /
 ENV PATH="${BUN_INSTALL_BIN}:${PATH}"
+ENV PATH="${NPM_CONFIG_PREFIX}/bin:${PATH}"
 ENV PATH="${PNPM_HOME}:${PATH}"
 ENV PATH="/usr/local/bin-mcp-stdio:${PATH}"
 # 优先级脚本，确保在 PATH 最前面

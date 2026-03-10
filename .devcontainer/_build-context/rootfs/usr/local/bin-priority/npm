@@ -1,0 +1,20 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# npm shim: 先确保 node 已安装（安装 node 后系统自然有 npm），然后执行真实的 npm
+# NPM_CONFIG_PREFIX 和 PATH 已在 Dockerfile 中全局设置
+# @verify: npm --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+npm_bin="$(_get-real-bin --silent npm)"
+
+if [ -z "$npm_bin" ]; then
+    echo "⚠️  npm 未找到，正在自动安装 Node.js..." >&2
+    h-setup-node-bin >&2
+fi
+
+exec _exec-real-bin npm "$@"
