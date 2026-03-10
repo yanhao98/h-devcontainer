@@ -1,0 +1,25 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# cowsay: 让 ASCII 牛说话的趣味命令行工具
+# 示例：
+cowsay "Hello, World!"                  # 牛说话
+cowsay -f tux "Linux!"                  # 企鹅说话
+cowsay -l                               # 列出所有可用角色
+echo "Moo" | cowsay                     # 从管道输入
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: cowsay "test"
+
+add-bun-priority-bin-pkg cowsay@latest
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/cowsay"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+
+exec "$TARGET_BIN" "$@"
