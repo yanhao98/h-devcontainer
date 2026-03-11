@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# lowriter: LibreOffice Writer，打开和编辑 Word 文档
+# 示例：
+lowriter document.docx                # 打开 Word 文档
+lowriter --convert-to pdf file.docx   # 转换为 PDF
+lowriter --headless --convert-to pdf *.docx  # 批量转换
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: lowriter --version
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-writer lowriter "$@"

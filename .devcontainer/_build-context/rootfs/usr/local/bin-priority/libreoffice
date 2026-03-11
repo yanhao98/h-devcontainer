@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# libreoffice: LibreOffice 办公套件主入口
+# 示例：
+libreoffice --writer document.docx     # 用 Writer 打开文档
+libreoffice --calc spreadsheet.xlsx    # 用 Calc 打开表格
+libreoffice --headless --convert-to pdf file.docx  # 无界面转换 PDF
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: libreoffice --version
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-common libreoffice "$@"

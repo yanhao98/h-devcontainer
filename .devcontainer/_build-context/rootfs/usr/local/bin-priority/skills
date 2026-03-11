@@ -1,0 +1,30 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# skills: 开放 Agent Skills 生态的 CLI，为 Claude Code / Cursor 等安装技能
+# 示例：
+skills add vercel-labs/agent-skills                         # 从 GitHub 安装技能
+skills add vercel-labs/agent-skills --list                  # 列出仓库中可用的技能
+skills add vercel-labs/agent-skills -s frontend-design      # 安装指定技能
+skills list                                                 # 列出已安装的技能
+skills find typescript                                      # 搜索技能
+skills update                                               # 更新已安装的技能
+skills remove web-design-guidelines                         # 移除技能
+skills init my-skill                                        # 创建新技能模板
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: skills --version
+# @verify: skills --help
+
+add-bun-priority-bin-pkg skills@latest
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/skills"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+
+exec "$TARGET_BIN" "$@"

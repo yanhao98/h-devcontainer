@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# xdotool: X11 自动化工具，模拟键盘/鼠标输入和窗口操作
+# 示例：
+xdotool click 1                          # 在当前位置左键点击
+xdotool click --window root 3            # 右键点击桌面根窗口
+xdotool mousemove 500 300                # 移动鼠标到坐标 (500, 300)
+xdotool key Return                       # 模拟按下回车键
+xdotool type 'hello'                     # 模拟键盘输入文字
+xdotool search --name 'Firefox'          # 查找窗口
+xdotool getactivewindow windowminimize   # 最小化当前窗口
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: xdotool --version
+exec _apt-shim-exec xdotool xdotool "$@"

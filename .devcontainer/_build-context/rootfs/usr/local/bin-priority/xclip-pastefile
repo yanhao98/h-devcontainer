@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xclip-pastefile: 通过 X 剪贴板粘贴文件
+# 示例：
+xclip-pastefile
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: which xclip-pastefile
+exec _apt-shim-exec xclip xclip-pastefile "$@"

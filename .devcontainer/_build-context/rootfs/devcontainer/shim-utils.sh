@@ -52,6 +52,7 @@ _print_caller_info() {
         # 顶层调用：打开盒子边框
         _GROUP_ENDED=false
         export _SHIM_GROUP_OPEN=1
+        export _SHIM_GROUP_OPENER_PID=$$
         echo -e "\e[90m╭──────────────────────────────────────────────────────────╮\e[0m" >&2
         echo -e "\e[90m← $chain\e[0m" >&2
 

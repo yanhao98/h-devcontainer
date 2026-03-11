@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xclip-cutfile: 通过 X 剪贴板剪切文件
+# 示例：
+xclip-cutfile file1.txt file2.txt
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: which xclip-cutfile
+exec _apt-shim-exec xclip xclip-cutfile "$@"

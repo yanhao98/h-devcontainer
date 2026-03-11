@@ -16,6 +16,9 @@ SOURCE_DIR="$PROJECT_ROOT/.devcontainer/_build-context/rootfs/usr/local"
 # 目标目录
 TARGET_DIR="/usr/local"
 
+DEVCONTAINER_SOURCE="$PROJECT_ROOT/.devcontainer/_build-context/rootfs/devcontainer"
+DEVCONTAINER_TARGET="/devcontainer"
+
 echo "📂 正在将 $SOURCE_DIR 复制到 $TARGET_DIR ..."
 
 if [ ! -d "$SOURCE_DIR" ]; then
@@ -37,5 +40,10 @@ fi
 
 # 让普通用户也可以编辑 bin-priority 中的脚本
 sudo chmod a+w "$TARGET_DIR/bin-priority" "$TARGET_DIR/bin-priority/"*
+
+# 同步 /devcontainer/ 目录（shim-utils.sh 等共享脚本）
+if [ -d "$DEVCONTAINER_SOURCE" ]; then
+    sudo cp -R --preserve=mode "$DEVCONTAINER_SOURCE/"* "$DEVCONTAINER_TARGET/"
+fi
 
 echo "✅ 复制完成！"

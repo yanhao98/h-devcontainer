@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# loweb: LibreOffice Web 编辑器（HTML 编辑）
+# 示例：
+loweb page.html                # 打开 HTML 文件编辑
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: loweb --version
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-writer loweb "$@"

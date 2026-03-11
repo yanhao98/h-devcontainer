@@ -3,7 +3,6 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-echo -e "\033[0;90m📦 安装: $*\033[0m" >&2
 mkdir -p /vscode/bun-priority-bin/
 
 BUN_ARGS=()
@@ -13,4 +12,79 @@ BUN_ARGS+=("--no-progress")
 BUN_ARGS+=("--no-summary")
 BUN_ARGS+=("--cwd=/vscode/bun-priority-bin/")
 
-exec bun "${BUN_ARGS[@]}" add "$@"
+# 筛选需要安装/更新的包：latest 永远更新，固定版本已安装则跳过
+PKGS_NEW=()
+PKGS_UPDATE=()
+for arg in "$@"; do
+    if [[ "$arg" == -* ]]; then
+        BUN_ARGS+=("$arg")
+        continue
+    fi
+
+    # 解析 pkg_name 和 pkg_version（兼容 @scope/pkg@version）
+    if [[ "$arg" == @* ]]; then
+        rest="${arg:1}"
+        if [[ "$rest" == *@* ]]; then
+            pkg_name="@${rest%@*}"
+            pkg_version="${rest##*@}"
+        else
+            pkg_name="$arg"
+            pkg_version=""
+        fi
+    else
+        if [[ "$arg" == *@* ]]; then
+            pkg_name="${arg%@*}"
+            pkg_version="${arg##*@}"
+        else
+            pkg_name="$arg"
+            pkg_version=""
+        fi
+    fi
+
+    pkg_json="/vscode/bun-priority-bin/node_modules/${pkg_name}/package.json"
+    already_installed=false
+    [[ -f "$pkg_json" ]] && already_installed=true
+
+    # latest 或无版本 → 永远需要执行
+    if [[ -z "$pkg_version" || "$pkg_version" == "latest" ]]; then
+        if $already_installed; then
+            PKGS_UPDATE+=("$arg")
+        else
+            PKGS_NEW+=("$arg")
+        fi
+        continue
+    fi
+
+    # 固定版本 → 检查是否已安装
+    installed_version=""
+    if $already_installed; then
+        installed_version=$(grep -m1 '"version"' "$pkg_json" | sed 's/.*: *"\(.*\)".*/\1/') || true
+    fi
+
+    if [[ "$installed_version" == "$pkg_version" ]]; then
+        continue
+    fi
+
+    if $already_installed; then
+        PKGS_UPDATE+=("$arg")
+    else
+        PKGS_NEW+=("$arg")
+    fi
+done
+
+ALL_PKGS=("${PKGS_NEW[@]+"${PKGS_NEW[@]}"}" "${PKGS_UPDATE[@]+"${PKGS_UPDATE[@]}"}")
+if [[ ${#ALL_PKGS[@]} -eq 0 ]]; then
+    exit 0
+fi
+
+# 输出：安装 xxx，更新 xxx
+msg_parts=()
+if [[ ${#PKGS_NEW[@]} -gt 0 ]]; then
+    msg_parts+=("安装 ${PKGS_NEW[*]}")
+fi
+if [[ ${#PKGS_UPDATE[@]} -gt 0 ]]; then
+    msg_parts+=("更新 ${PKGS_UPDATE[*]}")
+fi
+IFS='，' ; echo -e "\033[0;90m📦 ${msg_parts[*]}\033[0m" >&2 ; unset IFS
+
+exec bun "${BUN_ARGS[@]}" add "${ALL_PKGS[@]}"

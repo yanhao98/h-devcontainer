@@ -8,7 +8,9 @@ set -o nounset
 set -o pipefail
 
 # 仅顶层 shim（非嵌套）需要处理分组边框
-if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]]; then
+# 仅当本进程就是 group opener 时才负责关闭边框
+# exec 保持 PID 不变，所以 $$ == opener PID 说明是同一个 shim 链
+if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]] && [[ "${_SHIM_GROUP_OPENER_PID:-}" == "$$" ]]; then
     source /devcontainer/shim-utils.sh
     # 设置 EXIT trap 用于异常退出时自动关闭边框
     trap '_print_group_end' EXIT
@@ -18,7 +20,7 @@ real_bin="$(_get-real-bin "$1")"
 
 # 在 exec 前手动关闭边框（exec 不触发 EXIT trap）
 # _GROUP_ENDED 标志防止与 EXIT trap 重复打印
-if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]]; then
+if [[ "${_SHIM_GROUP_OPEN:-}" == "1" ]] && [[ "${_SHIM_NESTED:-}" != "1" ]] && [[ "${_SHIM_GROUP_OPENER_PID:-}" == "$$" ]]; then
     _print_group_end
 fi
 

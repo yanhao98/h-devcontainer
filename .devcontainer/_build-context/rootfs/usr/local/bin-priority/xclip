@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xclip: X11 剪贴板命令行工具
+# 示例：
+xclip -selection clipboard < file.txt
+echo "hello" | xclip -selection clipboard
+xclip -selection clipboard -o
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xclip -version
+exec _apt-shim-exec xclip xclip "$@"

@@ -1,0 +1,30 @@
+#!/bin/bash
+# 初始化 LibreOffice 用户配置：持久化到 /vscode 卷 + 关闭 Tip of the Day
+# 用法: _libreoffice-init-config （在 libreoffice/lowriter/loweb shim 中调用）
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 持久化配置到 /vscode 卷
+_ensure-vscode-symlink /vscode/libreoffice-config ~/.config/libreoffice
+
+# 关闭 Tip of the Day 弹窗
+_lo_reg="$HOME/.config/libreoffice/4/user/registrymodifications.xcu"
+if [ -f "$_lo_reg" ]; then
+    # 配置文件已存在：注入 ShowTipOfTheDay=false（如果还没有）
+    if ! grep -q 'ShowTipOfTheDay' "$_lo_reg" 2>/dev/null; then
+        sed -i '/<\/oor:items>/i <item oor:path="/org.openoffice.Office.Common/Misc"><prop oor:name="ShowTipOfTheDay" oor:op="fuse"><value>false</value></prop></item>' "$_lo_reg"
+        echo "✅ 已关闭 LibreOffice Tip of the Day 弹窗" >&2
+    fi
+else
+    # 首次启动：预创建最小配置文件
+    mkdir -p "$(dirname "$_lo_reg")"
+    cat > "$_lo_reg" << 'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<item oor:path="/org.openoffice.Office.Common/Misc"><prop oor:name="ShowTipOfTheDay" oor:op="fuse"><value>false</value></prop></item>
+</oor:items>
+XML
+    echo "✅ 已预创建 LibreOffice 配置（关闭 Tip of the Day）" >&2
+fi
