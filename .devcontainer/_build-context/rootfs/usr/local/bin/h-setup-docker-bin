@@ -19,17 +19,19 @@ esac
 DOCKER_VERSION="$(_curl-fsSL--compressed https://api.github.com/repos/moby/moby/releases/latest | grep -oP '"tag_name":\s*"docker-v\K[^"]+')"
 echo "📦 Docker CLI v${DOCKER_VERSION} (${arch})" >&2
 
+DOCKER_COMPOSE_VERSION="$(_curl-fsSL--compressed https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')"
+echo "📦 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})" >&2
+
 # 统一的下载缓存目录
 sudo mkdir -p /vscode/downloads || true
 sudo chown -R "$(whoami):$(whoami)" /vscode/downloads || true
 cache_dir="/vscode/downloads"
+
+# Docker CLI 下载
 tarball="docker-${DOCKER_VERSION}-${arch}.tgz"
 cached_file="$cache_dir/$tarball"
-
-# 下载链接
 tarball_url="https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz"
 
-# 检查是否存在缓存
 need_download=true
 if [[ -f "$cached_file" ]]; then
     echo "📦 发现已缓存的 Docker CLI 归档文件，跳过下载。" >&2
@@ -43,14 +45,38 @@ if [[ "$need_download" == "true" ]]; then
     }
 fi
 
+# Docker Compose 下载
+compose_bin="docker-compose-linux-${arch}"
+compose_url="https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/${compose_bin}"
+compose_cached="$cache_dir/docker-compose-${DOCKER_COMPOSE_VERSION}-${arch}"
+
+need_compose_download=true
+if [[ -f "$compose_cached" ]]; then
+    echo "📦 发现已缓存的 Docker Compose 二进制文件，跳过下载。" >&2
+    need_compose_download=false
+fi
+
+if [[ "$need_compose_download" == "true" ]]; then
+    echo "⬇️ 正在下载 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})..." >&2
+    _curl-fsSL--compressed -o "$compose_cached" "$compose_url" || {
+        echo "❌ 下载失败: $compose_url" >&2; exit 1;
+    }
+fi
+
 # 安装
-echo "📥 正在安装 Docker CLI 到 /usr/local/bin..." >&2
+echo "📥 正在安装 Docker CLI 和 Docker Compose 到系统目录..." >&2
 
 tmp="$(mktemp -d)"
 tar -xzf "$cached_file" -C "$tmp" docker/docker
 sudo install -m 755 "$tmp/docker/docker" /usr/local/bin/docker
+
+sudo mkdir -p /usr/local/lib/docker/cli-plugins
+sudo install -m 755 "$compose_cached" /usr/local/lib/docker/cli-plugins/docker-compose
+sudo ln -sf /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+
 rm -rf "$tmp"
 
 # 验证安装
-echo "✅ Docker CLI 安装成功：" >&2
+echo "✅ Docker 和 Docker Compose 安装成功：" >&2
 echo "   docker: $(/usr/local/bin/docker --version)" >&2
+echo "   docker-compose: $(/usr/local/bin/docker-compose --version)" >&2
