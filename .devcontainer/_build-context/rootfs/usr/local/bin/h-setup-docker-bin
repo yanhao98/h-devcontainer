@@ -57,7 +57,7 @@ if [[ -f "$compose_cached" ]]; then
 fi
 
 if [[ "$need_compose_download" == "true" ]]; then
-    echo "⬇️ 正在下载 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})..." >&2
+    echo "📥 正在下载 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})..." >&2
     _curl-fsSL--compressed -o "$compose_cached" "$compose_url" || {
         echo "❌ 下载失败: $compose_url" >&2; exit 1;
     }
