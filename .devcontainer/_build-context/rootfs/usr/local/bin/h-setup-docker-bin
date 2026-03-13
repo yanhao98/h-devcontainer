@@ -27,41 +27,29 @@ sudo mkdir -p /vscode/downloads || true
 sudo chown -R "$(whoami):$(whoami)" /vscode/downloads || true
 cache_dir="/vscode/downloads"
 
-# Docker CLI 下载
-tarball="docker-${DOCKER_VERSION}-${arch}.tgz"
-cached_file="$cache_dir/$tarball"
-tarball_url="https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz"
-
-need_download=true
-if [[ -f "$cached_file" ]]; then
-    echo "📦 发现已缓存的 Docker CLI 归档文件，跳过下载。" >&2
-    need_download=false
-fi
-
-if [[ "$need_download" == "true" ]]; then
-    echo "⬇️ 正在下载 Docker CLI v${DOCKER_VERSION} (${arch})..." >&2
-    _curl-fsSL--compressed -o "$cached_file" "$tarball_url" || {
-        echo "❌ 下载失败: $tarball_url" >&2; exit 1;
+# 下载文件到缓存（如果尚未缓存）
+# 用法: _download_cached <显示名称> <缓存路径> <下载URL>
+_download_cached() {
+    local name="$1" cached="$2" url="$3"
+    if [[ -f "$cached" ]]; then
+        echo "📦 发现已缓存的 ${name}，跳过下载。" >&2
+        return
+    fi
+    echo "⬇️  正在下载 ${name}..." >&2
+    _curl-fsSL--compressed -o "$cached" "$url" || {
+        echo "❌ 下载失败: $url" >&2; exit 1;
     }
-fi
+}
+
+# Docker CLI 下载
+cached_file="$cache_dir/docker-${DOCKER_VERSION}-${arch}.tgz"
+_download_cached "Docker CLI v${DOCKER_VERSION} (${arch})" "$cached_file" \
+    "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz"
 
 # Docker Compose 下载
-compose_bin="docker-compose-linux-${arch}"
-compose_url="https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/${compose_bin}"
 compose_cached="$cache_dir/docker-compose-${DOCKER_COMPOSE_VERSION}-${arch}"
-
-need_compose_download=true
-if [[ -f "$compose_cached" ]]; then
-    echo "📦 发现已缓存的 Docker Compose 二进制文件，跳过下载。" >&2
-    need_compose_download=false
-fi
-
-if [[ "$need_compose_download" == "true" ]]; then
-    echo "📥 正在下载 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})..." >&2
-    _curl-fsSL--compressed -o "$compose_cached" "$compose_url" || {
-        echo "❌ 下载失败: $compose_url" >&2; exit 1;
-    }
-fi
+_download_cached "Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})" "$compose_cached" \
+    "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-${arch}"
 
 # 安装
 echo "📥 正在安装 Docker CLI 和 Docker Compose 到系统目录..." >&2
