@@ -22,11 +22,11 @@ fi
 
 add-bun-priority-bin-pkg agent-browser@latest
 
-# 确保 Playwright Chromium 浏览器已安装
-if [ ! -d "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}/chromium-"* ] 2>/dev/null; then
-    echo "📦 正在安装 Playwright Chromium 浏览器..." >&2
-    npx playwright install chromium >&2
-fi
+# # 确保 Playwright Chromium 浏览器已安装
+# if [ ! -d "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}/chromium-"* ] 2>/dev/null; then
+#     echo "📦 正在安装 Playwright Chromium 浏览器..." >&2
+#     npx playwright install chromium >&2
+# fi
 
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/agent-browser"
 
