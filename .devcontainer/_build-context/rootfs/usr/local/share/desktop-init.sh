@@ -11,7 +11,7 @@ LOG=/tmp/container-init.log
 
 export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-"autolaunch:"}"
 export DISPLAY="${DISPLAY:-:1}"
-export VNC_RESOLUTION="${VNC_RESOLUTION:-1440x768x16}"
+export VNC_RESOLUTION="${VNC_RESOLUTION:-1440x768}"
 export LANG="${LANG:-"en_US.UTF-8"}"
 export LANGUAGE="${LANGUAGE:-"en_US.UTF-8"}"
 
@@ -94,6 +94,7 @@ sudoIf chown root:${group_name} /tmp/.X11-unix
 if [ "$(echo "${VNC_RESOLUTION}" | tr -cd 'x' | wc -c)" = "1" ]; then VNC_RESOLUTION=${VNC_RESOLUTION}x24; fi
 screen_geometry="${VNC_RESOLUTION%*x*}"
 screen_depth="${VNC_RESOLUTION##*x}"
+log "Resolved VNC settings: display=${DISPLAY}, geometry=${screen_geometry}, depth=${screen_depth}, dpi=${VNC_DPI:-96}"
 
 # TigerVNC 出于安全考虑，拒绝在没有密码保护的情况下允许外部连接（非 localhost）。
 # 允许非本地连接 VNC，并添加不安全连接确认标志

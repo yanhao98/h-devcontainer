@@ -59,7 +59,7 @@ ENV NPM_CONFIG_PREFIX="/vscode/npm-global"
 ENV PNPM_HOME="${HOME}/.pnpm"
 
 ENV INSTALL_NOVNC=false \
-    VNC_RESOLUTION="1680x1050x16" \
+    VNC_RESOLUTION="1680x1050" \
     NODE_OPTIONS="--max-old-space-size=4096" \
     TZ="Asia/Shanghai"
 

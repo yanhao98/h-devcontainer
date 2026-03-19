@@ -1,5 +1,9 @@
 #!/bin/bash
-RESOLUTION=${1:-${VNC_RESOLUTION:-1920x1080}}
+RAW_RESOLUTION=${1:-${VNC_RESOLUTION:-1920x1080}}
+RESOLUTION=${RAW_RESOLUTION}
+if [ "$(echo "${RAW_RESOLUTION}" | tr -cd 'x' | wc -c)" -ge 2 ]; then
+    RESOLUTION=${RAW_RESOLUTION%*x*}
+fi
 DPI=${2:-${VNC_DPI:-96}}
 IGNORE_ERROR=${3:-"false"}
 if [ -z "$1" ]; then
