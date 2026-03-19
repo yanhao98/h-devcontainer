@@ -1,0 +1,26 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# docker-compose: 容器编排 CLI（通过挂载的 docker.sock 连接主机 Docker）
+# 示例：
+docker-compose up -d                    # 启动 compose 服务
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: docker-compose --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+docker_compose_bin="$(_get-real-bin --silent docker-compose)"
+
+if [ -z "$docker_compose_bin" ]; then
+    echo "⚠️  docker-compose 未安装，正在自动安装..." >&2
+    h-setup-docker-bin >&2
+fi
+
+exec _exec-real-bin docker-compose "$@"
