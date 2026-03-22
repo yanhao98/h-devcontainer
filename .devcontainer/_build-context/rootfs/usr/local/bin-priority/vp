@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+# @verify: vp --version
+
+add-bun-priority-bin-pkg vite-plus
+
+BUN_ARGS=("--bun")
+BUN_ARGS+=("run")
+BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/vp")
+
+echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} $*\e[0m" >&2
+
+exec bun "${BUN_ARGS[@]}" "$@"
