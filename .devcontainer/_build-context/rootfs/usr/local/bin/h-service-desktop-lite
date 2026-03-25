@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+echo "🖥️  正在准备 desktop-lite 服务..." >&2
+DESKTOP_LITE_AUTOSTART=0 h-setup-desktop-lite >&2
+
+echo "🚀 正在以前台受管模式启动 desktop-lite..." >&2
+exec env DESKTOP_INIT_FOREGROUND=1 /usr/local/share/desktop-init.sh

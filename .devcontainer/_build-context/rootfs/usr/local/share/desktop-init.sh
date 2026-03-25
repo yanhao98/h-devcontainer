@@ -71,6 +71,28 @@ version_gt() {
     [ "$(printf '%s\n' "$2" "$1" | sort -V | head -n1)" != "$1" ]
 }
 
+waitForManagedProcess()
+{
+    pid_file="$1"
+    process_name="$2"
+
+    while :; do
+        if [ ! -s "$pid_file" ]; then
+            log "${process_name} pid 文件缺失: ${pid_file}"
+            return 1
+        fi
+
+        pid="$(cat "$pid_file")"
+        if kill -0 "$pid" 2>/dev/null; then
+            sleep 5
+            continue
+        fi
+
+        log "${process_name} 守护循环已退出 (pid=${pid})."
+        return 1
+    done
+}
+
 #=== 启动流程 ================================================================
 
 log "** SCRIPT START **"
@@ -137,6 +159,9 @@ fi
 if [ -n "${1:-}" ]; then
     log "Executing \"$@\"."
     exec "$@"
+elif [ "${DESKTOP_INIT_FOREGROUND:-0}" = "1" ]; then
+    log "DESKTOP_INIT_FOREGROUND=1，保持前台运行并监控 Xtigervnc。"
+    waitForManagedProcess /tmp/Xtigervnc.pid Xtigervnc
 else
     log "No command provided to execute."
 fi

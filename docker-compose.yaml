@@ -25,6 +25,7 @@ services:
     ports:
       # VNC 端口
       - "127.0.0.1:5909:5901" # VNC 5901 映射到宿主机的 5909 端口，且仅限本地访问
+      - "127.0.0.1:9001:9001" # Supervisord 控制面板
     # command: /bin/bash /docker-compose-entrypoint.sh
     restart: unless-stopped
     networks:

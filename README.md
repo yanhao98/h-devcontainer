@@ -12,6 +12,23 @@
 | 8    | VS Code 附加到容器   | -                      |
 | 9    | postAttachCommand    | 容器内，每次附加       |
 
+## Supervisord
+
+镜像内已预装 `supervisor`，默认会在无启动命令时由 `ENTRYPOINT` 拉起，并按环境变量启用内置服务配置。
+
+常用环境变量：
+
+- `SUPERVISOR_ENABLED_SERVICES=desktop-lite`：启用内置服务，支持逗号分隔多个名字
+- `SUPERVISOR_HTTP_ENABLED=true`：启用 Supervisord Web 控制面板
+- `SUPERVISOR_HTTP_HOST=0.0.0.0`
+- `SUPERVISOR_HTTP_PORT=9001`
+- `SUPERVISOR_HTTP_USERNAME=usr_vscode`
+- `SUPERVISOR_HTTP_PASSWORD=devcontainer`
+
+内置服务模板放在 `/etc/supervisor/conf.d.available/`，入口脚本会把启用项链接到 `/etc/supervisor/conf.d.enabled/`。
+
+`desktop-lite` 现在可以作为一个受管服务启动，不再只能靠入口脚本直接后台拉起。
+
 ## Docker Mount Consistency 模式对比
 
 | 模式              | 权威方 (Authority) | 性能特点               | 适用场景                             | 数据风险                                   |

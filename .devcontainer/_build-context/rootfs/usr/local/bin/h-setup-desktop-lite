@@ -56,8 +56,12 @@ fi
 # 设置文件权限
 sudo chmod +x /usr/local/share/desktop-init.sh /usr/local/bin/set-resolution
 
-# 启动桌面守护进程
-nohup setsid /usr/local/share/desktop-init.sh >/dev/null 2>&1 &
-# postStartCommand 完成后，VS Code 会终止其所有子进程（包括后台启动的 VNC 服务器）。
-# - nohup: 忽略 SIGHUP 信号
-# - setsid: 创建新的 session，进程成为 session leader，完全脱离原终端/进程组
+if [ "${DESKTOP_LITE_AUTOSTART:-1}" = "1" ]; then
+    echo "🚀 正在后台启动 desktop-lite..." >&2
+    nohup setsid /usr/local/share/desktop-init.sh >/dev/null 2>&1 &
+    # postStartCommand 完成后，VS Code 会终止其所有子进程（包括后台启动的 VNC 服务器）。
+    # - nohup: 忽略 SIGHUP 信号
+    # - setsid: 创建新的 session，进程成为 session leader，完全脱离原终端/进程组
+else
+    echo "⏭️  跳过 desktop-lite 后台自启动，交由外部进程管理器接管。" >&2
+fi
