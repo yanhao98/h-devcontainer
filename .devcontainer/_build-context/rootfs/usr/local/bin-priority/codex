@@ -6,41 +6,45 @@ set -o pipefail   # 对应 -o pipefail
 source /devcontainer/shim-utils.sh
 _print_caller_info
 
+CODEX_CONFIG_DIR="/vscode/codex-home"
+CODEX_CONFIG_FILE="$CODEX_CONFIG_DIR/config.toml"
+CODEX_SCHEMA_LINE='#:schema https://developers.openai.com/codex/config-schema.json'
+CONFIG_CREATED=false
+
 # 确保默认配置文件存在
 ensure_default_config() {
-    # Dockerfile: CODEX_HOME=/vscode/codex-home
-    local config_dir="/vscode/codex-home"
-    local config_file="$config_dir/config.toml"
-    local schema_line='#:schema https://developers.openai.com/codex/config-schema.json'
+    mkdir -p "$CODEX_CONFIG_DIR"
 
-    mkdir -p "$config_dir"
-
-    if [ -f "$config_file" ]; then
-        echo "📝 配置文件已存在: $config_file" >&2
+    if [ -f "$CODEX_CONFIG_FILE" ]; then
+        echo "📝 配置文件已存在: $CODEX_CONFIG_FILE" >&2
         # 确保第一行是 schema 声明
         local first_line
-        first_line="$(head -n 1 "$config_file")"
-        if [ "$first_line" != "$schema_line" ]; then
+        first_line="$(head -n 1 "$CODEX_CONFIG_FILE")"
+        if [ "$first_line" != "$CODEX_SCHEMA_LINE" ]; then
             echo "📝 插入 schema 声明到配置文件首行" >&2
-            sed -i "1i\\$schema_line" "$config_file"
+            sed -i "1i\\$CODEX_SCHEMA_LINE" "$CODEX_CONFIG_FILE"
         fi
     else
-        echo "📝 创建默认配置文件: $config_file" >&2
-        cat > "$config_file" << EOF
-$schema_line
-model = "gemini-3-pro-preview"
-model_provider = "NewAPI"
-preferred_auth_method = "apikey"
-# 禁止将 AI 响应写入本地存储
-# disable_response_storage = true
+        echo "📝 创建默认配置文件: $CODEX_CONFIG_FILE" >&2
+        cat > "$CODEX_CONFIG_FILE" << EOF
+$CODEX_SCHEMA_LINE
+model = "gpt-5.4"
+review_model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+model_provider = "Bifrost"
 
-[model_providers.NewAPI]
-name = "New API"
-base_url = "https://new-api.example.com/v1"
-wire_api = "chat"
-http_headers = {"Authorization" = "Bearer your_api_key_here"}
+[model_providers.Bifrost]
+name = "HBifrost"
+base_url = "https://bifrost.example.com/v1"
+requires_openai_auth = false
+http_headers = {"x-bf-vk" = ""}
+
+[projects."/workspaces/h-devcontainers"]
+trust_level = "trusted"
 EOF
+        CONFIG_CREATED=true
     fi
+
 }
 
 add-bun-priority-bin-pkg @openai/codex@latest
@@ -48,15 +52,16 @@ add-bun-priority-bin-pkg @openai/codex@latest
 # 调用函数确保配置文件存在
 ensure_default_config
 
-BUN_ARGS=("--bun")
-BUN_ARGS+=("run")
-BUN_ARGS+=("/vscode/bun-priority-bin/node_modules/.bin/codex")
-CLI_ARGS=()
-CLI_ARGS+=("--sandbox=danger-full-access")
-CLI_ARGS+=("--dangerously-bypass-approvals-and-sandbox")
+if [[ "$CONFIG_CREATED" == "true" ]]; then
+    echo "✋ 已创建默认配置文件，请先编辑后再重新运行 codex: $CODEX_CONFIG_FILE" >&2
+    _print_group_end
+    exit 1
+fi
 
-echo -e "\e[90m→ exec bun ${BUN_ARGS[*]} ${CLI_ARGS[*]} $*\e[0m" >&2
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/codex"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
 
 _print_group_end
 
-exec bun "${BUN_ARGS[@]}" "${CLI_ARGS[@]}" "$@"
+exec "$TARGET_BIN" "$@"
