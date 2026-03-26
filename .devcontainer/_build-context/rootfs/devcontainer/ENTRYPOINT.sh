@@ -31,7 +31,7 @@ configure_supervisor_http_panel() {
     local http_conf="/etc/supervisor/conf.d.enabled/00-inet-http-server.conf"
     local template_conf="/etc/supervisor/conf.d.available/00-inet-http-server.conf.tpl"
     local host="${SUPERVISOR_HTTP_HOST:-0.0.0.0}"
-    local port="${SUPERVISOR_HTTP_PORT:-9001}"
+    local port="${SUPERVISOR_HTTP_PORT:-9100}"
     local username="${SUPERVISOR_HTTP_USERNAME:-usr_vscode}"
     local password="${SUPERVISOR_HTTP_PASSWORD:-devcontainer}"
     local tmp_conf

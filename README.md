@@ -21,7 +21,7 @@
 - `SUPERVISOR_ENABLED_SERVICES=desktop-lite`：启用内置服务，支持逗号分隔多个名字，例如 `desktop-lite,opencode`
 - `SUPERVISOR_HTTP_ENABLED=true`：启用 Supervisord Web 控制面板
 - `SUPERVISOR_HTTP_HOST=0.0.0.0`
-- `SUPERVISOR_HTTP_PORT=9001`
+- `SUPERVISOR_HTTP_PORT=9100`
 - `SUPERVISOR_HTTP_USERNAME=usr_vscode`
 - `SUPERVISOR_HTTP_PASSWORD=devcontainer`
 
