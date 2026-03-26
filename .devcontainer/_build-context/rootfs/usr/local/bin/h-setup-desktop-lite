@@ -26,6 +26,7 @@ _apt-install-cached \
     fonts-wqy-microhei `# 中文字体 (~5MB)` \
     dunst libnotify-bin `# 桌面通知 (守护进程 + notify-send)` \
     adwaita-icon-theme `# GTK 默认图标主题 (~13MB)，避免 "Could not find theme Adwaita"` \
+    adwaita-icon-theme-legacy `# 旧版 GTK 应用回退图标主题 (~3MB)，避免 "Could not find theme AdwaitaLegacy"` \
     fonts-noto-color-emoji `# 彩色 emoji 字体 (~10MB)`
 
 # 创建必要目录
