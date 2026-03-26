@@ -59,9 +59,32 @@ if [[ "$CONFIG_CREATED" == "true" ]]; then
 fi
 
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/codex"
+NATIVE_TARGET_BIN=""
+NATIVE_PATH_DIR=""
 CLI_ARGS=()
 CLI_ARGS+=("--sandbox=danger-full-access")
 CLI_ARGS+=("--dangerously-bypass-approvals-and-sandbox")
+
+case "$(uname -m)" in
+    x86_64)
+        NATIVE_TARGET_BIN="/vscode/bun-priority-bin/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex/codex"
+        NATIVE_PATH_DIR="/vscode/bun-priority-bin/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/path"
+        ;;
+    aarch64 | arm64)
+        NATIVE_TARGET_BIN="/vscode/bun-priority-bin/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/codex/codex"
+        NATIVE_PATH_DIR="/vscode/bun-priority-bin/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/path"
+        ;;
+esac
+
+if [[ -n "$NATIVE_TARGET_BIN" && -x "$NATIVE_TARGET_BIN" ]]; then
+    TARGET_BIN="$NATIVE_TARGET_BIN"
+    if [[ -d "$NATIVE_PATH_DIR" ]]; then
+        export PATH="$NATIVE_PATH_DIR:$PATH"
+    fi
+    export CODEX_MANAGED_BY_BUN=1
+else
+    echo "⚠️  未找到原生 codex 二进制，回退到 Node 包装器: $TARGET_BIN" >&2
+fi
 
 echo -e "\e[90m→ exec $TARGET_BIN ${CLI_ARGS[*]} $*\e[0m" >&2
 
