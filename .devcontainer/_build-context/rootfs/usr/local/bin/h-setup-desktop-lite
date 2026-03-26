@@ -25,7 +25,7 @@ _apt-install-cached \
     `# --- 以下非启动必需，但提升桌面可用性 ---` \
     fonts-wqy-microhei `# 中文字体 (~5MB)` \
     dunst libnotify-bin `# 桌面通知 (守护进程 + notify-send)` \
-    gnome-icon-theme `# GTK 应用图标 (~15MB)` \
+    adwaita-icon-theme `# GTK 默认图标主题 (~13MB)，避免 "Could not find theme Adwaita"` \
     fonts-noto-color-emoji `# 彩色 emoji 字体 (~10MB)`
 
 # 创建必要目录
