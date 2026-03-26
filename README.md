@@ -18,14 +18,14 @@
 
 常用环境变量：
 
-- `SUPERVISOR_ENABLED_SERVICES=desktop-lite`：启用内置服务，支持逗号分隔多个名字
+- `SUPERVISOR_ENABLED_SERVICES=desktop-lite`：启用内置服务，支持逗号分隔多个名字，例如 `desktop-lite,opencode`
 - `SUPERVISOR_HTTP_ENABLED=true`：启用 Supervisord Web 控制面板
 - `SUPERVISOR_HTTP_HOST=0.0.0.0`
 - `SUPERVISOR_HTTP_PORT=9001`
 - `SUPERVISOR_HTTP_USERNAME=usr_vscode`
 - `SUPERVISOR_HTTP_PASSWORD=devcontainer`
 
-内置服务模板放在 `/etc/supervisor/conf.d.available/`，入口脚本会把启用项链接到 `/etc/supervisor/conf.d.enabled/`。
+内置服务模板放在 `/etc/supervisor/conf.d.available/`，入口脚本会把启用项链接到 `/etc/supervisor/conf.d.enabled/`。当前内置服务包括 `desktop-lite` 和 `opencode`；`00-inet-http-server.conf.tpl` 会在启动时按环境变量渲染成最终的 HTTP 面板配置。
 
 `desktop-lite` 现在可以作为一个受管服务启动，不再只能靠入口脚本直接后台拉起。
 

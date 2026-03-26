@@ -81,7 +81,7 @@ ENV DISPLAY=:1 \
     # 全局拦截 fsync/fdatasync，跳过落盘等待。dev container 是一次性环境，不需要持久化保证。
     LD_PRELOAD=libeatmydata.so
 
-ENV SUPERVISOR_ENABLED_SERVICES="desktop-lite" \
+ENV SUPERVISOR_ENABLED_SERVICES="desktop-lite,opencode" \
     SUPERVISOR_HTTP_ENABLED="true" \
     SUPERVISOR_HTTP_HOST="0.0.0.0" \
     SUPERVISOR_HTTP_PORT="9001" \

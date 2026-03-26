@@ -59,9 +59,12 @@ if [[ "$CONFIG_CREATED" == "true" ]]; then
 fi
 
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/codex"
+CLI_ARGS=()
+CLI_ARGS+=("--sandbox=danger-full-access")
+CLI_ARGS+=("--dangerously-bypass-approvals-and-sandbox")
 
-echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+echo -e "\e[90m→ exec $TARGET_BIN ${CLI_ARGS[*]} $*\e[0m" >&2
 
 _print_group_end
 
-exec "$TARGET_BIN" "$@"
+exec "$TARGET_BIN" "${CLI_ARGS[@]}" "$@"

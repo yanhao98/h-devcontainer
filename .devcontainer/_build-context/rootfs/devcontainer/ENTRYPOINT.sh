@@ -14,6 +14,10 @@ is_truthy() {
     esac
 }
 
+escape_sed_replacement() {
+    printf '%s' "${1:-}" | sed 's/[|&\\]/\\&/g'
+}
+
 prepare_supervisor_runtime() {
     echo "📁 准备 supervisord 运行目录..." >&2
     sudo install -d -o root -g usr_vscode -m 0775 /var/log/supervisor
@@ -25,6 +29,7 @@ prepare_supervisor_runtime() {
 
 configure_supervisor_http_panel() {
     local http_conf="/etc/supervisor/conf.d.enabled/00-inet-http-server.conf"
+    local template_conf="/etc/supervisor/conf.d.available/00-inet-http-server.conf.tpl"
     local host="${SUPERVISOR_HTTP_HOST:-0.0.0.0}"
     local port="${SUPERVISOR_HTTP_PORT:-9001}"
     local username="${SUPERVISOR_HTTP_USERNAME:-usr_vscode}"
@@ -38,13 +43,18 @@ configure_supervisor_http_panel() {
         return
     fi
 
+    if [ ! -f "$template_conf" ]; then
+        echo "❌ 未找到 Supervisord HTTP 面板模板: $template_conf" >&2
+        return 1
+    fi
+
     tmp_conf="$(mktemp)"
-    cat > "$tmp_conf" <<EOF
-[inet_http_server]
-port=${host}:${port}
-username=${username}
-password=${password}
-EOF
+    sed \
+        -e "s|@SUPERVISOR_HTTP_HOST@|$(escape_sed_replacement "$host")|g" \
+        -e "s|@SUPERVISOR_HTTP_PORT@|$(escape_sed_replacement "$port")|g" \
+        -e "s|@SUPERVISOR_HTTP_USERNAME@|$(escape_sed_replacement "$username")|g" \
+        -e "s|@SUPERVISOR_HTTP_PASSWORD@|$(escape_sed_replacement "$password")|g" \
+        "$template_conf" > "$tmp_conf"
     sudo install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
     rm -f "$tmp_conf"
 
