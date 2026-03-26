@@ -97,7 +97,7 @@ main() {
     enable_builtin_supervisor_services
 
     echo "🚀 交由 supervisord 接管容器主进程..." >&2
-    exec sudo /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+    exec sudo --preserve-env /usr/bin/env PATH="$PATH" /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
 }
 
 main "$@"
