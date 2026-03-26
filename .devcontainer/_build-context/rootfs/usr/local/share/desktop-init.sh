@@ -2,6 +2,11 @@
 #-------------------------------------------------------------------------------------------------------------
 # desktop-init.sh: VNC 桌面环境启动脚本
 # 由 ENTRYPOINT.sh 通过 h-setup-desktop-lite 以 nohup setsid 方式调用，作为守护进程运行
+# 会按顺序启动并维持桌面相关组件：
+# 1. dbus-daemon
+# 2. Xtigervnc
+# 3. dunst
+# 4. noVNC（已安装时）
 # 原始来源: https://github.com/devcontainers/features/blob/main/src/desktop-lite/install.sh
 #-------------------------------------------------------------------------------------------------------------
 
