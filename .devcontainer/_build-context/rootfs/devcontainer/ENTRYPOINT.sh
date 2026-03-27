@@ -32,8 +32,10 @@ configure_supervisor_http_panel() {
     local template_conf="/etc/supervisor/conf.d.available/00-inet-http-server.conf.tpl"
     local host="${SUPERVISOR_HTTP_HOST:-0.0.0.0}"
     local port="${SUPERVISOR_HTTP_PORT:-9100}"
-    local username="${SUPERVISOR_HTTP_USERNAME:-usr_vscode}"
-    local password="${SUPERVISOR_HTTP_PASSWORD:-devcontainer}"
+    local username="${SUPERVISOR_HTTP_USERNAME-}"
+    local password="${SUPERVISOR_HTTP_PASSWORD-}"
+    local rendered_username=""
+    local rendered_password=""
     local tmp_conf
 
     sudo rm -f "$http_conf"
@@ -48,17 +50,28 @@ configure_supervisor_http_panel() {
         return 1
     fi
 
+    if [ -n "$username" ] && [ -n "$password" ]; then
+        rendered_username="$username"
+        rendered_password="$password"
+    elif [ -n "$username" ] || [ -n "$password" ]; then
+        echo "⚠️  SUPERVISOR_HTTP_USERNAME 和 SUPERVISOR_HTTP_PASSWORD 必须同时为非空；当前按无认证处理。" >&2
+    fi
+
     tmp_conf="$(mktemp)"
     sed \
         -e "s|@SUPERVISOR_HTTP_HOST@|$(escape_sed_replacement "$host")|g" \
         -e "s|@SUPERVISOR_HTTP_PORT@|$(escape_sed_replacement "$port")|g" \
-        -e "s|@SUPERVISOR_HTTP_USERNAME@|$(escape_sed_replacement "$username")|g" \
-        -e "s|@SUPERVISOR_HTTP_PASSWORD@|$(escape_sed_replacement "$password")|g" \
+        -e "s|@SUPERVISOR_HTTP_USERNAME@|$(escape_sed_replacement "$rendered_username")|g" \
+        -e "s|@SUPERVISOR_HTTP_PASSWORD@|$(escape_sed_replacement "$rendered_password")|g" \
         "$template_conf" > "$tmp_conf"
     sudo install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
     rm -f "$tmp_conf"
 
-    echo "✅ 已启用 Supervisord HTTP 控制面板: http://${host}:${port}" >&2
+    if [ -n "$rendered_username" ]; then
+        echo "✅ 已启用 Supervisord HTTP 控制面板: http://${host}:${port} (需要登录)" >&2
+    else
+        echo "✅ 已启用 Supervisord HTTP 控制面板: http://${host}:${port} (无需登录)" >&2
+    fi
 }
 
 enable_builtin_supervisor_services() {

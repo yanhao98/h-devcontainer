@@ -85,8 +85,8 @@ ENV SUPERVISOR_ENABLED_SERVICES="desktop-lite,opencode" \
     SUPERVISOR_HTTP_ENABLED="true" \
     SUPERVISOR_HTTP_HOST="0.0.0.0" \
     SUPERVISOR_HTTP_PORT="9100" \
-    SUPERVISOR_HTTP_USERNAME="usr_vscode" \
-    SUPERVISOR_HTTP_PASSWORD="devcontainer"
+    SUPERVISOR_HTTP_USERNAME="" \
+    SUPERVISOR_HTTP_PASSWORD=""
 
 # Set the default editor and visual
 ENV EDITOR="code --wait"

@@ -22,8 +22,8 @@
 - `SUPERVISOR_HTTP_ENABLED=true`：启用 Supervisord Web 控制面板
 - `SUPERVISOR_HTTP_HOST=0.0.0.0`
 - `SUPERVISOR_HTTP_PORT=9100`
-- `SUPERVISOR_HTTP_USERNAME=usr_vscode`
-- `SUPERVISOR_HTTP_PASSWORD=devcontainer`
+- `SUPERVISOR_HTTP_USERNAME=`：可选；需要与 `SUPERVISOR_HTTP_PASSWORD` 同时设为非空才启用登录
+- `SUPERVISOR_HTTP_PASSWORD=`：可选；默认空，表示无需登录
 
 内置服务模板放在 `/etc/supervisor/conf.d.available/`，入口脚本会把启用项链接到 `/etc/supervisor/conf.d.enabled/`。当前内置服务包括 `desktop-lite` 和 `opencode`；`00-inet-http-server.conf.tpl` 会在启动时按环境变量渲染成最终的 HTTP 面板配置。
 
