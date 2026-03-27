@@ -98,6 +98,24 @@ waitForManagedProcess()
     done
 }
 
+waitForProcess()
+{
+    process_name="$1"
+    timeout_seconds="${2:-30}"
+    deadline=$((SECONDS + timeout_seconds))
+
+    while [ "$SECONDS" -lt "$deadline" ]; do
+        if pgrep -x "$process_name" > /dev/null; then
+            log "${process_name} 已就绪."
+            return 0
+        fi
+        sleep 1
+    done
+
+    log "等待 ${process_name} 就绪超时 (${timeout_seconds}s)."
+    return 1
+}
+
 #=== 启动流程 ================================================================
 
 log "** SCRIPT START **"
@@ -136,10 +154,13 @@ else
     startInBackgroundIfNotRunning "Xtigervnc" sudoUserIf "${common_options} -SecurityTypes None"
 fi
 
-# 3. 启动 dunst 通知守护进程 (notify-send 需要)
-if command -v dunst > /dev/null 2>&1 && ! pgrep -x dunst > /dev/null; then
-    sudoUserIf dunst &
-    log "dunst started."
+# 3. 等待 fluxbox 会话稳定后，再启动 dunst，避免它在 X server 尚未接受客户端时提前退出
+if waitForProcess "fluxbox" 30; then
+    if command -v dunst > /dev/null 2>&1; then
+        startInBackgroundIfNotRunning "dunst" sudoUserIf "dunst"
+    fi
+else
+    log "跳过 dunst 自启动，因为 fluxbox 未在超时前就绪。"
 fi
 
 # 5. 启动 noVNC (如果已安装): 提供浏览器 Web 端访问 VNC 的能力，监听 6080 端口

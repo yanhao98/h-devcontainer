@@ -32,6 +32,8 @@ if [ -n "$MISSING_DEPS" ]; then
 fi
 
 # 配置 (支持环境变量覆盖)
+DISPLAY="${DISPLAY:-:1}"
+DISPLAY_WAIT_TIMEOUT_SECONDS="${DISPLAY_WAIT_TIMEOUT_SECONDS:-30}"
 WALLPAPER_PATH="${WALLPAPER_PATH:-/tmp/wallpaper-info.jpg}"
 BG_COLOR="${BG_COLOR:-#333333}"
 BG_COLOR_END="${BG_COLOR_END:-#000000}"
@@ -39,17 +41,45 @@ TEXT_COLOR="${TEXT_COLOR:-white}"
 SHADOW_COLOR="${SHADOW_COLOR:-rgba(0,0,0,0.5)}"
 FONT="${FONT:-DejaVu-Sans-Bold}"
 DEFAULT_RESOLUTION="1920x1200"
+DISPLAY_READY=0
+
+wait_for_display() {
+    local deadline
+    local xdpyinfo_output=""
+
+    echo "等待桌面显示 $DISPLAY 就绪..." >&2
+    deadline=$((SECONDS + DISPLAY_WAIT_TIMEOUT_SECONDS))
+
+    while [ "$SECONDS" -lt "$deadline" ]; do
+        if xdpyinfo_output="$(xdpyinfo -display "$DISPLAY" 2>&1)"; then
+            echo "桌面显示 $DISPLAY 已就绪。" >&2
+            return 0
+        fi
+        sleep 1
+    done
+
+    echo "警告: 等待桌面显示 $DISPLAY 就绪超时，壁纸将仅生成不应用。" >&2
+    if [ -n "$xdpyinfo_output" ]; then
+        printf '%s\n' "$xdpyinfo_output" >&2
+    fi
+    return 1
+}
 
 # 获取信息
 HOST_NAME=$(hostname)
 # 尝试获取工作区名称，优先使用环境变量，否则使用当前目录名
 WORKSPACE_NAME="${DEVCONTAINER_WORKSPACE_FOLDER_BASENAME:-$(basename "$PWD")}"
 
+if wait_for_display; then
+    DISPLAY_READY=1
+fi
+
 # 获取分辨率
 RESOLUTION="$DEFAULT_RESOLUTION"
-if command -v xdpyinfo &> /dev/null; then
+if [ "$DISPLAY_READY" = "1" ]; then
     # 尝试从 xdpyinfo 获取分辨率，如果失败则保持默认
-    DETECTED_RES=$(xdpyinfo 2>/dev/null | awk '/dimensions:/ {print $2}' || true)
+    XDPYINFO_OUTPUT="$(xdpyinfo -display "$DISPLAY" 2>&1 || true)"
+    DETECTED_RES=$(printf '%s\n' "$XDPYINFO_OUTPUT" | awk '/dimensions:/ {print $2}')
     if [ -n "$DETECTED_RES" ]; then
         RESOLUTION="$DETECTED_RES"
     fi
@@ -99,6 +129,11 @@ convert -size "$RESOLUTION" -define gradient:direction=NorthWest gradient:"$BG_C
 echo "壁纸已生成: $WALLPAPER_PATH" >&2
 
 # 应用壁纸
+if [ "$DISPLAY_READY" != "1" ]; then
+    echo "警告: 桌面显示 $DISPLAY 尚未就绪，跳过壁纸应用。" >&2
+    exit 0
+fi
+
 echo "正在应用壁纸到 $DISPLAY..." >&2
 if command -v fbsetbg &> /dev/null; then
     fbsetbg -f "$WALLPAPER_PATH"
