@@ -1,0 +1,123 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# notify-send: 清洗不兼容的内部标签后再转发到真实二进制
+# 示例：
+notify-send "Markup Test" "<system-reminder>hello</system-reminder><button>Open</button>"
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: notify-send --help
+
+_path_without_bin_priority() {
+    local cleaned=()
+    local entry
+
+    IFS=':' read -r -a path_entries <<< "${PATH}"
+    for entry in "${path_entries[@]}"; do
+        if [ "${entry}" != "/usr/local/bin-priority" ]; then
+            cleaned+=("${entry}")
+        fi
+    done
+
+    (
+        IFS=':'
+        printf '%s' "${cleaned[*]}"
+    )
+}
+
+_sanitize_notification_text() {
+    perl -0pe '
+        s{<\s*br\s*/?\s*>}{"\n"}gei;
+        s{</\s*p\s*>}{"\n"}gei;
+        s{<\s*p(?:\s+[^>]*)?>}{}gi;
+        s{</?\s*system-reminder(?:\s+[^>]*)?>}{}gi;
+        s{</?\s*button(?:\s+[^>]*)?>}{" "}gei;
+        s{<(/?)([A-Za-z][A-Za-z0-9:-]*)([^>]*)>}{
+            my ($slash, $name, $attrs) = ($1, lc($2), $3);
+            my %allowed = map { $_ => 1 } qw(b i s u span big small sub sup tt);
+            $allowed{$name} ? "<$slash$name$attrs>" : "";
+        }ge;
+        s/[ \t]+\n/\n/g;
+        s/\n[ \t]+/\n/g;
+        s/[ \t]{2,}/ /g;
+        s/\n{3,}/\n\n/g;
+        s/^\s+//;
+        s/\s+$//;
+    '
+}
+
+if ! dpkg --status libnotify-bin >/dev/null 2>/dev/null; then
+    PATH="$(_path_without_bin_priority)" _apt-install-cached libnotify-bin >&2
+fi
+
+real_bin="$(_get-real-bin --silent notify-send)"
+forward_args=()
+summary=""
+body=""
+have_summary=false
+have_body=false
+parsing_options=true
+
+while [ "$#" -gt 0 ]; do
+    if [ "$parsing_options" = true ]; then
+        case "$1" in
+            --)
+                forward_args+=("$1")
+                parsing_options=false
+                shift
+                continue
+                ;;
+            -u|--urgency|-t|--expire-time|-a|--app-name|-i|--icon|-c|--category|-h|--hint|-r|--replace-id|-A|--action)
+                if [ "$#" -lt 2 ]; then
+                    exec "${real_bin}" "${forward_args[@]}" "$@"
+                fi
+                forward_args+=("$1" "$2")
+                shift 2
+                continue
+                ;;
+            --urgency=*|--expire-time=*|--app-name=*|--icon=*|--category=*|--hint=*|--replace-id=*|--action=*)
+                forward_args+=("$1")
+                shift
+                continue
+                ;;
+            -e|-p|-w|-v|-?|-?*|--help|--version)
+                forward_args+=("$1")
+                shift
+                continue
+                ;;
+            -*)
+                forward_args+=("$1")
+                shift
+                continue
+                ;;
+        esac
+    fi
+
+    if [ "$have_summary" = false ]; then
+        summary="$1"
+        have_summary=true
+    elif [ "$have_body" = false ]; then
+        body="$1"
+        have_body=true
+    else
+        forward_args+=("$1")
+    fi
+    shift
+done
+
+if [ "$have_summary" = true ]; then
+    summary="$(printf '%s' "${summary}" | _sanitize_notification_text)"
+    forward_args+=("${summary}")
+fi
+
+if [ "$have_body" = true ]; then
+    body="$(printf '%s' "${body}" | _sanitize_notification_text)"
+    forward_args+=("${body}")
+fi
+
+exec "${real_bin}" "${forward_args[@]}"
