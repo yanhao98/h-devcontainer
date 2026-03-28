@@ -5,6 +5,21 @@ set -o pipefail   # 对应 -o pipefail
 
 # @verify: vp --version
 
+search_dir="$PWD"
+while true; do
+    local_vp="${search_dir}/node_modules/.bin/vp"
+    if [[ -x "$local_vp" ]]; then
+        echo -e "\e[90m→ exec ${local_vp} $*\e[0m" >&2
+        exec "$local_vp" "$@"
+    fi
+
+    if [[ "$search_dir" == "/" ]]; then
+        break
+    fi
+
+    search_dir="$(dirname "$search_dir")"
+done
+
 add-bun-priority-bin-pkg vite-plus
 
 BUN_ARGS=("--bun")
