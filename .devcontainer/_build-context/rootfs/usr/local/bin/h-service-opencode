@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+set -o errexit
+set -o nounset
+set -o pipefail
+
+typeset raw_pids
+typeset -a pids
+raw_pids="$(lsof -tiTCP:4096 -sTCP:LISTEN 2>/dev/null || true)"
+
+if [[ -n "$raw_pids" ]]; then
+    pids=(${(f)raw_pids})
+else
+    pids=()
+fi
+
+if (( ${#pids[@]} )); then
+    echo "⚠️  检测到 4096 端口被占用，先发送 SIGTERM: ${pids[*]}" >&2
+    kill -TERM -- "${pids[@]}" 2>/dev/null || true
+
+    for pid in "${pids[@]}"; do
+        for _ in {1..10}; do
+            if ! kill -0 "$pid" 2>/dev/null; then
+                break
+            fi
+            sleep 0.2
+        done
+
+        if kill -0 "$pid" 2>/dev/null; then
+            echo "⚠️  进程 $pid 未退出，改用 SIGKILL" >&2
+            kill -KILL "$pid" 2>/dev/null || true
+        fi
+    done
+fi
+
+echo "🚀 正在启动 opencode 服务..." >&2
+exec /usr/local/bin-priority/opencode serve --port 4096 --hostname 0.0.0.0
+#  --print-logs --log-level=DEBUG
