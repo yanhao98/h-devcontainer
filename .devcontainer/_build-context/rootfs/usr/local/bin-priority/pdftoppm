@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# pdftoppm: 将 PDF 页面转换为位图图像
+# 示例：
+pdftoppm -jpeg input.pdf output               # 转为 JPEG 序列
+pdftoppm -png -r 300 input.pdf page          # 以 300 DPI 转为 PNG
+pdftoppm -f 1 -l 3 -jpeg input.pdf preview   # 仅转换第 1-3 页
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: pdftoppm -v 2>&1 | head -1
+exec _apt-shim-exec poppler-utils pdftoppm "$@"

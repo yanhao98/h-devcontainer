@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# pdfimages: 提取或列出 PDF 内嵌图片
+# 示例：
+pdfimages -list input.pdf                     # 列出图片信息
+pdfimages -all input.pdf images/out           # 提取所有图片
+pdfimages -j input.pdf images/page            # 优先保留 JPEG 原始格式
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: pdfimages -v 2>&1 | head -1
+exec _apt-shim-exec poppler-utils pdfimages "$@"

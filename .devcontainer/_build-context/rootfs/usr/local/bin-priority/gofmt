@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# gofmt: Go 源码格式化工具
+# 示例：
+gofmt main.go                               # 格式化单个文件并输出到 stdout
+gofmt -w main.go                            # 直接写回文件
+gofmt -w ./...                              # 批量格式化 Go 源码
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: gofmt -h 2>&1 | head -1
+exec _apt-shim-exec golang-go gofmt "$@"

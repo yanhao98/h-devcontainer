@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# go: Go 语言工具链入口
+# 示例：
+go version                                  # 查看 Go 版本
+go run main.go                              # 直接运行程序
+go test ./...                               # 运行所有测试
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: go version
+exec _apt-shim-exec golang-go go "$@"

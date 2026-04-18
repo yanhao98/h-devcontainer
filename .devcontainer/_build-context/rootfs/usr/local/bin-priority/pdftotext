@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# pdftotext: 从 PDF 中提取文本
+# 示例：
+pdftotext input.pdf output.txt                # 提取文本到文件
+pdftotext -layout input.pdf output.txt        # 尽量保留版式
+pdftotext -f 1 -l 5 input.pdf output.txt      # 只提取指定页范围
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: pdftotext -v 2>&1 | head -1
+exec _apt-shim-exec poppler-utils pdftotext "$@"

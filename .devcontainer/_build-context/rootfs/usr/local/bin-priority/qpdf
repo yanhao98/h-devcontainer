@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# qpdf: PDF 结构操作工具
+# 示例：
+qpdf --empty --pages a.pdf b.pdf -- merged.pdf    # 合并 PDF
+qpdf input.pdf --pages . 1-5 -- part.pdf          # 拆分页范围
+qpdf --password=secret --decrypt in.pdf out.pdf   # 解密 PDF
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: qpdf --version
+exec _apt-shim-exec qpdf qpdf "$@"
