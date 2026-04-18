@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# lofromtemplate: 从 LibreOffice 模板新建文档
+# 示例：
+lofromtemplate template.ott                    # 从 Writer 模板创建文档
+lofromtemplate template.ots                    # 从 Calc 模板创建表格
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: lofromtemplate --help 2>&1 | head -1
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-common lofromtemplate "$@"

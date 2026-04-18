@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# loffice: LibreOffice 精简命令入口
+# 示例：
+loffice --writer document.docx                # 用 Writer 打开文档
+loffice --headless --convert-to pdf file.docx # 无界面转换 PDF
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: loffice --version
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-common loffice "$@"

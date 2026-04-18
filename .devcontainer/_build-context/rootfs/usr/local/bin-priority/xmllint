@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# xmllint: XML 校验、格式化与 XPath 查询工具
+# 示例：
+xmllint --format file.xml                    # 格式化 XML
+xmllint --noout file.xml                     # 仅校验 XML 是否合法
+xmllint --xpath '//book/title/text()' file.xml  # 执行 XPath 查询
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: xmllint --version
+exec _apt-shim-exec libxml2-utils xmllint "$@"

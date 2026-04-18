@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# pandoc: 通用文档格式转换工具
+# 示例：
+pandoc README.md -o README.html              # Markdown 转 HTML
+pandoc notes.md -o notes.pdf                # 转换为 PDF
+pandoc report.docx -t gfm -o report.md      # Word 转 Markdown
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: pandoc --version
+exec _apt-shim-exec pandoc pandoc "$@"

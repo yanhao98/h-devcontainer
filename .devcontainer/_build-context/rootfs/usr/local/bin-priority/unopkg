@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# unopkg: LibreOffice UNO 扩展管理工具
+# 示例：
+unopkg list                                  # 列出已安装扩展
+unopkg add extension.oxt                     # 安装扩展
+unopkg remove extension-id                   # 卸载扩展
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: unopkg --help 2>&1 | head -1
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-common unopkg "$@"

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# soffice: LibreOffice 底层命令入口
+# 示例：
+soffice --headless --convert-to pdf file.docx   # 转换为 PDF
+soffice --writer document.docx                  # 用 Writer 打开文档
+soffice --version                               # 查看版本
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: soffice --version
+
+_libreoffice-init-config
+exec _apt-shim-exec libreoffice-core soffice "$@"
