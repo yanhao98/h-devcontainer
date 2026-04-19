@@ -1,0 +1,67 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+add-bun-priority-bin-pkg opencode-ai
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
+CLI_ARGS=()
+# Work around upstream symlink-path plugin install regression:
+# https://github.com/anomalyco/opencode/issues/23312
+OPENCODE_XDG_CONFIG_HOME="/vscode/opencode--xdg-config-home"
+OPENCODE_XDG_CACHE_HOME="/vscode/opencode--xdg-cache-home"
+OPENCODE_CONFIG_DIR_REAL="${OPENCODE_XDG_CONFIG_HOME}/opencode"
+OPENCODE_CACHE_DIR_REAL="${OPENCODE_XDG_CACHE_HOME}/opencode"
+LEGACY_OPENCODE_CONFIG_DIR="/vscode/opencode--home_.config_opencode"
+LEGACY_OPENCODE_CACHE_DIR="/vscode/opencode--home_.cache_opencode"
+
+migrate_opencode_dir() {
+  local legacy_dir="$1"
+  local target_dir="$2"
+  local label="$3"
+  local migration_stamp="${target_dir}/.h-devcontainers-legacy-migrated"
+
+  mkdir -p "$target_dir"
+
+  if [[ ! -d "$legacy_dir" ]] || [[ "$legacy_dir" == "$target_dir" ]] || [[ -f "$migration_stamp" ]]; then
+    return 0
+  fi
+
+  echo "📦 同步现有 ${label}: ${legacy_dir} → ${target_dir}" >&2
+  cp -rn "$legacy_dir"/. "$target_dir"/
+  touch "$migration_stamp"
+}
+
+migrate_opencode_dir "$LEGACY_OPENCODE_CONFIG_DIR" "$OPENCODE_CONFIG_DIR_REAL" "Opencode 配置"
+migrate_opencode_dir "$LEGACY_OPENCODE_CACHE_DIR" "$OPENCODE_CACHE_DIR_REAL" "Opencode 缓存"
+
+_ensure-vscode-symlink "$OPENCODE_CONFIG_DIR_REAL" ~/.config/opencode
+_ensure-vscode-symlink "$OPENCODE_CACHE_DIR_REAL" ~/.cache/opencode
+_ensure-vscode-symlink /vscode/opencode--home_.cache_oh_my_opencode ~/.cache/oh-my-opencode
+
+export XDG_CONFIG_HOME="$OPENCODE_XDG_CONFIG_HOME"
+export XDG_CACHE_HOME="$OPENCODE_XDG_CACHE_HOME"
+
+# 初始化 Opencode 配置文件
+init_opencode_config() {
+  local config_file="${XDG_CONFIG_HOME}/opencode/opencode.jsonc"
+  
+  if [[ ! -f "$config_file" ]]; then
+    mkdir -p "$(dirname "$config_file")"
+    cat > "$config_file" <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json"
+}
+EOF
+    echo "⚙️  已初始化配置文件: $config_file" >&2
+  fi
+}
+
+init_opencode_config
+
+# export OPENCODE_CONFIG_DIR=/vscode/opencode-config
+
+echo -e "\e[90m→ exec ${TARGET_BIN} ${CLI_ARGS[*]} $*\e[0m" >&2
+
+exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
