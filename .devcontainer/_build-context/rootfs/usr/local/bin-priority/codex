@@ -32,6 +32,7 @@ model = "gpt-5.4"
 review_model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 model_provider = "Bifrost"
+model_context_window = 500000
 
 [model_providers.Bifrost]
 name = "HBifrost"
