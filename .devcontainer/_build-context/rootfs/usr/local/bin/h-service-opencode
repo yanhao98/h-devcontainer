@@ -22,7 +22,7 @@ if (( ${#pids[@]} )); then
             if ! kill -0 "$pid" 2>/dev/null; then
                 break
             fi
-            sleep 0.2
+            sleep 0.5
         done
 
         if kill -0 "$pid" 2>/dev/null; then
