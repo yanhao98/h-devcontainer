@@ -6,12 +6,13 @@ set -o pipefail   # 对应 -o pipefail
 # 资料:
 #   https://download.docker.com/linux/static/stable/
 #   https://github.com/moby/moby/releases
+#   https://github.com/docker/buildx/releases
 
 # 确定架构
 arch="$(uname -m)"
 case "$arch" in
-    x86_64)  arch="x86_64" ;;
-    aarch64) arch="aarch64" ;;
+    x86_64)  buildx_arch="amd64" ;;
+    aarch64) buildx_arch="arm64" ;;
     *) echo "❌ 不支持的架构: $arch" >&2; exit 1 ;;
 esac
 
@@ -22,9 +23,13 @@ echo "📦 Docker CLI v${DOCKER_VERSION} (${arch})" >&2
 DOCKER_COMPOSE_VERSION="$(_curl-fsSL--compressed https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')"
 echo "📦 Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})" >&2
 
+DOCKER_BUILDX_VERSION="$(_curl-fsSL--compressed https://api.github.com/repos/docker/buildx/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')"
+echo "📦 Docker Buildx ${DOCKER_BUILDX_VERSION} (linux-${buildx_arch})" >&2
+
 # 统一的下载缓存目录
 sudo mkdir -p /vscode/downloads || true
-sudo chown -R "$(whoami):$(whoami)" /vscode/downloads || true
+cache_owner="${SUDO_USER:-$(whoami)}"
+sudo chown -R "${cache_owner}:${cache_owner}" /vscode/downloads || true
 cache_dir="/vscode/downloads"
 
 # 下载文件到缓存（如果尚未缓存）
@@ -51,8 +56,13 @@ compose_cached="$cache_dir/docker-compose-${DOCKER_COMPOSE_VERSION}-${arch}"
 _download_cached "Docker Compose ${DOCKER_COMPOSE_VERSION} (${arch})" "$compose_cached" \
     "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-${arch}"
 
+# Docker Buildx 下载
+buildx_cached="$cache_dir/docker-buildx-${DOCKER_BUILDX_VERSION}-linux-${buildx_arch}"
+_download_cached "Docker Buildx ${DOCKER_BUILDX_VERSION} (linux-${buildx_arch})" "$buildx_cached" \
+    "https://github.com/docker/buildx/releases/download/${DOCKER_BUILDX_VERSION}/buildx-${DOCKER_BUILDX_VERSION}.linux-${buildx_arch}"
+
 # 安装
-echo "📥 正在安装 Docker CLI 和 Docker Compose 到系统目录..." >&2
+echo "📥 正在安装 Docker CLI、Docker Compose 和 Docker Buildx 到系统目录..." >&2
 
 tmp="$(mktemp -d)"
 tar -xzf "$cached_file" -C "$tmp" docker/docker
@@ -60,11 +70,14 @@ sudo install -m 755 "$tmp/docker/docker" /usr/local/bin/docker
 
 sudo mkdir -p /usr/local/lib/docker/cli-plugins
 sudo install -m 755 "$compose_cached" /usr/local/lib/docker/cli-plugins/docker-compose
+sudo install -m 755 "$buildx_cached" /usr/local/lib/docker/cli-plugins/docker-buildx
 sudo ln -sf /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+sudo ln -sf /usr/local/lib/docker/cli-plugins/docker-buildx /usr/local/bin/docker-buildx
 
 rm -rf "$tmp"
 
 # 验证安装
-echo "✅ Docker 和 Docker Compose 安装成功：" >&2
+echo "✅ Docker、Docker Compose 和 Docker Buildx 安装成功：" >&2
 echo "   docker: $(/usr/local/bin/docker --version)" >&2
 echo "   docker-compose: $(/usr/local/bin/docker-compose --version)" >&2
+echo "   docker buildx: $(/usr/local/bin/docker buildx version)" >&2
