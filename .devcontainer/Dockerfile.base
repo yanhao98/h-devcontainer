@@ -98,7 +98,7 @@ ENV GIT_EDITOR="code --wait"
 COPY _build-context/rootfs /
 ENV PATH="${BUN_INSTALL_BIN}:${PATH}"
 ENV PATH="${NPM_CONFIG_PREFIX}/bin:${PATH}"
-ENV PATH="${PNPM_HOME}:${PATH}"
+ENV PATH="${PNPM_HOME}/bin:${PNPM_HOME}:${PATH}"
 ENV PATH="/usr/local/bin-mcp-stdio:${PATH}"
 # 优先级脚本，确保在 PATH 最前面
 ENV PATH="/usr/local/bin-priority:${PATH}"

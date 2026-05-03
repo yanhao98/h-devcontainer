@@ -20,7 +20,7 @@ case "${arch##*-}" in \
 	*) echo "❌ 错误: 不支持的架构: $arch" >&2; exit 1 ;; \
 esac
 
-asset_name="pnpm-linux-${build}"
+base_asset_name="pnpm-linux-${build}"
 
 # 统一的下载缓存目录
 sudo mkdir -p /vscode/downloads || true
@@ -35,18 +35,25 @@ fi
 
 echo "🔍 正在获取 pnpm 版本信息..." >&2
 release_info=$(_curl-fsSL--compressed "$release_api_uri")
-version=$(echo "$release_info" | jq -r ".tag_name")
-pnpm_uri=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
-expected_checksum=$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$asset_name\") | .digest" | cut -d: -f2)
+version=$(printf '%s\n' "$release_info" | jq -r ".tag_name // empty")
+asset_name=$(printf '%s\n' "$release_info" | jq -r --arg name "$base_asset_name" '[.assets[] | select(.name == $name or .name == ($name + ".tar.gz"))][0].name // empty')
+pnpm_uri=$(printf '%s\n' "$release_info" | jq -r --arg name "$asset_name" '.assets[] | select(.name == $name) | .browser_download_url // empty')
+expected_checksum=$(printf '%s\n' "$release_info" | jq -r --arg name "$asset_name" '.assets[] | select(.name == $name) | (.digest // "") | sub("^sha256:"; "")')
 
-if [[ -z "$version" || -z "$pnpm_uri" || -z "$expected_checksum" ]]; then
+if [[ -z "$version" || -z "$asset_name" || -z "$pnpm_uri" || -z "$expected_checksum" ]]; then
     echo "❌ 错误: 无法从 GitHub API 获取 pnpm 的发布信息。" >&2
     echo "API URI: $release_api_uri" >&2
     exit 1
 fi
 
+echo "📦 找到 pnpm ${version} (${asset_name})" >&2
+
 # 缓存路径（包含版本号）
-cached_pnpm_path="/vscode/downloads/${asset_name}-${version}"
+if [[ "$asset_name" == *.tar.gz ]]; then
+    cached_pnpm_path="/vscode/downloads/${asset_name%.tar.gz}-${version}.tar.gz"
+else
+    cached_pnpm_path="/vscode/downloads/${asset_name}-${version}"
+fi
 
 # 检查是否存在且校验通过
 need_download=true
@@ -62,7 +69,7 @@ if [[ -f "$cached_pnpm_path" ]]; then
 fi
 
 if [[ "$need_download" == "true" ]]; then
-    echo "⬇️ 正在下载 pnpm ${version} ($build)..." >&2
+    echo "⬇️ 正在下载 pnpm ${version} (${asset_name})..." >&2
     _curl-fsSL--compressed -o "$cached_pnpm_path" "$pnpm_uri" || {
         echo "❌ 下载失败: $pnpm_uri" >&2; exit 1;
     }
@@ -81,13 +88,39 @@ PNPM_HOME="${PNPM_HOME:-$HOME/.pnpm}"
 tmp_dir="$(mktemp -d)" || { echo "❌ 创建临时目录失败" >&2; exit 1; }
 trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
 
-cp "$cached_pnpm_path" "$tmp_dir/pnpm"
+if [[ "$asset_name" == *.tar.gz ]]; then
+    tar -xzf "$cached_pnpm_path" -C "$tmp_dir"
+else
+    cp "$cached_pnpm_path" "$tmp_dir/pnpm"
+fi
+
+if [[ ! -f "$tmp_dir/pnpm" ]]; then
+    echo "❌ pnpm 归档文件中未找到 pnpm 可执行文件" >&2
+    exit 1
+fi
+
 chmod +x "$tmp_dir/pnpm"
 
 ENV="$HOME/.zshrc" SHELL="$(which zsh)" "$tmp_dir/pnpm" setup || { echo "❌ pnpm setup 失败" >&2; exit 1; }
 
 # 配置 store 目录
 cmd_pnpm="$PNPM_HOME/pnpm"
+if [[ -x "$PNPM_HOME/bin/pnpm" ]]; then
+    if [[ -L "$cmd_pnpm" ]]; then
+        rm -f "$cmd_pnpm"
+    fi
+
+    cat > "$cmd_pnpm" <<'EOF'
+#!/usr/bin/env sh
+exec "$(dirname "$0")/bin/pnpm" "$@"
+EOF
+    chmod +x "$cmd_pnpm"
+fi
+if [[ ! -x "$cmd_pnpm" ]]; then
+    echo "❌ pnpm setup 完成后未找到 pnpm 可执行文件" >&2
+    exit 1
+fi
+
 $cmd_pnpm config set store-dir /vscode/pnpm/pnpm-store || { echo "❌ pnpm config set store-dir 失败" >&2; exit 1; }
 
 # 安装 shell 补全
