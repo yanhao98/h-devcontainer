@@ -10,6 +10,8 @@ if false; then
 java -version                       # 显示 Java 版本
 java -cp /path/to/classes MyApp     # 运行 Java 应用程序
 java -jar app.jar                   # 运行 JAR 文件
+
+update-alternatives --config java   # 配置默认 Java 版本
 #-------------------------------------------------------------------------------------------------------------
 fi
 

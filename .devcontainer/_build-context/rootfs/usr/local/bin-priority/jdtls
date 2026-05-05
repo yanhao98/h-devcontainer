@@ -1,0 +1,27 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# jdtls: Eclipse Java language server
+# 示例：
+jdtls                               # 启动 Java LSP 服务
+JDTLS_DATA_DIR=/tmp/jdtls-data jdtls # 指定 workspace data 目录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: timeout 5s jdtls >/tmp/jdtls-verify.log 2>&1 || [ $? -eq 124 ]
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+jdtls_bin="$(_get-real-bin --silent jdtls)"
+
+if [ -z "$jdtls_bin" ]; then
+    echo "⚠️  jdtls 未安装，正在自动安装..." >&2
+    h-setup-jdtls-bin >&2
+fi
+
+exec _exec-real-bin jdtls "$@"

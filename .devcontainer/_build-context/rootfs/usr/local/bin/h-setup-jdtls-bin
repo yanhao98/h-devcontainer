@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 资料:
+#   https://github.com/eclipse-jdtls/eclipse.jdt.ls
+#   https://download.eclipse.org/jdtls/milestones/
+
+JDTLS_VERSION="${JDTLS_VERSION:-1.58.0}"
+JDTLS_BUILD="${JDTLS_BUILD:-202604151538}"
+JDTLS_HOME="${JDTLS_HOME:-/usr/local/share/jdtls}"
+archive_name="jdt-language-server-${JDTLS_VERSION}-${JDTLS_BUILD}.tar.gz"
+base_url="https://download.eclipse.org/jdtls/milestones/${JDTLS_VERSION}"
+archive_url="${base_url}/${archive_name}"
+checksum_url="${archive_url}.sha256"
+
+sudo mkdir -p /vscode/downloads || true
+cache_owner="${SUDO_USER:-$(whoami)}"
+sudo chown -R "${cache_owner}:${cache_owner}" /vscode/downloads || true
+cached_archive="/vscode/downloads/${archive_name}"
+
+echo "📦 jdtls ${JDTLS_VERSION}-${JDTLS_BUILD}" >&2
+
+if ! dpkg --status openjdk-21-jdk >/dev/null 2>&1; then
+    echo "⚠️  OpenJDK 21 未安装，正在自动安装..." >&2
+    _apt-install-cached openjdk-21-jdk >&2
+fi
+
+need_download=true
+if [[ -f "$cached_archive" ]]; then
+    echo "📦 发现已缓存的 jdtls 归档文件，正在验证校验和..." >&2
+    expected_checksum="$(_curl-fsSL--compressed "$checksum_url" | awk '{print $1}')"
+    if _verify_checksum "$cached_archive" "$expected_checksum" >&2; then
+        echo "✅ 校验和验证成功，跳过下载。" >&2
+        need_download=false
+    else
+        echo "⚠️  校验和不匹配或验证失败，将重新下载。" >&2
+    fi
+fi
+
+if [[ "$need_download" == "true" ]]; then
+    echo "⬇️  正在下载 jdtls ${JDTLS_VERSION}..." >&2
+    download_tmp="${cached_archive}.tmp.$$"
+    rm -f "$download_tmp"
+    _curl-fsSL--compressed -o "$download_tmp" "$archive_url" || {
+        rm -f "$download_tmp"
+        echo "❌ 下载失败: $archive_url" >&2
+        exit 1
+    }
+
+    echo "🔐 正在验证下载的文件..." >&2
+    expected_checksum="$(_curl-fsSL--compressed "$checksum_url" | awk '{print $1}')"
+    if ! _verify_checksum "$download_tmp" "$expected_checksum" >&2; then
+        rm -f "$download_tmp"
+        echo "❌ 下载的文件校验失败" >&2
+        exit 1
+    fi
+    mv "$download_tmp" "$cached_archive"
+    echo "✅ 校验和验证成功。" >&2
+fi
+
+tmp_dir="$(mktemp -d)"
+trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
+
+mkdir -p "$tmp_dir/jdtls"
+tar -xzf "$cached_archive" -C "$tmp_dir/jdtls"
+
+sudo rm -rf "$JDTLS_HOME"
+sudo mkdir -p "$(dirname "$JDTLS_HOME")"
+sudo cp -R "$tmp_dir/jdtls" "$JDTLS_HOME"
+
+wrapper_tmp="$tmp_dir/jdtls-wrapper"
+cat > "$wrapper_tmp" <<'EOF'
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+JDTLS_HOME="${JDTLS_HOME:-/usr/local/share/jdtls}"
+PROJECT_ROOT="${PWD:-$HOME}"
+PROJECT_KEY="$(printf '%s' "$PROJECT_ROOT" | sha1sum | cut -d' ' -f1)"
+DATA_DIR="${JDTLS_DATA_DIR:-${HOME}/.cache/jdtls/workspaces/${PROJECT_KEY}}"
+
+if [[ ! -x "$JDTLS_HOME/bin/jdtls" ]]; then
+    echo "No executable jdtls wrapper found at $JDTLS_HOME/bin/jdtls" >&2
+    exit 1
+fi
+
+mkdir -p "$DATA_DIR"
+
+has_data_arg=false
+for arg in "$@"; do
+    [[ "$arg" == "-data" || "$arg" == "--data" ]] && has_data_arg=true
+done
+
+if [[ "$has_data_arg" == "true" ]]; then
+    exec "$JDTLS_HOME/bin/jdtls" "$@"
+else
+    exec "$JDTLS_HOME/bin/jdtls" -data "$DATA_DIR" "$@"
+fi
+EOF
+
+sudo install -m 755 "$wrapper_tmp" /usr/local/bin/jdtls
+
+echo "✅ jdtls 安装成功：/usr/local/bin/jdtls" >&2
