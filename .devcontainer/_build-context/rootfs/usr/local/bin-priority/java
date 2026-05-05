@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# java: Java 虚拟机和运行时环境
+# 示例：
+java -version                       # 显示 Java 版本
+java -cp /path/to/classes MyApp     # 运行 Java 应用程序
+java -jar app.jar                   # 运行 JAR 文件
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: java -version
+exec _apt-shim-exec openjdk-21-jdk java "$@"

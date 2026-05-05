@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# javac: Java 编译器
+# 示例：
+javac -version                      # 显示 javac 版本
+javac HelloWorld.java               # 编译 Java 源文件
+javac -d classes/*.java             # 编译多个文件到指定目录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: javac -version
+exec _apt-shim-exec openjdk-21-jdk javac "$@"
