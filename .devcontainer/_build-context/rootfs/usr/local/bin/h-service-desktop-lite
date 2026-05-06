@@ -3,6 +3,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+echo "👤 desktop-lite 服务运行用户: $(id -un) (uid=$(id -u), gid=$(id -g))" >&2
 echo "🖥️  正在准备 desktop-lite 服务..." >&2
 DESKTOP_LITE_AUTOSTART=0 h-setup-desktop-lite >&2
 
