@@ -18,13 +18,38 @@ escape_sed_replacement() {
     printf '%s' "${1:-}" | sed 's/[|&\\]/\\&/g'
 }
 
+# 非 root 时自动加 sudo；root 运行时直接执行，避免容器入口链路无谓经过 sudo。
+sudoIf() {
+    if [ "$(id -u)" -ne 0 ]; then
+        sudo "$@"
+    else
+        "$@"
+    fi
+}
+
+execSudoIf() {
+    if [ "$(id -u)" -ne 0 ]; then
+        local env_entry
+        local -a preserved_env
+
+        preserved_env=(/usr/bin/env)
+        while IFS= read -r -d '' env_entry; do
+            preserved_env+=("$env_entry")
+        done < /proc/self/environ
+
+        exec sudo "${preserved_env[@]}" "$@"
+    else
+        exec "$@"
+    fi
+}
+
 prepare_supervisor_runtime() {
     echo "📁 准备 supervisord 运行目录..." >&2
-    sudo install -d -o root -g usr_vscode -m 0775 /var/log/supervisor
-    sudo install -d -o root -g root -m 0755 /etc/supervisor/conf.d.enabled
-    sudo rm -f /var/run/supervisor.sock /var/run/supervisord.pid
-    sudo find /etc/supervisor/conf.d.enabled -maxdepth 1 -type f -name '*.conf' -delete
-    sudo find /etc/supervisor/conf.d.enabled -maxdepth 1 -type l -name '*.conf' -delete
+    sudoIf install -d -o root -g usr_vscode -m 0775 /var/log/supervisor
+    sudoIf install -d -o root -g root -m 0755 /etc/supervisor/conf.d.enabled
+    sudoIf rm -f /var/run/supervisor.sock /var/run/supervisord.pid
+    sudoIf find /etc/supervisor/conf.d.enabled -maxdepth 1 -type f -name '*.conf' -delete
+    sudoIf find /etc/supervisor/conf.d.enabled -maxdepth 1 -type l -name '*.conf' -delete
 }
 
 configure_supervisor_http_panel() {
@@ -38,7 +63,7 @@ configure_supervisor_http_panel() {
     local rendered_password=""
     local tmp_conf
 
-    sudo rm -f "$http_conf"
+    sudoIf rm -f "$http_conf"
 
     if ! is_truthy "${SUPERVISOR_HTTP_ENABLED:-true}"; then
         echo "ℹ️  已禁用 Supervisord HTTP 控制面板。" >&2
@@ -64,7 +89,7 @@ configure_supervisor_http_panel() {
         -e "s|@SUPERVISOR_HTTP_USERNAME@|$(escape_sed_replacement "$rendered_username")|g" \
         -e "s|@SUPERVISOR_HTTP_PASSWORD@|$(escape_sed_replacement "$rendered_password")|g" \
         "$template_conf" > "$tmp_conf"
-    sudo install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
+    sudoIf install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
     rm -f "$tmp_conf"
 
     if [ -n "$rendered_username" ]; then
@@ -92,7 +117,7 @@ enable_builtin_supervisor_services() {
             continue
         fi
 
-        sudo ln -sf "${available_dir}/${service_name}.conf" "${enabled_dir}/${service_name}.conf"
+        sudoIf ln -sf "${available_dir}/${service_name}.conf" "${enabled_dir}/${service_name}.conf"
         echo "✅ 已启用内置服务: ${service_name}" >&2
     done
 }
@@ -110,7 +135,7 @@ main() {
     enable_builtin_supervisor_services
 
     echo "🚀 交由 supervisord 接管容器主进程..." >&2
-    exec sudo --preserve-env /usr/bin/env PATH="$PATH" /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+    execSudoIf /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
 }
 
 main "$@"

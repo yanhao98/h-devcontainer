@@ -23,8 +23,7 @@
 当前容器里，Supervisor 的启动链路大致是：
 
 ```text
-ENTRYPOINT.sh (usr_vscode)
-  -> sudo
+ENTRYPOINT.sh (root)
   -> supervisord (root)
   -> [program:desktop-lite] / [program:opencode]
   -> setuid 到 usr_vscode

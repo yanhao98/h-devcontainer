@@ -21,6 +21,8 @@
   "containerEnv": {
     "TZ": "${localEnv:TZ:Asia/Shanghai}"
   },
+  "containerUser": "root",
+  "remoteUser": "usr_vscode",
   "customizations": {
     "vscode": {
       "extensions": [
