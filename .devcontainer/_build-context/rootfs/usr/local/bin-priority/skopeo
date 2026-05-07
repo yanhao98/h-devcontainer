@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# skopeo: 容器镜像仓库与镜像传输工具，无需本地 Docker daemon
+# 示例：
+skopeo inspect docker://docker.io/library/alpine:latest       # 查看远程镜像元数据
+skopeo copy docker://docker.io/library/alpine:latest dir:alpine # 复制镜像到目录
+skopeo list-tags docker://docker.io/library/alpine            # 列出镜像标签
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: skopeo --version
+exec _apt-shim-exec skopeo skopeo "$@"
