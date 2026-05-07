@@ -105,9 +105,9 @@ ENV PATH="/usr/local/bin-priority:${PATH}"
 # 让普通用户也可以编辑 bin-priority 中的脚本
 RUN sudo chmod a+w /usr/local/bin-priority /usr/local/bin-priority/*
 
-# 配置 sudo 的 secure_path，确保 sudo 能找到 bin-priority 中的脚本
-# 验证: sudo -l | grep -q 'bin-priority'
-# 验证: echo $PATH && sudo env | grep PATH
+# 配置 sudo 保留 devcontainer 调用方环境，确保 ENTRYPOINT 提权后仍继承 PATH/BASH_ENV 等变量。
+# 验证: sudo -l | grep -q '!env_reset'
+# 验证: echo "$PATH" && sudo env | grep '^PATH='
 RUN sudo chmod 0440 /etc/sudoers.d/secure_path_config
 
 # 设置入口点

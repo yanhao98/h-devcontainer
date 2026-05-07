@@ -1,7 +1,14 @@
-# sudo 默认会忽略用户的 $PATH，使用自己的 secure_path 查找可执行文件。
-# 这里将 /usr/local/bin-priority 加入 secure_path 最前面，
-# 确保通过 sudo 执行命令时也能触发 bin-priority 中的自动安装 shim 脚本。
-# 注意：即使使用 sudo -E 或 sudo --preserve-env，PATH 仍会被 secure_path 覆盖。
-# 如果需要把调用方的完整 PATH 传给 sudo 后启动的长期进程，需要在 sudo 之后显式重设，
-# 例如：sudo --preserve-env /usr/bin/env PATH="$PATH" <command>
-Defaults secure_path="/usr/local/bin-priority:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Dev container 中 usr_vscode 已配置 NOPASSWD sudo。
+# ENTRYPOINT 默认以 usr_vscode 启动，然后通过 `sudo "$0" "$@"` 重进自身为 root 来启动 supervisord。
+# 因此 sudo 需要尽量保留调用方环境，否则 BASH_ENV、完整 PATH 和未来新增的普通环境变量会在重进 root 时丢失。
+
+# 关闭 sudo 默认的环境重置；否则 sudo 只保留少量安全变量。
+Defaults !env_reset
+
+# 关闭 sudo 的固定 secure_path；否则 sudo 会用自己的 PATH 覆盖 devcontainer 当前 PATH。
+Defaults !secure_path
+
+# BASH_ENV/ENV 默认在 sudo 的删除列表中；移除后，非交互式 bash 的初始化入口能通过 sudo 传递。
+Defaults env_delete -= "BASH_ENV ENV"
+
+# 注意：LD_PRELOAD 这类变量可能在 setuid sudo 启动前已被动态链接器剥离，sudoers 无法原生保留。

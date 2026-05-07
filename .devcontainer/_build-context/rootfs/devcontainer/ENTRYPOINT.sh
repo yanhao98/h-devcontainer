@@ -18,13 +18,22 @@ escape_sed_replacement() {
     printf '%s' "${1:-}" | sed 's/[|&\\]/\\&/g'
 }
 
+exec_self_as_root_if_needed() {
+    if [ "$(id -u)" -eq 0 ]; then
+        return
+    fi
+
+    echo "🔐 ENTRYPOINT 初始用户: $(id -un) (uid=$(id -u), gid=$(id -g))，通过 sudo 切换到 root 启动 supervisord..." >&2
+    exec sudo "$0" "$@"
+}
+
 prepare_supervisor_runtime() {
     echo "📁 准备 supervisord 运行目录..." >&2
-    sudo install -d -o root -g usr_vscode -m 0775 /var/log/supervisor
-    sudo install -d -o root -g root -m 0755 /etc/supervisor/conf.d.enabled
-    sudo rm -f /var/run/supervisor.sock /var/run/supervisord.pid
-    sudo find /etc/supervisor/conf.d.enabled -maxdepth 1 -type f -name '*.conf' -delete
-    sudo find /etc/supervisor/conf.d.enabled -maxdepth 1 -type l -name '*.conf' -delete
+    install -d -o root -g usr_vscode -m 0775 /var/log/supervisor
+    install -d -o root -g root -m 0755 /etc/supervisor/conf.d.enabled
+    rm -f /var/run/supervisor.sock /var/run/supervisord.pid
+    find /etc/supervisor/conf.d.enabled -maxdepth 1 -type f -name '*.conf' -delete
+    find /etc/supervisor/conf.d.enabled -maxdepth 1 -type l -name '*.conf' -delete
 }
 
 configure_supervisor_http_panel() {
@@ -38,7 +47,7 @@ configure_supervisor_http_panel() {
     local rendered_password=""
     local tmp_conf
 
-    sudo rm -f "$http_conf"
+    rm -f "$http_conf"
 
     if ! is_truthy "${SUPERVISOR_HTTP_ENABLED:-true}"; then
         echo "ℹ️  已禁用 Supervisord HTTP 控制面板。" >&2
@@ -64,7 +73,7 @@ configure_supervisor_http_panel() {
         -e "s|@SUPERVISOR_HTTP_USERNAME@|$(escape_sed_replacement "$rendered_username")|g" \
         -e "s|@SUPERVISOR_HTTP_PASSWORD@|$(escape_sed_replacement "$rendered_password")|g" \
         "$template_conf" > "$tmp_conf"
-    sudo install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
+    install -o root -g root -m 0644 "$tmp_conf" "$http_conf"
     rm -f "$tmp_conf"
 
     if [ -n "$rendered_username" ]; then
@@ -77,8 +86,11 @@ configure_supervisor_http_panel() {
 enable_builtin_supervisor_services() {
     local available_dir="/etc/supervisor/conf.d.available"
     local enabled_dir="/etc/supervisor/conf.d.enabled"
+    local service_conf
     local service_name
     local service_list="${SUPERVISOR_ENABLED_SERVICES:-}"
+    local service_user
+    local conf_line
     service_list="${service_list//,/ }"
 
     if [ -z "${service_list//[[:space:]]/}" ]; then
@@ -87,30 +99,51 @@ enable_builtin_supervisor_services() {
     fi
 
     for service_name in $service_list; do
-        if [ ! -f "${available_dir}/${service_name}.conf" ]; then
+        service_conf="${available_dir}/${service_name}.conf"
+        if [ ! -f "$service_conf" ]; then
             echo "⚠️  未找到内置服务配置: ${service_name}" >&2
             continue
         fi
 
-        sudo ln -sf "${available_dir}/${service_name}.conf" "${enabled_dir}/${service_name}.conf"
-        echo "✅ 已启用内置服务: ${service_name}" >&2
+        service_user=""
+        while IFS= read -r conf_line; do
+            case "$conf_line" in
+                user=*)
+                    service_user="${conf_line#user=}"
+                    service_user="${service_user%%[[:space:];#]*}"
+                    break
+                    ;;
+            esac
+        done < "$service_conf"
+
+        ln -sf "$service_conf" "${enabled_dir}/${service_name}.conf"
+        if [ -n "$service_user" ]; then
+            echo "✅ 已启用内置服务: ${service_name} (运行用户: ${service_user})" >&2
+        else
+            echo "✅ 已启用内置服务: ${service_name}" >&2
+        fi
     done
 }
 
 main() {
-    echo "容器已启动" >&2
-
     if [ "$#" -gt 0 ]; then
+        echo "容器已启动" >&2
+        echo "👤 ENTRYPOINT 当前用户: $(id -un) (uid=$(id -u), gid=$(id -g))" >&2
         echo "➡️  检测到启动命令，直接执行: $*" >&2
         exec "$@"
     fi
+
+    exec_self_as_root_if_needed "$@"
+
+    echo "容器已启动" >&2
+    echo "👤 ENTRYPOINT 当前用户: $(id -un) (uid=$(id -u), gid=$(id -g))" >&2
 
     prepare_supervisor_runtime
     configure_supervisor_http_panel
     enable_builtin_supervisor_services
 
     echo "🚀 交由 supervisord 接管容器主进程..." >&2
-    exec sudo --preserve-env /usr/bin/env PATH="$PATH" /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+    exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
 }
 
 main "$@"

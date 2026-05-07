@@ -24,7 +24,7 @@
 
 ```text
 ENTRYPOINT.sh (usr_vscode)
-  -> sudo
+  -> sudo 重新执行 ENTRYPOINT.sh (root)
   -> supervisord (root)
   -> [program:desktop-lite] / [program:opencode]
   -> setuid 到 usr_vscode
@@ -33,9 +33,9 @@ ENTRYPOINT.sh (usr_vscode)
 
 重点：
 
-- `supervisord` 主进程自己是 `root`
-- 具体服务进程通常不是 `root`
-- 当 `program` 里写了 `user=usr_vscode`，Supervisor 会在真正执行 `command=` 前把进程身份切到 `usr_vscode`
+- 容器默认用户是 `usr_vscode`，所以 `docker exec` 默认进入普通用户
+- `ENTRYPOINT.sh` 默认启动时会用免密 sudo 重新执行自身，以 root 启动 `supervisord`
+- 具体服务通过 `user=usr_vscode` 从 root `supervisord` 降权运行
 
 ## 什么是 setuid
 
