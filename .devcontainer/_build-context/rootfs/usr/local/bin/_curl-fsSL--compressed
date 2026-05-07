@@ -8,5 +8,8 @@ set -o pipefail   # 对应 -o pipefail
 # -S (--show-error): 与 -s 一起使用时，在失败时显示错误信息
 # -L (--location): 遇到重定向时，自动跟随新的 URL
 # --compressed: 请求压缩内容，并自动解压响应
+# --retry 3: 失败时重试 3 次
+# --retry-all-errors: 对所有 curl 错误启用重试
+# --retry-delay 1: 每次重试间隔 1 秒
 
-exec curl -fsSL --compressed "$@"
+exec curl -fsSL --compressed --retry 3 --retry-all-errors --retry-delay 1 "$@"
