@@ -5,7 +5,10 @@ set -o pipefail   # 对应 -o pipefail
 
 add-bun-priority-bin-pkg opencode-ai
 
-TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/opencode-ai/bin/.opencode"
+if [[ ! -x "$TARGET_BIN" ]]; then
+  TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
+fi
 CLI_ARGS=()
 
 _ensure-vscode-symlink /vscode/opencode--home_.config_opencode ~/.config/opencode
