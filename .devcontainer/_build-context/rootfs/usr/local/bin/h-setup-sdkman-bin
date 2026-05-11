@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# SDKMAN installer: installs SDKMAN without modifying user shell rc files.
+# @verify: h-setup-sdkman-bin && bash -lc 'sdk version'
+
+sdkman_dir="${SDKMAN_DIR:-$HOME/.sdkman}"
+export SDKMAN_DIR="$sdkman_dir"
+
+if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+    echo "✅ SDKMAN 已安装：$SDKMAN_DIR" >&2
+    exit 0
+fi
+
+echo "⬇️ 正在安装 SDKMAN 到 $SDKMAN_DIR..." >&2
+mkdir -p "$(dirname "$SDKMAN_DIR")"
+
+if ! _curl-fsSL--compressed "https://get.sdkman.io?ci=true&rcupdate=false" | bash >&2; then
+    echo "❌ SDKMAN 安装失败" >&2
+    exit 1
+fi
+
+if [[ ! -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+    echo "❌ SDKMAN 初始化脚本不存在: $SDKMAN_DIR/bin/sdkman-init.sh" >&2
+    exit 1
+fi
+
+echo "✅ SDKMAN 安装成功：$SDKMAN_DIR" >&2

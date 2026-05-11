@@ -14,3 +14,4 @@
 
 
 source /devcontainer/command-not-found-handler.bash
+source /devcontainer/sdkman-lazyload.sh

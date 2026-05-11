@@ -1,4 +1,5 @@
 builtin source /devcontainer/command-not-found-handler.zsh
+builtin source /devcontainer/sdkman-lazyload.sh
 
 # 以下内容仅交互式 shell 需要（本文件通过 zshenv 加载，对所有 zsh 实例生效）
 if [[ -o interactive ]]; then
