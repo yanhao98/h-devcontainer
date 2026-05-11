@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# ruby: Ruby 编程语言解释器
+# 示例：
+ruby --version
+ruby -e 'puts "hello"'
+ruby -ryaml -e 'puts YAML.load_file("file.yaml").inspect'
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: ruby --version
+exec _apt-shim-exec ruby ruby "$@"
