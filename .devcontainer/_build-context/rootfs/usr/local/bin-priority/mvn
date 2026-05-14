@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# mvn: Apache Maven 构建工具
+# 示例：
+mvn --version                       # 显示 Maven 版本
+mvn test                            # 运行测试
+mvn package                         # 构建项目包
+mvn clean install                   # 清理并安装到本地仓库
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: mvn --version
+exec _apt-shim-exec maven mvn "$@"
