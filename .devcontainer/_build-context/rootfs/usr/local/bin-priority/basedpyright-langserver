@@ -1,0 +1,22 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+:
+#-------------------------------------------------------------------------------
+# basedpyright-langserver: Python language server used by OpenCode LSP.
+# 示例：
+# basedpyright-langserver --stdio
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: basedpyright-langserver --stdio < /dev/null
+
+if [ "$#" -eq 0 ]; then
+    set -- --stdio
+fi
+
+export UV_CACHE_DIR="/vscode/uv-cache"
+exec uvx --from basedpyright basedpyright-langserver "$@"
