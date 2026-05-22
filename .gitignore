@@ -1,4 +1,5 @@
 .sisyphus/run-continuation/
+.omo/run-continuation/
 node_modules/
 .pnpm-store/
 .devcontainer/.env

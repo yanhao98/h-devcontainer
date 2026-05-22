@@ -1,0 +1,23 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# oh-my-openagent: Oh My OpenAgent CLI
+# 示例：
+oh-my-openagent --help
+oh-my-openagent --version
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: oh-my-openagent --help
+
+add-bun-priority-bin-pkg oh-my-openagent@latest
+
+TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/oh-my-openagent"
+
+echo -e "\e[90m→ exec $TARGET_BIN $*\e[0m" >&2
+
+exec "$TARGET_BIN" "$@"
