@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# make-first-existing-target: 执行第一个存在的 make target
+# 示例：
+make-first-existing-target build all -- -j"$(nproc)"
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: make-first-existing-target --help
+exec _apt-shim-exec make make-first-existing-target "$@"

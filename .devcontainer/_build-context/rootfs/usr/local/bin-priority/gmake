@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# gmake: GNU make 兼容命令
+# 示例：
+gmake --version
+gmake -n target
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: gmake --version
+exec _apt-shim-exec make gmake "$@"
