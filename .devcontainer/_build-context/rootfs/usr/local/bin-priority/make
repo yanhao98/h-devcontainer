@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# make: 构建自动化工具
+# 示例：
+make --version
+make -n target
+make -j"$(nproc)"
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: make --version
+exec _apt-shim-exec make make "$@"
