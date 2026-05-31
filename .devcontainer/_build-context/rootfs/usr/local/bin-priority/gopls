@@ -1,0 +1,27 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------
+# gopls: Go 官方语言服务器
+# 示例：
+gopls version                              # 查看 gopls 版本
+gopls serve                                # 启动 Go LSP 服务
+#-------------------------------------------------------------------------------
+fi
+
+# @verify: gopls version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+gopls_bin="$(_get-real-bin --silent gopls)"
+
+if [ -z "$gopls_bin" ]; then
+    echo "⚠️  gopls 未安装，正在自动安装..." >&2
+    h-setup-gopls-bin >&2
+fi
+
+exec _exec-real-bin gopls "$@"

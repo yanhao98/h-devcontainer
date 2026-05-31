@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# 资料:
+#   https://pkg.go.dev/golang.org/x/tools/gopls
+#   https://go.dev/doc/toolchain
+
+GOPLS_VERSION="${GOPLS_VERSION:-latest}"
+
+go_bin="$(_get-real-bin --silent go)"
+if [ -z "$go_bin" ]; then
+    echo "⚠️  Go 未安装，正在自动安装..." >&2
+    _apt-install-cached golang-go >&2
+    go_bin="$(_get-real-bin --silent go)"
+fi
+
+tmp_dir="$(mktemp -d)"
+trap "rm -rf '$tmp_dir'" EXIT INT TERM HUP
+mkdir -p "$tmp_dir/bin"
+
+echo "📦 gopls ${GOPLS_VERSION}" >&2
+echo "📥 正在安装 gopls 到 /usr/local/bin..." >&2
+
+GOBIN="$tmp_dir/bin" "$go_bin" install "golang.org/x/tools/gopls@${GOPLS_VERSION}" >&2
+
+sudo install -m 755 "$tmp_dir/bin/gopls" /usr/local/bin/gopls
+
+echo "✅ gopls 安装成功：$(/usr/local/bin/gopls version | head -1) (/usr/local/bin/gopls)" >&2
