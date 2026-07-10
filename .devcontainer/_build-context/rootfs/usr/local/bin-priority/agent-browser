@@ -22,61 +22,11 @@ fi
 
 add-bun-priority-bin-pkg agent-browser@latest
 
-# Temporary ARM64 workaround:
-# - Debian chromium 150.0.7871.46 full browser crashes in headless mode before
-#   DevToolsActivePort is written.
-# - chromium-headless-shell works in the same container for agent-browser's
-#   default headless open/snapshot/click workflow.
-# - Once the Debian/system Chromium headless regression is fixed, remove this
-#   ARM64 override block and let agent-browser use its normal browser selection.
-# Relevant Debian bugs: #1141488, #1141571.
-ensure_arm64_headless_shell() {
-    if [ ! -x /usr/bin/chromium-headless-shell ]; then
-        echo "📦 Linux ARM64 检测到无 Chromium for Testing，可用的系统浏览器为 chromium-headless-shell，正在安装..." >&2
-        _apt-install-cached chromium-headless-shell >&2
-    fi
-}
-
-is_arm64=false
-case "$(uname -m)" in
-    aarch64 | arm64)
-        is_arm64=true
-        ;;
-esac
-
-has_explicit_executable_path=false
-headed_requested=false
-
-for arg in "$@"; do
-    case "$arg" in
-        --executable-path | --executable-path=*)
-            has_explicit_executable_path=true
-            ;;
-        --headed | --headed=true)
-            headed_requested=true
-            ;;
-    esac
-done
-
-if [ "${AGENT_BROWSER_HEADED:-}" = "1" ] || [ "${AGENT_BROWSER_HEADED:-}" = "true" ]; then
-    headed_requested=true
-fi
-
-if [ "$is_arm64" = true ]; then
-    if [ "${1:-}" = "install" ]; then
-        echo "ℹ️  Chrome for Testing 不提供 Linux ARM64 build；同时 Debian chromium 150 当前有 headless 回归，因此改为确保系统 chromium-headless-shell 可用。" >&2
-        ensure_arm64_headless_shell
-        exit 0
-    fi
-
-    if [ "$has_explicit_executable_path" = false ] \
-        && [ -z "${AGENT_BROWSER_EXECUTABLE_PATH:-}" ] \
-        && [ "$headed_requested" = false ]; then
-        ensure_arm64_headless_shell
-        echo "ℹ️  Linux ARM64 默认 headless 模式下，临时改用 /usr/bin/chromium-headless-shell，绕过 Debian chromium 150 的 DevToolsActivePort/SIGTRAP 回归。修复后可删除此 shim 里的 ARM64 override。" >&2
-        set -- --executable-path /usr/bin/chromium-headless-shell "$@"
-    fi
-fi
+# # 确保 Playwright Chromium 浏览器已安装
+# if [ ! -d "${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}/chromium-"* ] 2>/dev/null; then
+#     echo "📦 正在安装 Playwright Chromium 浏览器..." >&2
+#     npx playwright install chromium >&2
+# fi
 
 TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/agent-browser"
 
