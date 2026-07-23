@@ -1,0 +1,23 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# code-server shim: 下载官方 standalone release（自带 Node），然后执行 code-server。
+# 不使用 npm/Bun，避免受容器全局 Node 版本和 npm 生命周期脚本影响。
+# @verify: code-server --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+code_server_prefix="/vscode/code-server"
+code_server_bin="$code_server_prefix/bin/code-server"
+
+if [ ! -x "$code_server_bin" ]; then
+    echo "📦 code-server 未找到，正在下载官方 standalone release..." >&2
+    curl -fsSL https://code-server.dev/install.sh |
+        sh -s -- --method standalone --prefix "$code_server_prefix" >&2
+fi
+
+_print_group_end
+exec "$code_server_bin" "$@"
