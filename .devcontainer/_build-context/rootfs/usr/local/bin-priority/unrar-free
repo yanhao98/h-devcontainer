@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit    # 对应 -e
+set -o nounset    # 对应 -u
+set -o pipefail   # 对应 -o pipefail
+
+if false; then
+#-------------------------------------------------------------------------------------------------------------
+# unrar-free: 查看和解压 RAR 压缩文件
+# 示例：
+unrar-free --list archive.rar                  # 列出压缩包内容
+unrar-free --extract archive.rar               # 解压到当前目录
+unrar-free --extract archive.rar file /tmp     # 解压指定文件到目标目录
+#-------------------------------------------------------------------------------------------------------------
+fi
+
+# @verify: unrar-free --version
+exec _apt-shim-exec unrar-free unrar-free "$@"
