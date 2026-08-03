@@ -3,18 +3,38 @@ set -o errexit    # 对应 -e
 set -o nounset    # 对应 -u
 set -o pipefail   # 对应 -o pipefail
 
-add-bun-priority-bin-pkg opencode-ai
+BUN_PRIORITY_ROOT="/vscode/bun-priority-bin"
 
-TARGET_BIN="/vscode/bun-priority-bin/node_modules/opencode-ai/bin/.opencode"
-if [[ ! -x "$TARGET_BIN" ]]; then
-  TARGET_BIN="/vscode/bun-priority-bin/node_modules/.bin/opencode"
-fi
-CLI_ARGS=()
+# 启动流程：锁定共享安装目录，同时更新主包和当前平台包，然后解锁并执行。
+mkdir -p "$BUN_PRIORITY_ROOT"
+exec {update_lock_fd}>"$BUN_PRIORITY_ROOT/.opencode-update.lock"
+flock "$update_lock_fd"
+
+# 用户要求每次启动都检查 latest；平台包和主包放进同一次 bun add，避免只更新主包。
+UPDATE_PACKAGES=(opencode-ai@latest)
+case "$(uname -m)" in
+  aarch64|arm64) UPDATE_PACKAGES+=(opencode-linux-arm64@latest) ;;
+  x86_64|amd64)
+    if grep -qw avx2 /proc/cpuinfo; then
+      UPDATE_PACKAGES+=(opencode-linux-x64@latest)
+    else
+      UPDATE_PACKAGES+=(opencode-linux-x64-baseline@latest)
+    fi
+    ;;
+esac
+add-bun-priority-bin-pkg "${UPDATE_PACKAGES[@]}" --no-cache --trust
+
+# 锁只保护包更新，不应由后面可能长期运行的 opencode 进程持有。
+flock -u "$update_lock_fd"
+exec {update_lock_fd}>&-
+
+# 执行 Bun 创建的标准入口，架构和平台选择交给 opencode-ai 上游处理。
+TARGET_BIN="$BUN_PRIORITY_ROOT/node_modules/.bin/opencode"
 
 _ensure-vscode-symlink /vscode/opencode--home_.config_opencode ~/.config/opencode
 _ensure-vscode-symlink /vscode/opencode--home_.cache_opencode ~/.cache/opencode
 _ensure-vscode-symlink /vscode/opencode--home_.cache_oh_my_opencode ~/.cache/oh-my-opencode
-
+_ensure-vscode-symlink /vscode/opencode--home_.omo ~/.omo
 # 初始化 Opencode 配置文件
 init_opencode_config() {
   local config_file="$HOME/.config/opencode/opencode.jsonc"
@@ -34,6 +54,6 @@ init_opencode_config
 
 # export OPENCODE_CONFIG_DIR=/vscode/opencode-config
 
-echo -e "\e[90m→ exec ${TARGET_BIN} ${CLI_ARGS[*]} $*\e[0m" >&2
+echo -e "\e[90m→ exec ${TARGET_BIN} $*\e[0m" >&2
 
-exec "${TARGET_BIN}" "${CLI_ARGS[@]}" "$@"
+exec "$TARGET_BIN" "$@"
