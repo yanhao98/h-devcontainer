@@ -1,0 +1,39 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# clippy-driver shim: automatically install the Rust clippy component, then execute clippy-driver
+# @verify: clippy-driver --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+cargo_bin_dir="${CARGO_HOME:-$HOME/.cargo}/bin"
+export PATH="$cargo_bin_dir${PATH:+:$PATH}"
+clippy_driver_bin="$(_get-real-bin --silent clippy-driver)"
+rustup_bin="$(_get-real-bin --silent rustup)"
+
+if [ -z "$clippy_driver_bin" ] || [ ! -x "$clippy_driver_bin" ] || [ -z "$rustup_bin" ] || [ ! -x "$rustup_bin" ]; then
+    echo "clippy-driver is not installed; installing via rustup..." >&2
+    h-setup-rustup-bin >&2
+    clippy_driver_bin="$(_get-real-bin --silent clippy-driver)"
+    rustup_bin="$(_get-real-bin --silent rustup)"
+    if [ -z "$clippy_driver_bin" ] && [ -x "$cargo_bin_dir/clippy-driver" ]; then
+        clippy_driver_bin="$cargo_bin_dir/clippy-driver"
+    fi
+    if [ -z "$rustup_bin" ] && [ -x "$cargo_bin_dir/rustup" ]; then
+        rustup_bin="$cargo_bin_dir/rustup"
+    fi
+fi
+
+active_toolchain_line="$("$rustup_bin" show active-toolchain)"
+active_toolchain="${active_toolchain_line%% *}"
+component_list="$("$rustup_bin" component list --toolchain "$active_toolchain" --installed)"
+
+if ! grep -q '^clippy-' <<<"$component_list"; then
+    echo "clippy component is not installed for $active_toolchain; installing via rustup..." >&2
+    "$rustup_bin" component add --toolchain "$active_toolchain" clippy >&2
+fi
+
+exec _exec-real-bin clippy-driver "$@"

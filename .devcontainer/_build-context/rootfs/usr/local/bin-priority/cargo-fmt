@@ -1,0 +1,39 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# cargo-fmt shim: automatically install the Rust rustfmt component, then execute cargo-fmt
+# @verify: cargo-fmt --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+cargo_bin_dir="${CARGO_HOME:-$HOME/.cargo}/bin"
+export PATH="$cargo_bin_dir${PATH:+:$PATH}"
+cargo_fmt_bin="$(_get-real-bin --silent cargo-fmt)"
+rustup_bin="$(_get-real-bin --silent rustup)"
+
+if [ -z "$cargo_fmt_bin" ] || [ ! -x "$cargo_fmt_bin" ] || [ -z "$rustup_bin" ] || [ ! -x "$rustup_bin" ]; then
+    echo "cargo-fmt is not installed; installing via rustup..." >&2
+    h-setup-rustup-bin >&2
+    cargo_fmt_bin="$(_get-real-bin --silent cargo-fmt)"
+    rustup_bin="$(_get-real-bin --silent rustup)"
+    if [ -z "$cargo_fmt_bin" ] && [ -x "$cargo_bin_dir/cargo-fmt" ]; then
+        cargo_fmt_bin="$cargo_bin_dir/cargo-fmt"
+    fi
+    if [ -z "$rustup_bin" ] && [ -x "$cargo_bin_dir/rustup" ]; then
+        rustup_bin="$cargo_bin_dir/rustup"
+    fi
+fi
+
+active_toolchain_line="$("$rustup_bin" show active-toolchain)"
+active_toolchain="${active_toolchain_line%% *}"
+component_list="$("$rustup_bin" component list --toolchain "$active_toolchain" --installed)"
+
+if ! grep -q '^rustfmt-' <<<"$component_list"; then
+    echo "rustfmt component is not installed for $active_toolchain; installing via rustup..." >&2
+    "$rustup_bin" component add --toolchain "$active_toolchain" rustfmt >&2
+fi
+
+exec _exec-real-bin cargo-fmt "$@"

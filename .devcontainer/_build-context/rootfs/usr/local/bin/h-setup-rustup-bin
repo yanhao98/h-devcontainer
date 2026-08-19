@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# Rustup installer: installs the official user-local Rust toolchain.
+# @verify: h-setup-rustup-bin && rustup --version
+
+cargo_home="${CARGO_HOME:-$HOME/.cargo}"
+rustup_bin="$cargo_home/bin/rustup"
+export CARGO_HOME="$cargo_home"
+export PATH="$cargo_home/bin:$PATH"
+
+if [[ ! -x "$rustup_bin" ]]; then
+    rustup_bin="$(_get-real-bin --silent rustup)"
+fi
+
+if [[ -z "$rustup_bin" ]]; then
+    echo "⬇️ 正在安装 Rust stable 工具链到 $CARGO_HOME..." >&2
+    _curl-fsSL--compressed https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile default --default-toolchain stable >&2
+    rustup_bin="$cargo_home/bin/rustup"
+else
+    echo "🔍 已找到 rustup，正在确保 Rust stable 工具链已安装..." >&2
+    "$rustup_bin" toolchain install stable --profile default >&2
+fi
+
+for component in rust-analyzer clippy rustfmt; do
+    "$rustup_bin" component add --toolchain stable "$component" >&2
+done
+echo "✅ Rust stable 工具链安装成功：$($rustup_bin --version)" >&2

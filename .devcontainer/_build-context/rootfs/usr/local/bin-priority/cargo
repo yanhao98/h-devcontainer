@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# cargo shim: automatically install Rust tooling, then execute cargo
+# @verify: cargo --version
+
+source /devcontainer/shim-utils.sh
+_print_caller_info
+
+cargo_bin_dir="${CARGO_HOME:-$HOME/.cargo}/bin"
+export PATH="$cargo_bin_dir${PATH:+:$PATH}"
+cargo_bin="$(_get-real-bin --silent cargo)"
+
+if [ -z "$cargo_bin" ]; then
+    echo "Rust tooling is not installed; installing rustup..." >&2
+    h-setup-rustup-bin >&2
+fi
+
+exec _exec-real-bin cargo "$@"
